@@ -181,8 +181,9 @@ class open_ephestos(bpy.types.Operator):
         if event.type in ('ESC'):
             context.region.callback_remove(self._handle)
             return {'CANCELLED'}
-
-        return {'RUNNING_MODAL'}
+        else:
+            return {'PASS_THROUGH'}
+        # return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
