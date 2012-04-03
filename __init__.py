@@ -120,7 +120,7 @@ class open_ephestos(bpy.types.Operator):
         context.area.tag_redraw()
 
         
-        if event.type in ('ESC'):
+        if context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('ESC'):
             context.region.callback_remove(self._handle)
             ephestos.running = False
             return {'CANCELLED'}
