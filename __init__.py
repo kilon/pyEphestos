@@ -1,15 +1,16 @@
 #-------------------------------------------------
+# -*- coding: utf-8 -*-
 #    morphic.py
 #
 #    a tree-based GUI for Python
 #    inspired by Squeak
 #
-#    written by Jens Mönig
+#    written by Jens MΓ¶nig
 #    jens@moenig.org
 #
 #    version 2009-Nov-06
 #
-#    Copyright (C) 2009 by Jens Mönig
+#    Copyright (C) 2009 by Jens MΓ¶nig
 #---------------------------------------
 #-------------------------------------------------
 #    morpheas.py
