@@ -5,12 +5,12 @@
 #    a tree-based GUI for Python
 #    inspired by Squeak
 #
-#    written by Jens MΓ¶nig
+#    written by Jens Moenig
 #    jens@moenig.org
 #
 #    version 2009-Nov-06
 #
-#    Copyright (C) 2009 by Jens MΓ¶nig
+#    Copyright (C) 2009 by Jens Moenig
 #---------------------------------------
 #-------------------------------------------------
 #    morpheas.py
@@ -89,10 +89,13 @@ class ephestos:
 def draw_ephestos():
    
     #set colour to use
-    bgl.glColor4f(0.5,0.0,0.5,0.7)
+    bgl.glColor4f(0.5,0.0,0.5,0.3)
 
-    
-    bgl.glRecti(5,5,bpy.context.area.regions[4].width-5, bpy.context.area.regions[4].height-5)
+    x_region = round((bpy.context.area.regions[4].width-5)/2)
+    y_region = round((bpy.context.area.regions[4].height-5)/2)
+    print("x_region : ",x_region)
+    print("y_region : ",y_region)
+    bgl.glRecti(5,5,x_region, y_region)
     
     
 def InitGLOverlay(self, context):

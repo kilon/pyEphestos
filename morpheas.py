@@ -290,6 +290,7 @@ class Rectangle:
         "factor can be either a Point or a scalar"
         return Rectangle(self.origin + factor, self.corner + factor)
 
+"""
     #Rectangle converting:
 
     def as_rect(self):
@@ -297,6 +298,7 @@ class Rectangle:
                            self.top(),
                            self.width(),
                            self.height())
+"""
 
 class Node(object):
 
@@ -379,13 +381,13 @@ class Morph(Node):
     def __init__(self):
         super(Morph, self).__init__()
         self.bounds = Point(0, 0).corner(Point(50,40))
-        self.color = pygame.Color(80, 80, 80)
-        self.alpha = 255
+        self.color = (0.3, 0.3,  0.3, 1)
+        self.alpha = 1 
         self.is_visible = True
         self.is_draggable = True
         self.draw_new()
         self.fps = 0
-        self.last_time = pygame.time.get_ticks()
+        # self.last_time = pygame.time.get_ticks()
       
     def __repr__(self):
         return self.__class__.__name__
@@ -400,6 +402,7 @@ class Morph(Node):
     def wants_to_step(self):
         return self.is_visible
 
+"""
     def step_frame(self):
         if not self.wants_to_step():
             return
@@ -415,6 +418,7 @@ class Morph(Node):
             for child in self.children:
                 child.step_frame()
 
+"""
     def step(self):
         pass
 
@@ -536,7 +540,7 @@ class Morph(Node):
             self.move_by(Point(0, -bottom_off))
 
     #Morph displaying:
-
+"""
     def draw_new(self):
         "initialize my surface"
         self.image = pygame.Surface(self.extent().as_list())
@@ -2835,3 +2839,4 @@ a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
 
 world = World()
 world.loop()
+"""
