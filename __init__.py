@@ -1,5 +1,4 @@
 #-------------------------------------------------
-# -*- coding: utf-8 -*-
 #    morphic.py
 #
 #    a tree-based GUI for Python
@@ -69,25 +68,26 @@ bl_info = {
     "tracker_url": "https://github.com/kilon/Ephestos",
     "category": "Development"}
 
-"""
+
 if "bpy" in locals():
     import imp
-    imp.reload(morpheas)
+    imp.reload(Ephestos.morpheas)
     
 else:
     from Ephestos import morpheas
-"""    
+   
 
 import bpy
 import bgl
 import blf
 from bpy.props import *
 
+
 class ephestos:
     running = False
 
 def draw_ephestos():
-   
+    """
     #set colour to use
     bgl.glColor4f(0.5,0.0,0.5,0.3)
 
@@ -96,6 +96,12 @@ def draw_ephestos():
     print("x_region : ",x_region)
     print("y_region : ",y_region)
     bgl.glRecti(5,5,x_region, y_region)
+    """
+    mymorph= morpheas.Morph()
+   
+    mymorph.color= (1.0,0.0,0.0)
+    
+    mymorph.draw_new()
     
     
 def InitGLOverlay(self, context):
