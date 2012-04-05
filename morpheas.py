@@ -110,13 +110,13 @@ class Point:
         else:
             return NotImplemented
     
-    def flip(self, directon, center):
+    def flip(self, direction, center):
         "direction must be 'vertical' or 'horizontal'"
 
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
         elif direction == 'horizontal':
-            return Point(center,x * 2 - self.x, self.y)
+            return Point(center.x * 2 - self.x, self.y)
         else:
             return NotImplemented
 
