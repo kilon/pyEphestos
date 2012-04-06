@@ -549,7 +549,7 @@ class Morph(Node):
         """
         bgl.glColor4f(self.colort,self, self.alpha)
         bgl.glRecti(self.extent().as_list())
-        """
+        
         
     def draw_on(self, surface, rectangle=None):
         if not self.is_visible:
@@ -2843,4 +2843,3 @@ a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
 
 world = World()
 world.loop()
-"""

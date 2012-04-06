@@ -518,9 +518,514 @@ class Morph(Node):
         "initialize my surface"
         print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
+        """
+        new_position = Point(self.position().x+100,self.position().y+100)
+        
+        self.set_position(new_position)
+        """
         
         dimensions = self.extent().as_list()
         
-        print("origin : ",self.bounds.origin)
+        print("dimensions : ", dimensions)
         
-        bgl.glRecti(self.position().x, self.position().y, dimensions[0], dimensions[1])  
+        bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])  
+        print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
+        
+        
+        
+    def draw_on(self, rectangle=None):
+        if not self.is_visible:
+            return
+        if rectangle == None:
+            rectangle = self.bounds
+        area = rectangle.intersect(self.bounds)
+        if area.extent() > Point(0,0):
+            p = area.origin.as_list()
+            area.origin = area.origin - self.bounds.origin
+            area.corner = area.corner - self.bounds.origin
+            self.draw_new()
+
+    def full_draw_on(self, rectangle=None):
+        if not self.is_visible:
+            return
+        if rectangle == None:
+            rectangle = self.full_bounds()
+        self.draw_on(rectangle)
+        for child in self.children:
+            child.full_draw_on(rectangle)
+
+    def hide(self):
+        self.is_visible = False
+        self.changed()
+        for morph in self.children:
+            morph.hide()
+
+    def show(self):
+        self.is_visible = True
+        self.changed()
+        for morph in self.children:
+            morph.show()
+
+    def toggle_visibility(self):
+        self.is_visible = not self.is_visible
+        self.changed()
+        for morph in self.children:
+            morph.toggle_visibility()
+
+    #Morph updating:
+
+    def changed(self):
+        w = self.root()
+        """
+        if isinstance(w, World):
+            w.broken.append(copy.copy(self.bounds))
+        """
+        
+    def full_changed(self):
+        w = self.root()
+        if isinstance(w, World):
+            w.broken.append(copy.copy(self.full_bounds()))
+
+    #Morph accessing - structure:
+    """
+    def world(self):
+        if isinstance(self.root(), World):
+            return self.root()
+    """
+    def add(self, morph):
+        parent = morph.parent
+        if parent is not None:
+            parent.remove_child(morph)
+        self.add_child(morph)
+
+    def morph_at(self, point):
+        morphs = self.all_children()
+        for m in morphs[::-1]:
+            if m.full_bounds().contains_point(point):
+                return m
+
+    #Morph duplicating:
+
+    def full_copy(self):
+        new = copy.copy(self)
+        lst = []
+        for m in self.children:
+            new_child = m.full_copy() 
+            new_child.parent = new
+            lst.append(new_child)
+        new.children = lst
+        return new
+
+    def duplicate(self):
+        clone = self.full_copy()
+        clone.parent = None
+        clone.pick_up()
+
+    #Morph dragging and dropping:
+
+    def root_for_grab(self):
+        if self.parent == None or isinstance(self.parent, Frame):
+            return self
+        else:
+            return self.parent.root_for_grab()
+
+    def wants_drop_of(self, morph):
+        "default is False - change for subclasses"
+        return False
+
+    def pick_up(self):
+        self.set_position(world.hand.position() - (self.extent() // 2))
+        world.hand.grab(self)
+
+    #Morph events:
+
+    def handles_mouse_over(self):
+        return False
+
+    def handles_mouse_click(self):
+        return False
+
+    def handles_mouse_move(self):
+        return False
+
+    def mouse_down_left(self, pos):
+        pass
+
+    def mouse_up_left(self, pos):
+        pass
+
+    def mouse_click_left(self, pos):
+        pass
+    
+    def mouse_down_middle(self, pos):
+        pass
+
+    def mouse_up_middle(self, pos):
+        pass
+
+    def mouse_click_middle(self, pos):
+        pass
+
+    def mouse_down_right(self, pos):
+        pass
+
+    def mouse_up_right(self, pos):
+        pass
+
+    def mouse_click_right(self, pos):
+        pass
+
+    def mouse_enter(self):
+        pass
+
+    def mouse_enter_dragging(self):
+        pass
+
+    def mouse_leave(self):
+        pass
+
+    def mouse_leave_dragging(self):
+        pass
+
+    def mouse_move(pos):
+        pass
+
+    #Morph menus:
+
+    def context_menu(self):
+        if world.is_dev_mode:
+            return self.developers_menu()
+        else:
+            return None
+
+    def developers_menu(self):
+        menu = Menu(self, self.__class__.__name__)
+        menu.add_item("pick up", 'pick_up')
+        menu.add_item("attach...", 'choose_parent')
+        menu.add_item("duplicate...", 'duplicate')
+        menu.add_line()
+        menu.add_item("transparency...", 'choose_alpha')
+        menu.add_item("resize...", 'resize')
+        if not isinstance(self.parent, Frame):
+            menu.add_item("adjust position...", 'adjust_position')
+        menu.add_item("color...", 'choose_color')
+        menu.add_line()
+        menu.add_item("hide", 'hide')
+        menu.add_item("close", 'delete')
+        return menu
+
+    def choose_alpha(self):
+        result = self.prompt(self.__class__.__name__ + "\nalpha\nvalue:",
+                            str(self.alpha),
+                            50)
+        if result != None:
+            self.alpha = min(max(int(result),0),254)
+            self.draw_new()
+            self.changed()
+
+    def choose_color(self):
+        result = self.pick_color(self.__class__.__name__ + "\ncolor:",
+                            self.color)
+        if result != None:
+            self.color = result
+            self.draw_new()
+            self.changed()
+
+    def resize(self):
+        handle = Resizer(self)
+        while self.is_resizing(handle):
+            world.do_one_cycle()
+        handle.delete()
+
+    def is_resizing(self, handle):
+        if world.hand.is_dragging(handle):
+            return True
+        elif pygame.mouse.get_pressed() != (1,0,0):
+            return True
+        elif world.hand.morph_at_pointer() is handle:
+            return True
+        else:
+            return False
+
+    def change_extent_to(self, point):
+        self.changed()
+        self.set_extent(point)
+        self.draw_new()
+        self.changed()
+
+    def adjust_position(self):
+        self.add_shadow()
+        p = pygame.mouse.get_pos()
+        pos = Point(p[0], p[1])
+        offset = pos - self.bounds.origin
+        while pygame.mouse.get_pressed() == (0,0,0):
+            mousepos = pygame.mouse.get_pos()
+            self.set_position(Point(mousepos[0], mousepos[1]) - offset)
+            world.do_one_cycle()
+        self.remove_shadow()
+        
+    def choose_parent(self):
+        self.choose_morph().add(self)
+        self.changed()
+
+    def choose_morph(self):
+        self.hint('click on a morph\nto select it')
+        while pygame.mouse.get_pressed() == (0,0,0):
+            world.do_one_cycle()
+        return world.hand.morph_at_pointer()        
+
+    #Morph utilities:
+
+    def hint(self, msg):
+        m = Menu()
+        m.title = msg.__str__()
+        m.is_draggable = True
+        m.popup_centered_at_hand()
+
+    def inform(self, msg):
+        m = Menu()
+        m.title = msg.__str__()
+        m.add_item("Ok")
+        m.is_draggable = True
+        m.popup_centered_at_hand()
+
+    def ask_yes_no(self, msg):
+        m = SelectionMenu()
+        m.title = msg.__str__()
+        m.add_item("Yes", True)
+        m.add_item("No", False)
+        m.is_draggable = True
+        return m.get_user_choice()
+
+    def prompt(self, msg, default='', width=100):
+        m = SelectionMenu()
+        m.title = msg.__str__()
+        m.add_entry(default, width)
+        m.add_line(2)
+        m.add_item("Ok", True)
+        m.add_item("Cancel", False)
+        m.is_draggable = True
+        if m.get_user_choice():
+            return m.get_entries()[0]
+        else:
+            return None
+
+    def pick_color(self, msg, default=(0,0,0,)):
+        m = SelectionMenu()
+        m.title = msg.__str__()
+        m.add_color_picker(default)
+        m.add_line(2)
+        m.add_item("Ok", True)
+        m.add_item("Cancel", False)
+        m.is_draggable = True
+        if m.get_user_choice():
+            return m.get_color_picks()[0]
+        else:
+            return None
+class Frame(Morph):
+    " I clip my submorphs at my bounds "
+
+    def full_bounds(self):
+        
+        return self.bounds
+
+    def wants_drop_of(self, morph):
+        return True
+
+    def full_draw_on(self, surface, rectangle=None):
+        if rectangle == None:
+            rectangle = self.full_bounds()
+        rectangle = rectangle.intersect(self.full_bounds())
+        self.draw_on(rectangle)
+        for child in self.children:
+            child.full_draw_on(surface, self.bounds.intersect(rectangle))
+
+    def developers_menu(self):
+        menu = super(Frame, self).developers_menu()
+        menu.add_line()
+        menu.add_item("move all inside...", 'keep_all_submorphs_within')
+        return menu
+
+    def keep_all_submorphs_within(self):
+        for m in self.children:
+            m.keep_within(self)
+
+class World(Frame):
+    "I represent the screen"
+                      
+    def __init__(self, x=800, y=600):
+        super(World, self).__init__()
+        self.hand = Hand()
+        self.hand.world = self
+        self.keyboard_receiver = None
+        self.text_cursor = None
+        self.bounds = Point(0, 0).corner(Point(x, y))
+        self.color = pygame.Color(130, 130, 130)
+        self.open_menu = None
+        self.is_visible = True
+        self.is_draggable = False
+        self.is_dev_mode = True
+        self.is_quitting = False
+        self.draw_new()
+        self.broken = []
+
+    def __repr__(self):
+        return 'World(' + self.extent().__str__() + ')'
+
+    def draw_new(self):
+        icon = Ellipse().image
+        pygame.display.set_icon(icon)
+        self.image = pygame.display.set_mode(self.extent().as_list(),
+                                             pygame.RESIZABLE)
+        pygame.display.set_caption('Morphic')
+        self.image.fill(self.color)
+
+    def broken_for(self, morph):
+        "private"
+        result = []
+        fb = morph.full_bounds()
+        for r in self.broken:
+            if r.intersects(fb):
+                result.append(r)
+        return result
+
+    def add(self, morph):
+        if isinstance(morph, Menu):
+            if isinstance(self.open_menu, Menu):
+                self.open_menu.delete()
+        super(World, self).add(morph)
+        self.open_menu = morph
+
+    #World displaying:
+
+    def full_draw_on(self, surface, rectangle=None):
+        if rectangle == None:
+            rectangle = self.bounds
+        if rectangle.extent() > Point(0,0):
+            self.image.fill(self.color, rectangle.as_rect())
+            for child in self.children:
+                child.full_draw_on(surface, rectangle)
+            self.hand.full_draw_on(surface, rectangle)
+
+     
+
+    #World menus:
+
+    def context_menu(self):
+        menu = Menu(self, self.__class__.__name__)
+        if self.is_dev_mode:
+            menu.add_item("create a morph...", 'user_create_new_morph')
+            menu.add_line()
+            menu.add_item("hide all", 'hide_all')
+            menu.add_item("show all", 'show_all_hiddens')
+            menu.add_item("move all inside...", 'keep_all_submorphs_within')
+            menu.add_item("color...", 'choose_color')
+            menu.add_line()
+            menu.add_item("stop all bouncers", 'stop_all_bouncers')
+            menu.add_item("start all bouncers", 'start_all_bouncers')
+            menu.add_line()
+            menu.add_item("switch to user mode", 'toggle_dev_mode')
+            menu.add_item("close", 'delete')
+        else:
+            menu.add_item("enter developer's mode", 'toggle_dev_mode')
+        menu.add_line()
+        menu.add_item("about...", 'about')
+        return menu
+
+    def user_create_new_morph(self):
+        menu = Menu(self, "create new")
+        menu.add_item("rectangle...", 'user_create_rectangle')
+        menu.add_item("ellipse...", 'user_create_ellipse')
+        menu.add_item("circle box...", 'user_create_circle_box')
+        menu.add_item("rounded box...", 'user_create_rounded_box')
+        menu.add_item("polygon...", 'user_create_polygon')
+        menu.add_line()
+        menu.add_item("string...", 'user_create_string')
+        menu.add_item("text...", 'user_create_text')
+        menu.add_line()
+        menu.add_item("bouncer...", 'user_create_bouncer')
+        menu.add_item("frame...", 'user_create_frame')
+        menu.add_item("palette...", 'user_create_color_palette')
+        menu.add_item("slider...", 'user_create_slider')
+        
+        menu.popup_at_hand()
+
+    def user_create_rectangle(self):
+        Morph().pick_up()
+
+    def stop_all_bouncers(self):
+        for m in self.all_children():
+            if isinstance(m, Bouncer):
+                m.is_stopped = True
+
+    def start_all_bouncers(self):
+        for m in self.all_children():
+            if isinstance(m, Bouncer):
+                m.is_stopped = False
+
+    #World methods:
+
+    def delete(self):
+        if self.ask_yes_no("really quit?"):
+            self.is_quitting = True
+
+    def toggle_dev_mode(self):
+        self.is_dev_mode = not self.is_dev_mode
+
+    def show_all_hiddens(self):
+        for morph in self.children:
+            if not morph.is_visible:
+                morph.show()
+
+    def hide_all(self):
+        for morph in self.children:
+            morph.hide()
+
+    def pick_up(self):
+        pass
+
+    def edit(self, stringMorph):
+        if self.text_cursor != None:
+            self.text_cursor.delete()
+        self.text_cursor = TextCursor(stringMorph)
+        stringMorph.parent.add(self.text_cursor)
+        self.keyboard_receiver = self.text_cursor
+
+    def stop_editing(self):
+        if self.text_cursor != None:
+            self.text_cursor.delete()
+        self.keyboard_receiver = None
+
+    def about(self):
+        self.inform("morphic.py\n\n\
+a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
+" + version + "\n\nwritten by Jens Mönig\njens@moenig.org")
+
+    #World utilities:
+
+    def fontname_by_user(self):
+        names = sorted(pygame.font.get_fonts())
+        choice = ListMenu(names,
+                          'choose font').get_user_choice()
+        if choice == False:
+            return None
+        else:
+            return choice
+
+    
+
+    #World events / dragging and dropping:
+
+    def wants_drop_of(self, morph):
+        return True
+
+    def handles_mouse_click(self):
+        return True
+
+    #World mainloop:
+
+    def loop(self):
+        self.full_draw_on()
+        
+
+    
