@@ -82,6 +82,7 @@ import bgl
 import blf
 from bpy.props import *
 
+mymorph= morpheas.Morph()
 
 class ephestos:
     running = False
@@ -97,7 +98,7 @@ def draw_ephestos():
     print("y_region : ",y_region)
     bgl.glRecti(5,5,x_region, y_region)
     """
-    mymorph= morpheas.Morph()
+    
    
     mymorph.color= (1.0,0.0,0.0)
     

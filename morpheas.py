@@ -164,7 +164,7 @@ class Rectangle:
         if w < 0:
             return 0
         else:
-            return max(w * self.height, 0)
+            return max(w * self.height(), 0)
 
     def bottom(self):
         return self.corner.y
@@ -241,7 +241,7 @@ class Rectangle:
 
     def inset_by(self, delta):
         if isinstance(delta, Rectangle):
-            return Rectangle(self.origin + delta.origin)
+            return Rectangle(self.origin + delta.origin, self.corner - delta.corner)
         else:
             return Rectangle(self.origin + delta, self.corner - delta)
     
@@ -521,4 +521,6 @@ class Morph(Node):
         
         dimensions = self.extent().as_list()
         
-        bgl.glRecti(100,100,dimensions[0], dimensions[1])  
+        print("origin : ",self.bounds.origin)
+        
+        bgl.glRecti(self.position().x, self.position().y, dimensions[0], dimensions[1])  
