@@ -107,7 +107,7 @@ class Point:
         "direction must be 'right', 'left' or 'pi'"
         offset = self - center
         if direction == 'right':
-            return Point(-offset.y, offset,y) + center
+            return Point(-offset.y, offset.y) + center
         elif direction == 'left':
             return Point(offset.y, -offset.y) + center
         elif direction == 'pi':
@@ -1004,7 +1004,7 @@ class World(Frame):
     def about(self):
         self.inform("morphic.py\n\n\
 a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
-" + version + "\n\nwritten by Jens Mönig\njens@moenig.org")
+" + version + "\n\nwritten by Jens Monig\njens@moenig.org")
 
     #World utilities:
 
