@@ -75,6 +75,11 @@ class Point:
         if isinstance(other, Point):
             return Point(self.x / other.x, self.y / other.y)
         return Point(self.x / other, self.y / other)
+    
+    def __truediv__(self, other):
+        if isinstance(other, Point):
+            return Point(self.x / other.x, self.y / other.y)
+        return Point(self.x / other, self.y / other)
 
     def __floordiv__(self, other):
         if isinstance(other, Point):
