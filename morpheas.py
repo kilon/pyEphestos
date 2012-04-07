@@ -1,5 +1,4 @@
 
-
 import bgl
 import copy
 import math
