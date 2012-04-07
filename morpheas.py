@@ -1,5 +1,4 @@
 
-
 import bgl
 import copy
 import math
@@ -107,7 +106,7 @@ class Point:
         "direction must be 'right', 'left' or 'pi'"
         offset = self - center
         if direction == 'right':
-            return Point(-offset.y, offset,y) + center
+            return Point(-offset.y, offset.y) + center
         elif direction == 'left':
             return Point(offset.y, -offset.y) + center
         elif direction == 'pi':
