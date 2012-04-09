@@ -86,8 +86,15 @@ mymorph= morpheas.Morph()
 
 class ephestos:
     running = False
+    mouse_region_x = 0
+    mouse_region_y = 0
 
-def draw_ephestos():
+def draw_ephestos(self,context):
+    
+    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glColor4f(0.0, 0.0, 0.0, 0.5)
+    bgl.glLineWidth(1.5)
+
     """
     #set colour to use
     bgl.glColor4f(0.5,0.0,0.5,0.3)
@@ -102,42 +109,42 @@ def draw_ephestos():
    
     mymorph.color= (1.0,0.0,0.0)
     
-    mymorph.draw_new()
+    mymorph.draw_new(ephestos)
     
-    
-def InitGLOverlay(self, context):
-    
-
-    # 50% alpha, 2 pixel width line
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glColor4f(0.0, 0.0, 0.0, 0.5)
-    bgl.glLineWidth(1.5)
-
-    # start visible drawing
-    draw_ephestos()
-    
-
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-
-
+    
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
     bl_label = "Ephestos"
 
     def modal(self, context, event):
         context.area.tag_redraw()
-
+        
         
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('ESC'):
             context.region.callback_remove(self._handle)
             ephestos.running = False
+            print("CANCELLED")
             return {'CANCELLED'}
+        elif context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('MOUSEMOVE'):
+            ephestos.mouse_region_x= event.mouse_region_x
+            ephestos.mouse_region_y= event.mouse_region_y
+            print("RUNNING MODAL")
+            print("with mouse_x : ",event.mouse_x)
+            print("and mouse_y : ", event.mouse_y)
+            print("mouse_region_x : ",event.mouse_region_x)
+            print("mouse_region_y : ",event.mouse_region_y)
+            
+            return {'RUNNING_MODAL'}
+        
         else:
+            print("event type:",event.type)
+            print("PASS THROUGH")
             return {'PASS_THROUGH'}
-        # return {'RUNNING_MODAL'}
+         
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
@@ -147,7 +154,7 @@ class open_ephestos(bpy.types.Operator):
 
             # Add the region OpenGL drawing callback
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
-            self._handle = context.region.callback_add(InitGLOverlay, (self, context), 'POST_PIXEL')
+            self._handle = context.region.callback_add(draw_ephestos, (self, context), 'POST_PIXEL')
             ephestos.running = True
             return {'RUNNING_MODAL'}
         else:

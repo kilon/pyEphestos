@@ -518,22 +518,24 @@ class Morph(Node):
 
     #Morph displaying:
 
-    def draw_new(self):
+    def draw_new(self,event):
         "initialize my surface"
-        print("I use color : ", self.color)
+        # print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
-        """
-        new_position = Point(self.position().x+100,self.position().y+100)
+        
+        print("mouse_region_x : ",event.mouse_region_x)
+        print("mouse_region_y : ",event.mouse_region_y)
+        new_position = Point(event.mouse_region_x,event.mouse_region_y)
         
         self.set_position(new_position)
-        """
+        
         
         dimensions = self.extent().as_list()
         
-        print("dimensions : ", dimensions)
+        # print("dimensions : ", dimensions)
         
         bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])  
-        print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
+        # print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
         
         
         
@@ -858,19 +860,19 @@ class World(Frame):
     "I represent the screen"
                       
     def __init__(self, x=800, y=600):
-        super(World, self).__init__()
+        #super(World, self).__init__()
         self.hand = Hand()
         self.hand.world = self
         self.keyboard_receiver = None
         self.text_cursor = None
         self.bounds = Point(0, 0).corner(Point(x, y))
-        self.color = pygame.Color(130, 130, 130)
+        self.color = (130, 130, 130)
         self.open_menu = None
         self.is_visible = True
         self.is_draggable = False
         self.is_dev_mode = True
         self.is_quitting = False
-        self.draw_new()
+        #self.draw_new()
         self.broken = []
 
     def __repr__(self):
