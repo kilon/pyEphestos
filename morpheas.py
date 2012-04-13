@@ -522,12 +522,9 @@ class Morph(Node):
         "initialize my surface"
         # print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
+        # new_position = Point(event.mouse_region_x,event.mouse_region_y)
         
-        print("mouse_region_x : ",event.mouse_region_x)
-        print("mouse_region_y : ",event.mouse_region_y)
-        new_position = Point(event.mouse_region_x,event.mouse_region_y)
-        
-        self.set_position(new_position)
+        # self.set_position(new_position)
         
         
         dimensions = self.extent().as_list()
@@ -662,6 +659,7 @@ class Morph(Node):
 
     def mouse_click_left(self, pos):
         pass
+        
     
     def mouse_down_middle(self, pos):
         pass
@@ -860,7 +858,7 @@ class World(Frame):
     "I represent the screen"
                       
     def __init__(self, x=800, y=600):
-        #super(World, self).__init__()
+        super(World, self).__init__()
         self.hand = Hand()
         self.hand.world = self
         self.keyboard_receiver = None
@@ -896,9 +894,9 @@ class World(Frame):
         return result
 
     def add(self, morph):
-        if isinstance(morph, Menu):
+        """if isinstance(morph, Menu):
             if isinstance(self.open_menu, Menu):
-                self.open_menu.delete()
+                self.open_menu.delete()"""
         super(World, self).add(morph)
         self.open_menu = morph
 
@@ -1042,11 +1040,15 @@ class Hand(Morph):
         self.mouse_over_list = []
         self.mouse_down_morph = None
         self.morph_to_grab = None
+        self.moving_morph= False
         self.bounds = Point(0, 0).corner(Point(0,0))
 
     def __repr__(self):
         return 'Hand(' + self.center().__str__() + ')'
-
+    
+    def attach_to_world(self, world):
+        self.world = world
+        
     def changed(self):
         if self.world != None:
             b = self.full_bounds()
@@ -1057,24 +1059,24 @@ class Hand(Morph):
         pass
 
     def process_mouse_event(self, event):
-        if event.type == 4:
+        if event.type == 'MOUSEMOVE':
             self.process_mouse_move(event)
-        elif event.type == 5:
+        elif event.value=='PRESS':
             self.process_mouse_down(event)
-        elif event.type == 6:
+        elif event.value=='RELEASE':
             self.process_mouse_up(event)
 
     def morph_at_pointer(self):
         morphs = self.world.children
         for m in morphs[::-1]:
-            if m.full_bounds().contains_point(self.bounds.origin) and not(
-                isinstance(m, Shadow)) and m.is_visible:
+            if m.full_bounds().contains_point(self.bounds.origin) and m.is_visible:
                 return m.morph_at(self.bounds.origin)
         return self.world
 
     def all_morphs_at_pointer(self):
         answer = []
-        morphs = self.world.all_children()
+        # morphs = self.world.all_children()
+        morphs = self.world.children
         for m in morphs:
             if m.is_visible and (m.full_bounds().contains_point
                                  (self.bounds.origin)):
@@ -1091,10 +1093,10 @@ class Hand(Morph):
 
     def grab(self, morph):
         if self.children == []:
-            world.stop_editing()
-            morph.add_shadow()
+            self.world.stop_editing()
             self.add(morph)
             self.changed()
+            print("morph has been grabbed")
 
     def drop(self):
         if self.children != []:
@@ -1103,9 +1105,12 @@ class Hand(Morph):
             self.changed()
             target.add(morph)
             morph.changed()
-            morph.remove_shadow()
+            self.morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
+            
+            print("morph has been droped")
+            
 
     #Hand event dispatching:
 
@@ -1113,12 +1118,13 @@ class Hand(Morph):
         if self.children != []:
             self.drop()
         else:
-            pos = Point(event.dict["pos"][0],
-                        event.dict["pos"][1])
+            pos = Point(event.mouse_region_x,
+                        event.mouse_region_y)
             morph = self.morph_at_pointer()
 
             is_menu_click = False
-            for m in morph.all_parents():
+            
+            """for m in morph.all_parents():
                 if isinstance(m, Menu) or isinstance(m, Widget):
                     is_menu_click = True
             if not is_menu_click:
@@ -1129,17 +1135,22 @@ class Hand(Morph):
 
             if world.text_cursor != None:
                 if morph is not world.text_cursor.target:
-                    world.stop_editing()
+                    world.stop_editing()"""
 
             self.morph_to_grab = morph.root_for_grab()
+            print("self.morph_to_grab : ",self.morph_to_grab )
+            if morph.is_draggable:
+                self.moving_morph =True
             while not morph.handles_mouse_click():
                 morph = morph.parent
             self.mouse_down_morph = morph
-            if event.dict["button"] == 1:
+            if event.type == 'LEFTMOUSE':
                 morph.mouse_down_left(pos)
-            elif event.dict["button"] == 2:
+                
+                    
+            elif event.type == 'MIDDLEMOUSE':
                 morph.mouse_down_middle(pos)
-            elif event.dict["button"] == 3:
+            elif event.type == 'RIGHTMOUSE':
                 morph.mouse_down_right(pos)
             else:
                 pass
@@ -1147,32 +1158,36 @@ class Hand(Morph):
     def process_mouse_up(self, event):
         if self.children != []:
             self.drop()
+            if self.moving_morph == True:
+                    self.moving_morph = False
+                    print("movement finished")
         else:
-            pos = Point(event.dict["pos"][0],
-                        event.dict["pos"][1])
+            pos = Point(event.mouse_region_x,
+                        event.mouse_region_y)
             morph = self.morph_at_pointer()
 
             is_menu_click = False
-            for m in morph.all_parents():
+            """for m in morph.all_parents():
                 if isinstance(m, Menu) or isinstance(m, Widget):
-                    is_menu_click = True
+                    is_menu_click = True"""
 
-            if event.dict["button"] == 3 and not is_menu_click:
+            if event.type == 'RIGHTMOUSE' and event.value == 'RELEASE' and not is_menu_click:
                 menu = morph.context_menu()
                 if menu != None:
                     menu.popup_at_hand()
             
             while not morph.handles_mouse_click():
                 morph = morph.parent
-            if event.dict["button"] == 1:
+            if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_left(pos)
+                
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_left(pos)
-            elif event.dict["button"] == 2 and not is_menu_click:
+            elif event.event.type == 'MIDDLEMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_middle(pos)
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_middle(pos)
-            elif event.dict["button"] == 3 and not is_menu_click:
+            elif event.type == 'RIGHTMOUSE' and event.value =='RELEASE' and not is_menu_click:
                 morph.mouse_up_right(pos)
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_right(pos)
@@ -1181,25 +1196,40 @@ class Hand(Morph):
 
     def process_mouse_move(self, event):
         mouse_over_new = self.all_morphs_at_pointer()
-        if self.children == [] and event.dict["buttons"][0] == 1:
+        if self.children == [] and event.type == 'MOUSEMOVE':
             top_morph = self.morph_at_pointer()
             if top_morph.handles_mouse_move():
-                pos = Point(event.dict["pos"][0],
-                            event.dict["pos"][1])
+                pos = Point(event.mouse_region_x,
+                            event.mouse_region_y)
                 top_morph.mouse_move(pos)
             morph = top_morph.root_for_grab()
             if morph is self.morph_to_grab and morph.is_draggable:
+                
                 self.grab(morph)
+                
+                
+                
         for old in self.mouse_over_list:
-            if old not in mouse_over_new and old.handles_mouse_over():
+            if old not in mouse_over_new :
                 old.mouse_leave()
-                if event.dict["buttons"][0] == 1:
+                if event.type == 'MOUSEMOVE':
                     old.mouse_leave_dragging()
+                    print("I am dragging the old morph")
+                    
         for new in mouse_over_new: 
-            if new not in self.mouse_over_list and new.handles_mouse_over():
+            if new not in self.mouse_over_list:
                 new.mouse_enter()
-                if event.dict["buttons"][0] == 1:
+                if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
+                    
+            print("I am dragging the  new morph")
+            
+            
+        
+        if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
+            self.morph_to_grab.set_position(self.bounds.origin)
+            print("WARNING !!!! morph move : ",self.morph_to_grab)
+                          
         self.mouse_over_list = mouse_over_new
 
     #Hand testing:

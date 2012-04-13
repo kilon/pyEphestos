@@ -83,11 +83,22 @@ import blf
 from bpy.props import *
 
 mymorph= morpheas.Morph()
+morph2= morpheas.Morph()
+morph3= morpheas.Morph()
+world= morpheas.World()
+world.add(mymorph)
+world.add(morph2)
+world.add(morph3)
+morph2.set_position(morpheas.Point(150,150))
+morph3.set_position(morpheas.Point(350,350))
+hand = morpheas.Hand()
+hand.attach_to_world(world)
+
+
 
 class ephestos:
     running = False
-    mouse_region_x = 0
-    mouse_region_y = 0
+    
 
 def draw_ephestos(self,context):
     
@@ -110,7 +121,8 @@ def draw_ephestos(self,context):
     mymorph.color= (1.0,0.0,0.0)
     
     mymorph.draw_new(ephestos)
-    
+    morph2.draw_new(ephestos)
+    morph3.draw_new(ephestos)
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
@@ -129,19 +141,16 @@ class open_ephestos(bpy.types.Operator):
             ephestos.running = False
             print("CANCELLED")
             return {'CANCELLED'}
-        elif context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('MOUSEMOVE'):
-            ephestos.mouse_region_x= event.mouse_region_x
-            ephestos.mouse_region_y= event.mouse_region_y
-            print("RUNNING MODAL")
-            print("with mouse_x : ",event.mouse_x)
-            print("and mouse_y : ", event.mouse_y)
-            print("mouse_region_x : ",event.mouse_region_x)
-            print("mouse_region_y : ",event.mouse_region_y)
-            
-            return {'RUNNING_MODAL'}
-        
+        elif context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('MOUSEMOVE','LEFTMOUSE','RIGHTMOUSE') and event.mouse_region_x > 0 and event.mouse_region_x < bpy.context.area.regions[4].width and event.mouse_region_y > 0  and event.mouse_region_y < bpy.context.area.regions[4].height :
+            print("RUNNING_MODAL")
+            print("event type :" ,event.type)
+            print("event value : ",event.value)
+            hand.bounds.origin = morpheas.Point(event.mouse_region_x, event.mouse_region_y)
+            hand.process_mouse_event(event)
+            return {'RUNNING_MODAL'}   
         else:
-            print("event type:",event.type)
+            print("event type :" ,event.type)
+            print("event value : ",event.value)
             print("PASS THROUGH")
             return {'PASS_THROUGH'}
          
