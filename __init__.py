@@ -93,8 +93,9 @@ morph2.set_position(morpheas.Point(150,150))
 morph3.set_position(morpheas.Point(350,350))
 hand = morpheas.Hand()
 hand.attach_to_world(world)
-
-
+mymorph.color= (1.0,0.0,0.0)
+morph2.color= (0.0,1.0,0.0)
+morph3.color= (0.0,0.0,1.0)
 
 class ephestos:
     running = False
@@ -116,9 +117,6 @@ def draw_ephestos(self,context):
     print("y_region : ",y_region)
     bgl.glRecti(5,5,x_region, y_region)
     """
-    
-   
-    mymorph.color= (1.0,0.0,0.0)
     
     mymorph.draw_new(ephestos)
     morph2.draw_new(ephestos)
@@ -146,8 +144,8 @@ class open_ephestos(bpy.types.Operator):
             print("event type :" ,event.type)
             print("event value : ",event.value)
             hand.bounds.origin = morpheas.Point(event.mouse_region_x, event.mouse_region_y)
-            hand.process_mouse_event(event)
-            return {'RUNNING_MODAL'}   
+            
+            return hand.process_mouse_event(event) #{'RUNNING_MODAL'}   
         else:
             print("event type :" ,event.type)
             print("event value : ",event.value)

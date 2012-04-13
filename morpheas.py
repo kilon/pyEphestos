@@ -1060,11 +1060,11 @@ class Hand(Morph):
 
     def process_mouse_event(self, event):
         if event.type == 'MOUSEMOVE':
-            self.process_mouse_move(event)
+            return self.process_mouse_move(event)
         elif event.value=='PRESS':
-            self.process_mouse_down(event)
+            return self.process_mouse_down(event)
         elif event.value=='RELEASE':
-            self.process_mouse_up(event)
+            return self.process_mouse_up(event)
 
     def morph_at_pointer(self):
         morphs = self.world.children
@@ -1115,6 +1115,7 @@ class Hand(Morph):
     #Hand event dispatching:
 
     def process_mouse_down(self, event):
+        returned_value = {'PASS_THROUGH'}
         if self.children != []:
             self.drop()
         else:
@@ -1154,6 +1155,7 @@ class Hand(Morph):
                 morph.mouse_down_right(pos)
             else:
                 pass
+        return returned_value    
 
     def process_mouse_up(self, event):
         if self.children != []:
@@ -1170,20 +1172,24 @@ class Hand(Morph):
             """for m in morph.all_parents():
                 if isinstance(m, Menu) or isinstance(m, Widget):
                     is_menu_click = True"""
-
+            """
             if event.type == 'RIGHTMOUSE' and event.value == 'RELEASE' and not is_menu_click:
                 menu = morph.context_menu()
                 if menu != None:
                     menu.popup_at_hand()
+                    
+                    """
             
             while not morph.handles_mouse_click():
                 morph = morph.parent
+                
             if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_left(pos)
                 
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_left(pos)
-            elif event.event.type == 'MIDDLEMOUSE' and event.value == 'RELEASE':
+                    
+            elif event.type == 'MIDDLEMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_middle(pos)
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_middle(pos)
@@ -1193,8 +1199,10 @@ class Hand(Morph):
                     morph.mouse_click_right(pos)
             else:
                 pass
-
+        return {'PASS_THROUGH'}
+    
     def process_mouse_move(self, event):
+        value_returned = {'PASS_THROUGH'}
         mouse_over_new = self.all_morphs_at_pointer()
         if self.children == [] and event.type == 'MOUSEMOVE':
             top_morph = self.morph_at_pointer()
@@ -1206,6 +1214,7 @@ class Hand(Morph):
             if morph is self.morph_to_grab and morph.is_draggable:
                 
                 self.grab(morph)
+                value_returned = {'RUNNING_MODAL'}
                 
                 
                 
@@ -1229,8 +1238,9 @@ class Hand(Morph):
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
             self.morph_to_grab.set_position(self.bounds.origin)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
-                          
+            value_returned = {'RUNNING_MODAL'}            
         self.mouse_over_list = mouse_over_new
+        return value_returned
 
     #Hand testing:
 
