@@ -7,76 +7,91 @@ version = '2009-Nov-06'
 TRANSPARENT = 0
 
 class Point:
-
+    """ Point Class , defining the behavior of points """
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
     def __repr__(self):
+        "representation of Point Class"
         return self.x.__str__() + '@' + self.y.__str__()
 
     #Point comparison:
 
     def __eq__(self, other):
+        "getter: (point1 , point2) are the two points equal  ? "
         if isinstance(other, Point):
             return self.x == other.x and self.y == other.y
         return False
 
     def __ne__(self, other):
+        "getter: (point1 , point2) are the two points not equal ?"
         return not self.__eq__(other)
 
     def __lt__(self, other):
+        "getter: (point1 , point2) are the first point less than the second point ?"
         if isinstance(other, Point):
             return self.x < other.x and self.y < other.y
         return NotImplemented
 
     def __gt__(self, other):
+        "getter: (point1 , point2) is the first point greater than the second point ?"
         if isinstance(other, Point):
             return self.x > other.x and self.y > other.y
         return NotImplemented
 
     def __le__(self, other):
+        "getter: (point1 , point2) is the first point equal or less than second point ?"
         if isinstance(other, Point):
             return self.x <= other.x and self.y <= other.y
         return NotImplemented
 
     def __ge__(self, other):
+        "getter: (point1 , point2) is the first point equal or greater than the second point ?"
         if isinstance(other, Point):
             return self.x >= other.x and self.y >= other.y
         return NotImplemented
 
     def __round__(self):
+        "getter: (point1 , point2) return the round of the point "
         return Point(round(self.x), round(self.y))
 
     def max(self, other):
+        "getter: (point1 , point2) return the max between 2 points"
         return Point(max(self.x, other.x), max(self.y, other.y))
     
     def min(self, other):
+        "getter: (point1 , point2) return the min between 2 points"
         return Point(min(self.x, other.x), min(self.y, other.y))
 
     #Point arithmetic:
 
     def __add__(self, other):
+        "getter: (point1 , point2) add 2 points and return the result"
         if isinstance(other, Point):
             return Point(self.x + other.x, self.y + other.y)
         return Point(self.x + other, self.y + other)
         
     def __sub__(self, other):
+        "getter: (point1 , point2) substract 2 points and return the result"
         if isinstance(other, Point):
             return Point(self.x - other.x, self.y - other.y)
         return Point(self.x - other, self.y - other)
 
     def __mul__(self, other):
+        "getter: (point1 , point2) perform a mulitplication of 2 points and return the result"
         if isinstance(other, Point):
             return Point(self.x * other.x, self.y * other.y)
         return Point(self.x * other, self.y * other)
 
     def __div__(self, other):
+        "getter: (point1 , point2) perform a division of 2 points and return the result"
         if isinstance(other, Point):
             return Point(self.x / other.x, self.y / other.y)
         return Point(self.x / other, self.y / other)
 
     def __floordiv__(self, other):
+        "getter: (point1 , point2) perform a floor division of 2 points and return the result"
         if isinstance(other, Point):
             return Point(self.x // other.x, self.y // other.y)
         return Point(self.x // other, self.y // other)
@@ -85,21 +100,25 @@ class Point:
         return Point(abs(self.x), abs(self.y))
 
     def __neg__(self):
+        "getter: return the negative of a point"
         return Point(-self.x, -self.y)
 
     #Point functions:
 
     def dot_product(self, other):
+        "getter: (point1 , point2) return the dot product"
         return self.x * other.x + self.y * other.y
     
     def cross_product(self, other):
+        "getter: (point1 , point2) return the cross product"
         return self.x * other.y - self.y * other.x
 
     def distance_to(self, other):
+        "getter: (point1 , point2) return the distance between 2 points"
         return (other - self).r()
 
     def rotate(self, direction, center):
-        "direction must be 'right', 'left' or 'pi'"
+        "getter: (direction, center) rotate a point realtive to a center with a specific direction and return the result. direction must be 'right', 'left' or 'pi'"
         offset = self - center
         if direction == 'right':
             return Point(-offset.y, offset,y) + center
@@ -111,7 +130,7 @@ class Point:
             return NotImplemented
     
     def flip(self, directon, center):
-        "direction must be 'vertical' or 'horizontal'"
+        " getter: (direction , center) flip a point to a direction relative to a center and return the result. The direction can be either vertical or horizontal, of string typ"
 
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
@@ -123,28 +142,35 @@ class Point:
     #Point polar coordinates:
 
     def r(self):
+        "getter: return polar cordinates"
         return math.sqrt(self.dot_product(self))
 
     #Point transforming:
 
     def scale_by(self, scalePoint):
+        "getter: (point) scale the point by another point and return the result"
         return Point(scalePoint.x * self.x, scalePoint.y * self.y)
 
     def translate_by(self, deltaPoint):
+        "getter: (point) perform a mulitplication of 2 points and return the result"
         return Point(deltaPoint.x + self.x, deltaPoint.y + self.y)
 
     #Point converting:
 
     def as_list(self):
+        "getter:  return point coordinates (x,y) as a list"
         return [self.x, self.y]
 
     def corner(self, cornerPoint):
+        "getter: (point) return a rectangle between the point and another point"
         return Rectangle(self, cornerPoint)
 
     def rectangle(self, aPoint):
+        "getter: (point) return a rectangle between the point and another point using min and max"
         return Rectangle(self.min(aPoint), self.max(aPoint))
 
     def extent(self, extentPoint):
+        "getter: (point) return a rectangle between the point and another point taking the new point as an extension"
         return Rectangle(self, self + extentPoint)
     
 class Rectangle:
