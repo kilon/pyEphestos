@@ -6,103 +6,126 @@ version = '2009-Nov-06'
 TRANSPARENT = 0
 
 class Point:
-
+""" Point class defines the behavior of Points"""
     def __init__(self, x, y):
+    """ Point is initialised with 2 parameters (x,y) defining the coordinates"""
         self.x = x
         self.y = y
 
     def __repr__(self):
+    """ getter : return the string representation of point object"""
         return self.x.__str__() + '@' + self.y.__str__()
 
     #Point comparison:
 
     def __eq__(self, other):
+    """ getter (point) : compare current point with another point and return True of False whether they are equal"""
         if isinstance(other, Point):
             return self.x == other.x and self.y == other.y
         return False
 
     def __ne__(self, other):
+    """ getter (point) : compare current point with another point and return True of False whether they are not equal"""
         return not self.__eq__(other)
 
     def __lt__(self, other):
+""" getter (point) : compare current point with another point and return True of False whether the first is less than the second"""
         if isinstance(other, Point):
             return self.x < other.x and self.y < other.y
         return NotImplemented
 
     def __gt__(self, other):
+""" getter (point) : compare current point with another point and return True of False whether the first is greater than the second"""
         if isinstance(other, Point):
             return self.x > other.x and self.y > other.y
         return NotImplemented
 
     def __le__(self, other):
+""" getter (point) : compare current point with another point and return True of False whether the first is less than or equal to the second"""
         if isinstance(other, Point):
             return self.x <= other.x and self.y <= other.y
         return NotImplemented
 
     def __ge__(self, other):
+""" getter (point) : compare current point with another point and return True of False whether the first is greater than or equal to  the second"""
         if isinstance(other, Point):
             return self.x >= other.x and self.y >= other.y
         return NotImplemented
 
     def __round__(self):
+""" getter  : return the round of the point"""
         return Point(round(self.x), round(self.y))
 
     def max(self, other):
+""" getter (point) : compare current point with another point and return the max between the two"""
         return Point(max(self.x, other.x), max(self.y, other.y))
-    
+
     def min(self, other):
+""" getter (point) : compare current point with another point and return the min between the two"""
         return Point(min(self.x, other.x), min(self.y, other.y))
 
     #Point arithmetic:
 
     def __add__(self, other):
+""" getter (point) : add current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x + other.x, self.y + other.y)
         return Point(self.x + other, self.y + other)
-        
+
     def __sub__(self, other):
+""" getter (point) : substract current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x - other.x, self.y - other.y)
         return Point(self.x - other, self.y - other)
 
     def __mul__(self, other):
+""" getter (point) : multiply current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x * other.x, self.y * other.y)
         return Point(self.x * other, self.y * other)
 
     def __div__(self, other):
+""" getter (point) : divide current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x / other.x, self.y / other.y)
         return Point(self.x / other, self.y / other)
-    
+
     def __truediv__(self, other):
+""" getter (point) : true divide current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x / other.x, self.y / other.y)
         return Point(self.x / other, self.y / other)
 
     def __floordiv__(self, other):
+""" getter (point) : floor divide current point with another point and return the result point"""
         if isinstance(other, Point):
             return Point(self.x // other.x, self.y // other.y)
         return Point(self.x // other, self.y // other)
 
     def __abs__(self):
+""" getter  : return the abs"""
         return Point(abs(self.x), abs(self.y))
 
     def __neg__(self):
+""" getter  : return the negative"""
         return Point(-self.x, -self.y)
 
     #Point functions:
 
     def dot_product(self, other):
+""" getter (point) : return the the dot product between the current point and another point"""
         return self.x * other.x + self.y * other.y
-    
+
     def cross_product(self, other):
+""" getter (point) : return the the cross product between the current point and another point"""
         return self.x * other.y - self.y * other.x
 
     def distance_to(self, other):
+""" getter (point) : return the the distance between the current point and another point"""
         return (other - self).r()
 
     def rotate(self, direction, center):
+""" getter (direction,center) : return the the rotation point relative to a center and towards a direction"""
         "direction must be 'right', 'left' or 'pi'"
         offset = self - center
         if direction == 'right':
@@ -113,9 +136,10 @@ class Point:
             return center - offset
         else:
             return NotImplemented
-    
+
     def flip(self, direction, center):
-        "direction must be 'vertical' or 'horizontal'"
+""" getter (direction,center) : return the fliped point relative to a center and towards a direction.Direction must be 'vertical' or 'horizontal"""
+
 
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
@@ -127,30 +151,37 @@ class Point:
     #Point polar coordinates:
 
     def r(self):
+""" getter  : return the polar coordinates of the current point"""
         return math.sqrt(self.dot_product(self))
 
     #Point transforming:
 
     def scale_by(self, scalePoint):
+""" getter (point) : return the current point scaled by another point"""
         return Point(scalePoint.x * self.x, scalePoint.y * self.y)
 
     def translate_by(self, deltaPoint):
+""" getter (point) : return the current point translated by another point"""
         return Point(deltaPoint.x + self.x, deltaPoint.y + self.y)
 
     #Point converting:
 
     def as_list(self):
+""" getter : return the current point as a list"""
         return [self.x, self.y]
 
     def corner(self, cornerPoint):
+""" getter : return the rectangle of the current point with another point"""
         return Rectangle(self, cornerPoint)
 
     def rectangle(self, aPoint):
+""" getter : return the rectangle of the current point with another point using min and max"""
         return Rectangle(self.min(aPoint), self.max(aPoint))
 
     def extent(self, extentPoint):
+""" getter : return the rectangle of the current point with another point using extend"""
         return Rectangle(self, self + extentPoint)
-    
+
 class Rectangle:
 
     def __init__(self, origin, corner):
@@ -248,7 +279,7 @@ class Rectangle:
             return Rectangle(self.origin + delta.origin, self.corner - delta.corner)
         else:
             return Rectangle(self.origin + delta, self.corner - delta)
-    
+
     def expand_by(self, integer):
         return Rectangle(self.origin - integer, self.corner + integer)
 
@@ -259,7 +290,7 @@ class Rectangle:
     def merge(self, aRectangle):
         return Rectangle(self.origin.min(aRectangle.origin),
                          self.corner.max(aRectangle.corner))
-    
+
     #Rectangle testing:
 
     def contains_point(self, point):
@@ -288,7 +319,7 @@ class Rectangle:
     def scale_by(self, scale):
         "scale can be either a Point or a scalar"
         return Rectangle(self.origin * scale, self.corner * scale)
-    
+
     def translate_by(self, factor):
         "factor can be either a Point or a scalar"
         return Rectangle(self.origin + factor, self.corner + factor)
@@ -333,7 +364,7 @@ class Node(object):
         result = [self]
         for child in self.children:
             result.extend(child.all_children())
-        return result        
+        return result
 
     def all_leafs(self):
         result = []
@@ -347,7 +378,7 @@ class Node(object):
         result = [self]
         if self.parent != None:
             result.extend(self.parent.all_parents())
-        return result        
+        return result
 
     def siblings(self):
         result = []
@@ -376,13 +407,13 @@ class Morph(Node):
         super(Morph, self).__init__()
         self.bounds = Point(0, 0).corner(Point(50,40))
         self.color = (0.3, 0.3, 0.3)
-        self.alpha = 1 
+        self.alpha = 1
         self.is_visible = True
         self.is_draggable = True
         #self.draw_new()
         self.fps = 0
         # self.last_time = pygame.time.get_ticks()
-      
+
     def __repr__(self):
         return self.__class__.__name__
 
@@ -523,19 +554,19 @@ class Morph(Node):
         # print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
         # new_position = Point(event.mouse_region_x,event.mouse_region_y)
-        
+
         # self.set_position(new_position)
-        
-        
+
+
         dimensions = self.extent().as_list()
-        
+
         # print("dimensions : ", dimensions)
-        
-        bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])  
+
+        bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
         # print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
-        
-        
-        
+
+
+
     def draw_on(self, rectangle=None):
         if not self.is_visible:
             return
@@ -583,7 +614,7 @@ class Morph(Node):
         if isinstance(w, World):
             w.broken.append(copy.copy(self.bounds))
         """
-        
+
     def full_changed(self):
         w = self.root()
         if isinstance(w, World):
@@ -613,7 +644,7 @@ class Morph(Node):
         new = copy.copy(self)
         lst = []
         for m in self.children:
-            new_child = m.full_copy() 
+            new_child = m.full_copy()
             new_child.parent = new
             lst.append(new_child)
         new.children = lst
@@ -659,8 +690,8 @@ class Morph(Node):
 
     def mouse_click_left(self, pos):
         pass
-        
-    
+
+
     def mouse_down_middle(self, pos):
         pass
 
@@ -767,7 +798,7 @@ class Morph(Node):
             self.set_position(Point(mousepos[0], mousepos[1]) - offset)
             world.do_one_cycle()
         self.remove_shadow()
-        
+
     def choose_parent(self):
         self.choose_morph().add(self)
         self.changed()
@@ -776,7 +807,7 @@ class Morph(Node):
         self.hint('click on a morph\nto select it')
         while pygame.mouse.get_pressed() == (0,0,0):
             world.do_one_cycle()
-        return world.hand.morph_at_pointer()        
+        return world.hand.morph_at_pointer()
 
     #Morph utilities:
 
@@ -830,7 +861,7 @@ class Frame(Morph):
     " I clip my submorphs at my bounds "
 
     def full_bounds(self):
-        
+
         return self.bounds
 
     def wants_drop_of(self, morph):
@@ -856,7 +887,7 @@ class Frame(Morph):
 
 class World(Frame):
     "I represent the screen"
-                      
+
     def __init__(self, x=800, y=600):
         super(World, self).__init__()
         self.hand = Hand()
@@ -911,7 +942,7 @@ class World(Frame):
                 child.full_draw_on(surface, rectangle)
             self.hand.full_draw_on(surface, rectangle)
 
-     
+
 
     #World menus:
 
@@ -951,7 +982,7 @@ class World(Frame):
         menu.add_item("frame...", 'user_create_frame')
         menu.add_item("palette...", 'user_create_color_palette')
         menu.add_item("slider...", 'user_create_slider')
-        
+
         menu.popup_at_hand()
 
     def user_create_rectangle(self):
@@ -1016,7 +1047,7 @@ a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
         else:
             return choice
 
-    
+
 
     #World events / dragging and dropping:
 
@@ -1045,10 +1076,10 @@ class Hand(Morph):
 
     def __repr__(self):
         return 'Hand(' + self.center().__str__() + ')'
-    
+
     def attach_to_world(self, world):
         self.world = world
-        
+
     def changed(self):
         if self.world != None:
             b = self.full_bounds()
@@ -1108,9 +1139,9 @@ class Hand(Morph):
             self.morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
-            
+
             print("morph has been droped")
-            
+
 
     #Hand event dispatching:
 
@@ -1124,7 +1155,7 @@ class Hand(Morph):
             morph = self.morph_at_pointer()
 
             is_menu_click = False
-            
+
             """for m in morph.all_parents():
                 if isinstance(m, Menu) or isinstance(m, Widget):
                     is_menu_click = True
@@ -1147,15 +1178,15 @@ class Hand(Morph):
             self.mouse_down_morph = morph
             if event.type == 'LEFTMOUSE':
                 morph.mouse_down_left(pos)
-                
-                    
+
+
             elif event.type == 'MIDDLEMOUSE':
                 morph.mouse_down_middle(pos)
             elif event.type == 'RIGHTMOUSE':
                 morph.mouse_down_right(pos)
             else:
                 pass
-        return returned_value    
+        return returned_value
 
     def process_mouse_up(self, event):
         if self.children != []:
@@ -1177,18 +1208,18 @@ class Hand(Morph):
                 menu = morph.context_menu()
                 if menu != None:
                     menu.popup_at_hand()
-                    
+
                     """
-            
+
             while not morph.handles_mouse_click():
                 morph = morph.parent
-                
+
             if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_left(pos)
-                
+
                 if morph is self.mouse_down_morph:
                     morph.mouse_click_left(pos)
-                    
+
             elif event.type == 'MIDDLEMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_middle(pos)
                 if morph is self.mouse_down_morph:
@@ -1200,7 +1231,7 @@ class Hand(Morph):
             else:
                 pass
         return {'PASS_THROUGH'}
-    
+
     def process_mouse_move(self, event):
         value_returned = {'PASS_THROUGH'}
         mouse_over_new = self.all_morphs_at_pointer()
@@ -1212,33 +1243,33 @@ class Hand(Morph):
                 top_morph.mouse_move(pos)
             morph = top_morph.root_for_grab()
             if morph is self.morph_to_grab and morph.is_draggable:
-                
+
                 self.grab(morph)
                 value_returned = {'RUNNING_MODAL'}
-                
-                
-                
+
+
+
         for old in self.mouse_over_list:
             if old not in mouse_over_new :
                 old.mouse_leave()
                 if event.type == 'MOUSEMOVE':
                     old.mouse_leave_dragging()
                     print("I am dragging the old morph")
-                    
-        for new in mouse_over_new: 
+
+        for new in mouse_over_new:
             if new not in self.mouse_over_list:
                 new.mouse_enter()
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
-                    
+
             print("I am dragging the  new morph")
-            
-            
-        
+
+
+
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
             self.morph_to_grab.set_position(self.bounds.origin)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
-            value_returned = {'RUNNING_MODAL'}            
+            value_returned = {'RUNNING_MODAL'}
         self.mouse_over_list = mouse_over_new
         return value_returned
 
@@ -1248,7 +1279,4 @@ class Hand(Morph):
         if self.children != []:
             return morph is self.children[0]
         else:
-            return False        
-
-
-    
+            return False
