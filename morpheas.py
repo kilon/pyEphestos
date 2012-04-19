@@ -550,21 +550,9 @@ class Morph(Node):
 
     def draw_new(self,event):
         "initialize my surface"
-        # print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
-        # new_position = Point(event.mouse_region_x,event.mouse_region_y)
-
-        # self.set_position(new_position)
-
-
         dimensions = self.extent().as_list()
-
-        # print("dimensions : ", dimensions)
-
         bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
-        # print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
-
-
 
     def draw_on(self, rectangle=None):
         if not self.is_visible:
@@ -1169,7 +1157,7 @@ class Hand(Morph):
                     world.stop_editing()"""
 
             self.morph_to_grab = morph.root_for_grab()
-            print("self.morph_to_grab : ",self.morph_to_grab )
+            
             if morph.is_draggable:
                 self.moving_morph =True
             while not morph.handles_mouse_click():
@@ -1253,7 +1241,7 @@ class Hand(Morph):
                 old.mouse_leave()
                 if event.type == 'MOUSEMOVE':
                     old.mouse_leave_dragging()
-                    print("I am dragging the old morph")
+                    
 
         for new in mouse_over_new:
             if new not in self.mouse_over_list:
@@ -1261,13 +1249,12 @@ class Hand(Morph):
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
 
-            print("I am dragging the  new morph")
+            
 
 
 
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
             self.morph_to_grab.set_position(self.bounds.origin)
-            print("WARNING !!!! morph move : ",self.morph_to_grab)
             value_returned = {'RUNNING_MODAL'}
         self.mouse_over_list = mouse_over_new
         return value_returned
