@@ -1,4 +1,3 @@
-
 import unittest
 import bpy
 from math import sqrt
@@ -348,8 +347,27 @@ class morphas_1_Test(unittest.TestCase):
         mW_bounds = mW.bounds
 #PKHG.= a long list ;-)        check_contains(mW,"World")
 #PKHG.= (0@0 | 800@600)        print(mW.bounds)
-        PNW = mW_bounds.bottom_left()
-        assertTrue(PNW , morph.Point(0,0))
+
+
+#PKHG.INFO the next checks  are in fact checking Rectangle again
+        PZW = mW_bounds.bottom_left()
+        assertEqual(PZW , morph.Point(0,0))
+        PW = mW_bounds.left_center()
+        assertEqual(PW, morph.Point(0, 300))
+        PNW = mW_bounds.top_left()
+        assertEqual(PNW, morph.Point(0, 600))
+        PN = mW_bounds.top_center()
+        assertEqual(PN, morph.Point(400, 600))
+        PNE = mW_bounds.top_right()
+        assertEqual(PNE, morph.Point(800, 600))
+        PE = mW_bounds.right_center()
+        assertEqual(PE, morph.Point(800, 300))
+        PZE = mW_bounds.bottom_right()
+        assertEqual(PZE, morph.Point(800, 0))        
+        PZ = mW_bounds.bottom_center()
+        assertEqual(PZ, morph.Point(400, 0))        
+
+
         
 
 ########activate the test
