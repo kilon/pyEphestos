@@ -416,19 +416,21 @@ class Node(object):
         return None
 
 class Morph(Node ): 
-    def __init__(self, bot_left = Point(0,0), top_right = Point(50,40), rounded = False, with_name = False):
+    def __init__(self, bounds = None, rounded = False, with_name = False):
         super(Morph, self).__init__()
-#        self.bounds = Point(0, 0).corner(Point(50,40))
-        self.bounds = bot_left.corner(top_right)
+        if bounds:
+            self.bounds = bounds
+        else:
+            self.bounds = Point(0, 0).corner(Point(100,60))
         self.color = (0.3, 0.3, 0.3)
         self.alpha = 1
         self.is_visible = True
         self.is_draggable = True
-        #self.draw_new()
         self.fps = 0
         self.rounded = rounded
         # self.last_time = pygame.time.get_ticks()
         self.with_name = with_name
+
     def __repr__(self):
         return self.__class__.__name__
 
@@ -564,7 +566,6 @@ class Morph(Node ):
             self.move_by(Point(0, -bottom_off))
 
     #Morph displaying:
-
     def draw_new(self,event):
         "initialize my surface"
         # print("I use color : ", self.color)
@@ -941,7 +942,7 @@ class World(Frame):
     def __repr__(self):
         return 'World(' + self.extent().__str__() + ')'
 
-    def draw_new(self):
+    def draw_new(self, event):
         draw_rounded_morph(self, small = 0.2)        
         return
         icon = Ellipse().image
@@ -1324,32 +1325,34 @@ class Hand(Morph):
 class RoundedBox(Morph):
 
 #    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
-    def __init__(self, edge=4, border=20, bordercolor=(0,0,0), alpha = 1):
+    def __init__(self, edge=4, border=20, bordercolor=(0,0,0), alpha = .7, bot_left = Point(0,0), top_right = Point(100,100)):
+        super(RoundedBox, self).__init__()
+        self.bounds = bot_left.corner(top_right)
         self.edge = edge
         self.border = border
-        self.bordercolor = bordercolor
-        super(RoundedBox, self).__init__()
+        self.bordercolor = bordercolor        
         self.alpha = alpha #PKHG.ADDED
         print("RoundedBox created")
-    def draw_new(self):
+        
+    def draw_new(self, event):
 #        self.image = pygame.Surface(self.extent().as_list())
 #        self.image.set_colorkey(TRANSPARENT)
 #        self.image.set_alpha(self.alpha)
 #        self.image.fill(TRANSPARENT)
-        self.fill_rounded(self.edge, self.bordercolor, 0)
-#PKHG.means no inset black color if not changed at creation-time
         self.fill_rounded(max(self.edge - (self.border // 2),0),
                           self.color, self.border)
 
+        self.fill_rounded(self.edge, self.bordercolor, 0)
+#PKHG.means no inset black color if not changed at creation-time
+
     def fill_rounded(self, edge, color, inset):        
         "private"
-        print("dbg=========",self,inset)
-
+        print("fill rounded color = ", color, " inset = ",  inset)
         if inset == 0:
             draw_rounded_morph(self, small = 0.05, color = color, alpha = self.alpha)
         else:
             rect = self.bounds.inset_by(inset)
-            draw_rounded_morph(rect, small = 0.1, rectangle=True, color=(0,0,1))
+            draw_rounded_morph(rect, small = 0.1, rectangle=True, color=(0,0,1), alpha = 1)
 
     #RoundedBox menu:
 
@@ -1435,6 +1438,7 @@ def draw_rounded_morph(morph, small = 0.1, rectangle = False , color=(0,0,0), al
     offset = Point(a , -a)
     draw_all_points.extend(rounded_corners(PNW, offset, 90, a))
     draw_all_points.append(draw_all_points[0]) #top to end!
+    bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed??? YES!!!
     if rectangle:
         bgl.glColor4f(color[0], color[1], color[2], alpha)
     else:
@@ -1599,28 +1603,7 @@ class Text(Morph):
         for el in range(nr):
             DrawStringToViewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
         return
-        '''
-        height = 0
-        self.parse()
-        for line in self.lines:
-            s = self.font.render(line, 1, self.color)
-            surfaces.append(s)
-            height += s.get_height()
-        if self.max_width == 0:
-            self.set_extent(Point(self.max_line_width, height))
-        else:
-            self.set_extent(Point(self.max_width, height))
-        y = 0
-        for s in surfaces:
-            if self.alignment == 'right':
-                x = self.max_line_width - s.get_width()
-            elif self.alignment == 'center':
-                x = (self.max_line_width - s.get_width()) // 2
-            else:
-                x = 0
-            self.image.blit(s, (x,y))
-            y += s.get_height()
-        '''
+    
     #Text menu:
 
     def developers_menu(self):

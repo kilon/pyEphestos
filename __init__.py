@@ -20,7 +20,7 @@
 #    written by Kilon Alios
 #    thekilons@yahoo.co.uk
 #
-#    version March-2012
+#    version April-2012
 #
 #    Copyright (C) 2012 by Kilon Alios
 #---------------------------------------
@@ -81,32 +81,50 @@ import bpy
 import bgl
 import blf
 from bpy.props import *
+pwBot = morpheas.Point(30,30)
+pwTop = morpheas.Point(200,400)
+good_bounded_box = morpheas.RoundedBox(bot_left = pwBot, top_right = pwTop )
+#good_bounded_box.bounds = morpheas.Point(30,30).corner(morpheas.Point(200,400))
+good_bounded_box.set_position(morpheas.Point(40,40))
+good_bounded_box.name = "roundedBox"
+good_bounded_box.color = (1, 0, 0)
+good_bounded_box.alpha = 0.7
 
 text = morpheas.Text("PKHG = Peter\nline 2\nand this too and more and more")
 text.set_position(morpheas.Point(70,70))
 p1 = morpheas.Point(40,50)
-p2 = morpheas.Point(80,120) 
-mymorph= morpheas.Morph( top_right = p2,rounded = True, with_name = True)
-morph2= morpheas.Morph(bot_left = p1, top_right = p2)
-morph3= morpheas.Morph()
+p2 = morpheas.Point(80,120)
+bounds_red = p1.corner(p2)
+red_morph= morpheas.Morph( bounds = bounds_red, rounded = True, with_name = True)
+green_morph= morpheas.Morph()
+blue_morph= morpheas.Morph()
 world= morpheas.World()
 
-world.add(mymorph)
-world.add(morph2)
-world.add(morph3)
-world.add(text)
+rounded_box = morpheas.RoundedBox()#does not work yet why???b bottom_left= p1, top_right = p2)
+rounded_box.bounds = morpheas.Point(0,0).corner(morpheas.Point(200,400))
+rounded_box.color = (0,1,1)
+rounded_box.alpha = 0.2
 
-morph2.set_position(morpheas.Point(150,150))
-morph3.set_position(morpheas.Point(350,350))
+rounded_box.set_position(morpheas.Point(200,200))
+
+world.add(red_morph)
+world.add(green_morph)
+world.add(blue_morph)
+world.add(text)
+world.add(rounded_box)
+world.add(good_bounded_box)
+
+green_morph.set_position(morpheas.Point(150,150))
+blue_morph.set_position(morpheas.Point(350,350))
 hand = morpheas.Hand()
 
 hand.attach_to_world(world)
-mymorph.color= (1.0,0.0,0.0)
-mymorph.name = "red"
-morph2.color= (0.0,1.0,0.0)
-morph2.name = "green"
-morph3.color= (0.0,0.0,1.0)
-morph3.name = "blue"
+red_morph.color= (1.0,0.0,0.0)
+red_morph.name = "red"
+green_morph.color= (0.0,1.0,0.0)
+green_morph.name = "green"
+blue_morph.color= (0.0,0.0,1.0)
+blue_morph.name = "blue"
 
 class World:
     running = False
@@ -145,12 +163,14 @@ def draw_ephestos(self,context):
     bgl.glRecti(5,5,x_region, y_region)
     """
 #    if show_world:
-    world.draw_new()
+    good_bounded_box.draw_new(ephestos)
+    world.draw_new(ephestos)
 #        show_world = False
-    mymorph.draw_new(ephestos)
-    morph2.draw_new(ephestos)
-    morph3.draw_new(ephestos)
+    red_morph.draw_new(ephestos)
+    green_morph.draw_new(ephestos)
+    blue_morph.draw_new(ephestos)
     text.draw_new(ephestos)
+    rounded_box.draw_new(ephestos)
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
