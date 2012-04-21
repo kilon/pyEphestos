@@ -1,9 +1,15 @@
-
-import bgl
+import bgl, blf
 import copy
-import math
-version = '2009-Nov-06'
+#PKHG direct import!! import math #PKHG todo sqrt, sin , cos, degrees
+from math import radians, sin, cos, sqrt
+version = '2012-Apr-16'
 TRANSPARENT = 0
+debug_mouse = False
+debug_mymorph = False
+debug_world = False
+
+#winding.ttf
+#font = blf.load("c:/Windows/Fonts/Verdana.ttf");print("\n===start++++++DBG parse L12" , font, blf.dimensions(font,"PKHG "))
 
 class Point:
     """ Point class defines the behavior of Points"""
@@ -150,8 +156,8 @@ class Point:
     #Point polar coordinates:
 
     def r(self):
-        """ getter  : return the polar coordinates of the current point"""
-        return math.sqrt(self.dot_product(self))
+#PKHG        return math.sqrt(self.dot_product(self))
+        return sqrt(self.dot_product(self))
 
     #Point transforming:
 
@@ -201,22 +207,26 @@ class Rectangle:
             return max(w * self.height(), 0)
 
     def bottom(self):
-        return self.corner.y
+#        return self.corner.y
+        return self.origin.x
 
     def bottom_center(self):
         return Point(self.center().x, self.bottom())
 
     def bottom_left(self):
-        return Point(self.origin.x, self.corner.y)
+#        return Point(self.origin.x, self.corner.y)
+        return Point(self.origin.x, self.origin.y)
 
     def bottom_right(self):
-        return self.corner
+#        return self.corner
+        return Point(self.corner.x, self.origin.y)
 
     def bounding_box(self):
         return self
 
     def center(self):
-        return (self.top_left() + self.bottom_right()) // 2
+#        return (self.top_left() + self.bottom_right()) // 2
+        return Point(self.origin.x + self.corner.x, self.origin.y +self.corner.y) // 2
 
     def corners(self):
         return [self.top_left(),
@@ -234,25 +244,30 @@ class Rectangle:
         return self.origin.x
 
     def left_center(self):
-        return Point(self.left(), self.center().y)
+#        return Point(self.left(), self.center().y)
+        return Point(self.origin.x, self.center().y)
 
     def right(self):
         return self.corner.x
 
     def right_center(self):
-        return Point(self.right(), self.center().y)
+#        return Point(self.right(), self.center().y)
+        return Point(self.corner.x, self.center().y)
 
     def top(self):
         return self.origin.y
 
     def top_center(self):
-        return Point(self.center().x, self.top())
+#        return Point(self.center().x, self.top())
+        return Point(self.center().x, self.corner.y)
 
     def top_left(self):
-        return self.origin
+#        return self.origin
+        return Point(self.origin.x, self.corner.y)
 
     def top_right(self):
-        return Point(self.corner.x, self.origin.y)
+#        return Point(self.corner.x, self.origin.y)
+        return self.corner
 
     def width(self):
         return self.corner.x - self.origin.x
@@ -400,19 +415,20 @@ class Node(object):
                 return element
         return None
 
-class Morph(Node):
-
-    def __init__(self):
+class Morph(Node ): 
+    def __init__(self, bot_left = Point(0,0), top_right = Point(50,40), rounded = False, with_name = False):
         super(Morph, self).__init__()
-        self.bounds = Point(0, 0).corner(Point(50,40))
+#        self.bounds = Point(0, 0).corner(Point(50,40))
+        self.bounds = bot_left.corner(top_right)
         self.color = (0.3, 0.3, 0.3)
         self.alpha = 1
         self.is_visible = True
         self.is_draggable = True
         #self.draw_new()
         self.fps = 0
+        self.rounded = rounded
         # self.last_time = pygame.time.get_ticks()
-
+        self.with_name = with_name
     def __repr__(self):
         return self.__class__.__name__
 
@@ -497,7 +513,8 @@ class Morph(Node):
     #Morph accessing - changing:
 
     def set_position(self, aPoint):
-        delta = aPoint - self.top_left()
+#        delta = aPoint - self.top_left()
+        delta = aPoint - self.bottom_left()
         if delta.x != 0 or delta.y != 0:
             self.move_by(delta)
 
@@ -550,9 +567,36 @@ class Morph(Node):
 
     def draw_new(self,event):
         "initialize my surface"
+        # print("I use color : ", self.color)
         bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
+        # new_position = Point(event.mouse_region_x,event.mouse_region_y)
+
+        # self.set_position(new_position)
+
+
         dimensions = self.extent().as_list()
-        bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
+
+        # print("dimensions : ", dimensions)
+        if self.rounded:
+            draw_rounded_morph(self, small = 0.2)        
+        else:
+            bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
+        # print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
+        font_id = blf.load("c:/Windows/Fonts/arialbd.ttf")
+        size = 36
+        blf.size(font_id, size, 72)
+        dims_x,dims_y = blf.dimensions(font_id, self.name)
+        x = self.bounds.origin.x 
+        xx = self.bounds.corner.x
+
+        difx = xx - x
+        if dims_x > difx:
+            quot = difx/dims_x
+            size = int(size * quot)
+        y = self.bounds.corner.y - size
+        if self.with_name:
+            DrawStringToViewport(self.name, self, size , (1,1,1,1), font_id, x , y)
+
 
     def draw_on(self, rectangle=None):
         if not self.is_visible:
@@ -780,6 +824,7 @@ class Morph(Node):
         p = pygame.mouse.get_pos()
         pos = Point(p[0], p[1])
         offset = pos - self.bounds.origin
+#PKHG.? pygame
         while pygame.mouse.get_pressed() == (0,0,0):
             mousepos = pygame.mouse.get_pos()
             self.set_position(Point(mousepos[0], mousepos[1]) - offset)
@@ -882,7 +927,9 @@ class World(Frame):
         self.keyboard_receiver = None
         self.text_cursor = None
         self.bounds = Point(0, 0).corner(Point(x, y))
-        self.color = (130, 130, 130)
+        self.color = (0.,1.0,1)#(130, 130, 130)
+        self.alpha = 0.2 #PKHG
+#PKHG.INFO World is a Frames, a Frame  is a Morph, a Morh has color and alpha (yet!)
         self.open_menu = None
         self.is_visible = True
         self.is_draggable = False
@@ -895,6 +942,8 @@ class World(Frame):
         return 'World(' + self.extent().__str__() + ')'
 
     def draw_new(self):
+        draw_rounded_morph(self, small = 0.2)        
+        return
         icon = Ellipse().image
         pygame.display.set_icon(icon)
         self.image = pygame.display.set_mode(self.extent().as_list(),
@@ -1068,10 +1117,13 @@ class Hand(Morph):
         self.world = world
 
     def changed(self):
+        print("\n--dbg pkgh changed called")
         if self.world != None:
             b = self.full_bounds()
+            print("--dbg pkhg b = self.full_bounds() extent", b, b.extent())
             if b.extent() != Point(0, 0):
                 self.world.broken.append(self.full_bounds())
+                print("--dbg pkhg world.broken", self.world.broken[:])
 
     def draw_on(self, rectangle=None):
         pass
@@ -1108,7 +1160,7 @@ class Hand(Morph):
         while target.wants_drop_of(morph) == False:
             target = target.parent
         return target
-
+#Hand
     def grab(self, morph):
         if self.children == []:
             self.world.stop_editing()
@@ -1157,7 +1209,7 @@ class Hand(Morph):
                     world.stop_editing()"""
 
             self.morph_to_grab = morph.root_for_grab()
-            
+            print("self.morph_to_grab : ",self.morph_to_grab )
             if morph.is_draggable:
                 self.moving_morph =True
             while not morph.handles_mouse_click():
@@ -1241,7 +1293,7 @@ class Hand(Morph):
                 old.mouse_leave()
                 if event.type == 'MOUSEMOVE':
                     old.mouse_leave_dragging()
-                    
+                    print("I am dragging the old morph")
 
         for new in mouse_over_new:
             if new not in self.mouse_over_list:
@@ -1249,12 +1301,13 @@ class Hand(Morph):
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
 
-            
+            print("I am dragging the  new morph")
 
 
 
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
             self.morph_to_grab.set_position(self.bounds.origin)
+            print("WARNING !!!! morph move : ",self.morph_to_grab)
             value_returned = {'RUNNING_MODAL'}
         self.mouse_over_list = mouse_over_new
         return value_returned
@@ -1266,3 +1319,412 @@ class Hand(Morph):
             return morph is self.children[0]
         else:
             return False
+
+    
+class RoundedBox(Morph):
+
+#    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
+    def __init__(self, edge=4, border=20, bordercolor=(0,0,0), alpha = 1):
+        self.edge = edge
+        self.border = border
+        self.bordercolor = bordercolor
+        super(RoundedBox, self).__init__()
+        self.alpha = alpha #PKHG.ADDED
+        print("RoundedBox created")
+    def draw_new(self):
+#        self.image = pygame.Surface(self.extent().as_list())
+#        self.image.set_colorkey(TRANSPARENT)
+#        self.image.set_alpha(self.alpha)
+#        self.image.fill(TRANSPARENT)
+        self.fill_rounded(self.edge, self.bordercolor, 0)
+#PKHG.means no inset black color if not changed at creation-time
+        self.fill_rounded(max(self.edge - (self.border // 2),0),
+                          self.color, self.border)
+
+    def fill_rounded(self, edge, color, inset):        
+        "private"
+        print("dbg=========",self,inset)
+
+        if inset == 0:
+            draw_rounded_morph(self, small = 0.05, color = color, alpha = self.alpha)
+        else:
+            rect = self.bounds.inset_by(inset)
+            draw_rounded_morph(rect, small = 0.1, rectangle=True, color=(0,0,1))
+
+    #RoundedBox menu:
+
+    def developers_menu(self):
+        menu = super(RoundedBox, self).developers_menu()
+        menu.add_line()
+        menu.add_item("border color...", 'choose_border_color')
+        menu.add_item("border size...", 'choose_border')
+        menu.add_item("corner size...", 'choose_edge')
+        return menu
+
+    def choose_border(self):
+        result = self.prompt("border:",
+                            str(self.border),
+                            50)
+        if result != None:
+            self.changed()
+            self.border = min(max(int(result),0),self.width()//3)
+            self.draw_new()
+            self.changed()
+
+    def choose_edge(self):
+        result = self.prompt("corner:",
+                            str(self.edge),
+                            50)
+        if result != None:
+            self.changed()
+            self.edge = min(max(int(result),0),self.width()//3)
+            self.draw_new()
+            self.changed()
+
+    def choose_border_color(self):
+        result = self.pick_color(self.__class__.__name__ + "\nborder color:",
+                            self.bordercolor)
+        if result != None:
+            self.bordercolor = result
+            self.draw_new()
+            self.changed()
+
+def ellipsePoint(center, a, b, t):
+    t = radians(t)
+    x = a * cos(t)
+    y = b * sin(t)
+    Pt = Point(x,y)
+    return center + Pt
+
+def draw_rounded_morph(morph, small = 0.1, rectangle = False , color=(0,0,0), alpha = 1 ):
+    def rounded_corners(cornerPT, offset,  NSEW, a):
+#        print("\n === dbg ronded corn", cornerPT, offset, NSEW, a)
+        point_list = []
+        numb = 10 
+        fac = 90./numb
+        tvals = [NSEW +  el * fac  for el in range(numb +1)]
+        midPt = cornerPT + offset
+        for t  in tvals:
+            res = ellipsePoint(midPt,a,a,t)
+            point_list.append(res)
+        return point_list
+        
+    if debug_world and not rectangle and  morph.name == "World":
+        print("\n======DBG my name is", morph.name, " my color is", morph.color, morph.alpha)
+    small = abs(small)
+    if rectangle:
+        bounds = morph
+    else:
+        bounds = morph.bounds
+    PNW = bounds.top_left()
+    PZW = bounds.bottom_left()
+    PZE = bounds.bottom_right()
+    PNE = bounds.top_right()
+    disUp = PNW.distance_to(PZW)
+    disSide = PZW.distance_to(PZE)
+    a = min(disUp, disSide) * small
+
+    offset = Point(a, a)
+    draw_all_points = []
+#    print("\n====DBG PZW, offset", PZW, offset)
+    draw_all_points.extend(rounded_corners(PZW, offset,  180, a))
+    offset = Point(-a, a)
+    draw_all_points.extend( rounded_corners(PZE, offset, 270, a))
+    offset = Point(-a, -a)
+    draw_all_points.extend(rounded_corners(PNE, offset, 0, a))
+    offset = Point(a , -a)
+    draw_all_points.extend(rounded_corners(PNW, offset, 90, a))
+    draw_all_points.append(draw_all_points[0]) #top to end!
+    if rectangle:
+        bgl.glColor4f(color[0], color[1], color[2], alpha)
+    else:
+        bgl.glColor4f(morph.color[0], morph.color[1], morph.color[2], morph.alpha)
+    bgl.glBegin(bgl.GL_POLYGON)
+
+#PKHG works for Morph    bgl.glColor4f(1, 1, 0, .5)
+#    if morph.name == "World":
+#        print("\n=======dBG color set =", morph.color[0], morph.color[1], morph.color[2], morph.alpha)
+    for el in draw_all_points:
+        bgl.glVertex2f(el.x,el.y)
+    bgl.glEnd()
+    return
+
+def DrawStringToViewport(text, morph, size, color, font_id, x, y):
+    ''' my_string : the text we want to print
+        pos_x, pos_y : coordinates in integer values
+        size : font height.
+        colour_type : used for definining the colour'''
+#    my_dpi, font_id = 72, 0 # dirty fast assignment
+#
+    bgl.glColor4f(*color)
+#    x = morph.bounds.origin.x 
+#    xx = morph.bounds.corner.x
+#    difx = xx - x
+#PKHG. make it a parameter    y = morph.bounds.corner.y - size
+#    dimsx, dimsy = blf.dimensions(font_id,text)
+#    print("\ndbg before dims = ", dimsx, dimsy, difx, morph.name)
+    blf.position(font_id, x, y, 0)
+#    if dimsx > difx:
+#        size *= difx/dimsx
+#        size = int(size)
+#    blf.size(font_id, size, my_dpi)
+#    dims = blf.dimensions(font_id,text)
+#    print("\ndbg after dims = ", dims)
+    blf.draw(font_id, text)
+
+
+
+class Text(Morph):
+    "I am a mult line, word wrapping string"
+
+    def __init__(self,
+                 text,
+                 fontname="verdana",
+                 fontsize=24,
+                 bold=False,
+                 italic=False,
+                 alignment='left',
+#PKHG.INFO a real Text nees a with > 0 !!!
+                 max_width=200):
+#        pygame.font.init()
+#PKHG.TODO or always only font_id = 0 the default??
+#PKHG.works        self.font = blf.load("c:/Windows/Fonts/Verdana.ttf")
+#        self.font = blf.load("c:/Windows/Fonts/Verdana.ttf") #this works
+#no becomes bigger than it should        self.font = blf.load("c:/Windows/Fonts/arialbd.ttf")
+#        self.font = blf.load("c:/Windows/Fonts/arial.ttf") #this works
+#        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
+        self.font = blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
+        blf.size(self.font, fontsize, 72) #DPI = 72 !!
+        self.background_color = (0,1,0)
+        self.text = text
+        self.words = []
+        self.fontname = fontname
+        self.fontsize = fontsize
+        self.bold = bold
+        self.italic = italic
+        self.alignment=alignment
+#PKHG.??? is complicated   20<= max_width <= world width
+        self.max_width = max(20, min(max_width, 800))
+        super(Text, self).__init__()
+        self.color = (1,1,1) # PKHG.???BLACK pygame.Color(0,0,0)
+#PKHG.not yet        self.draw_new()
+        self.max_line_width = 0
+        self.lines = []
+#PKHG>???        
+        self.parse() #once?!
+        print("\n text init after parse ============lines============",self.lines)
+#        w = blf.dimensions(self.font,"Af")
+#        hight_line = round(w[1] + 1.51)
+        nr_of_lines = len(self.lines)
+        print("nr_of_lines", nr_of_lines)
+        res = ""
+        for el in self.lines:
+            print(el)
+            if len(el) > len(res):
+                res = el
+        blf.size(self.font, fontsize, 72) #DPI = 72 !!
+        w = blf.dimensions(self.font, res)
+        print("res =  and w max_line_width", res, w, self.max_line_width)
+        hight_line = round(w[1] + 1.51)
+        print("Text init nr of lines, w",nr_of_lines, w)
+        wi,hei = int(max(self.max_line_width, w[0]+2)), nr_of_lines * hight_line        
+        self.bounds = Point(0,0).corner(Point(wi, hei ))
+        print("size of text", self.bounds)
+
+
+    def __repr__(self):
+        return 'Text("' + self.text + '")'
+
+    def parse(self):    
+#        print("\n===++++++444444444++++++++DBG parse L1508 w" , self.font, blf.dimensions(self.font,"PKHG "))
+        self.words = []
+        paragraphs = self.text.splitlines()
+        self.max_line_width = 0
+        for p in paragraphs:
+            self.words.extend(p.split(' '))
+            self.words.append('\n')
+        '''
+        self.font = pygame.font.SysFont(
+            self.fontname,
+            self.fontsize,
+            self.bold,
+            self.italic)
+        '''
+        self.lines = []
+        oldline = ''
+        for word in self.words:
+            if word == '\n':
+                self.lines.append(oldline)
+#                self.max_line_width = max(self.max_line_width,
+#                                          self.font.size(oldline)[0])
+                w = blf.dimensions(self.font,oldline)
+                self.max_line_width = max(self.max_line_width, w[0])
+                oldline = ''
+            else:
+                if self.max_width > 0:
+                    newline = oldline + word + ' '
+#                    w = self.font.size(newline)
+                    w = blf.dimensions(self.font, newline)                    
+                    if w[0] > self.max_width:
+                        self.lines.append(oldline)
+                        w = blf.dimensions(self.font, oldline)
+#                        self.max_line_width = max(self.max_line_width,
+#                                                    self.font.size(oldline)[0])
+                        self.max_line_width = max(self.max_line_width, w[0])
+                        oldline = word + ' '
+                    else:
+                        oldline = newline
+                else:
+                    oldline = oldline + word + ' '
+        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
+#Text ...    
+    def draw_new(self, event):
+#PKHG.??? it is a morph!        surfaces = []
+        print("\n\n++++++++++++++++++ text draw new called")
+        tmp = self.bounds
+        x = self.bounds.origin.x
+        y = self.bounds.origin.y
+        xx = self.bounds.corner.x
+        yy = self.bounds.corner.y 
+        hei = yy - y
+        nr = len(self.lines)
+        lineHei = hei // nr 
+#        blf.position(self.font,x,y,0)
+        colo = self.color
+        color = (colo[0],colo[1],colo[2],1)
+        print("\n-------dbg draw_new of text called", tmp, color, self.lines[0])
+
+#        blf.draw(self.font,self.lines[0])
+
+        bgcol = self.background_color
+        bgl.glColor4f(bgcol[0],bgcol[1],bgcol[2] ,0)
+        dime = self.extent().as_list()
+        bgl.glRecti(self.position().x, self.position().y, self.position().x + dime[0], self.position().y + dime[1])         
+        for el in range(nr):
+            DrawStringToViewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
+        return
+        height = 0
+        self.parse()
+        for line in self.lines:
+            s = self.font.render(line, 1, self.color)
+            surfaces.append(s)
+            height += s.get_height()
+        if self.max_width == 0:
+            self.set_extent(Point(self.max_line_width, height))
+        else:
+            self.set_extent(Point(self.max_width, height))
+#        self.image = pygame.Surface(self.extent().as_list())
+#        self.image.fill(self.background_color)
+#        self.image.set_alpha(self.alpha)
+        y = 0
+        for s in surfaces:
+            if self.alignment == 'right':
+                x = self.max_line_width - s.get_width()
+            elif self.alignment == 'center':
+                x = (self.max_line_width - s.get_width()) // 2
+            else:
+                x = 0
+            self.image.blit(s, (x,y))
+            y += s.get_height()
+
+    #Text menu:
+
+    def developers_menu(self):
+        menu = super(Text, self).developers_menu()
+        menu.add_line()
+        menu.add_item("edit contents...", 'edit_contents')
+        menu.add_item("font name...", 'choose_font')
+        menu.add_item("font size...", 'choose_font_size')
+        menu.add_item("background...", 'choose_background_color')
+        menu.add_line()
+        if self.bold or self.italic:
+            menu.add_item("normal", 'set_to_normal')
+        if not self.bold:
+            menu.add_item("bold", 'set_to_bold')
+        if not self.italic:
+            menu.add_item("italic", 'set_to_italic')
+        menu.add_line()
+        if not self.alignment == 'left':
+            menu.add_item("align left", 'set_alignment_to_left')
+        if not self.alignment == 'center':
+            menu.add_item("centered", 'set_alignment_to_center')
+        if not self.alignment == 'right':
+            menu.add_item("align right", 'set_alignment_to_right')
+        return menu
+
+    def choose_font(self):
+        fontname = world.fontname_by_user()
+        if fontname != None:
+            self.fontname = fontname
+            self.changed()
+            self.draw_new()
+            self.changed()
+
+    def choose_font_size(self):
+        fontsize = self.prompt("please enter\n the font size\nin points:",
+                               str(self.fontsize),
+                               50)
+        if fontsize != None:
+            self.fontsize = int(fontsize)
+            self.changed()
+            self.draw_new()
+            self.changed()
+
+    def choose_background_color(self):
+        result = self.pick_color(self.__class__.__name__ + "\nbackground:",
+                            self.background_color)
+        if result != None:
+            self.background_color = result
+            self.draw_new()
+            self.changed()
+
+    def edit_contents(self):
+        text = self.prompt("edit contents\nof text field:",
+                               self.text,
+                               400)
+        if text != None:
+            self.text = text
+            self.changed()
+            self.draw_new()
+            self.changed()
+
+    def set_alignment_to_left(self):
+        self.set_alignment('left')
+
+    def set_alignment_to_right(self):
+        self.set_alignment('right')
+
+    def set_alignment_to_center(self):
+        self.set_alignment('center')
+
+    def set_alignment(self, alignment):
+        self.alignment = alignment
+        self.draw_new()
+        self.changed()
+
+    def set_to_normal(self):
+        self.bold = False
+        self.italic = False
+        self.changed()
+        self.draw_new()
+        self.changed()
+
+    def set_to_bold(self):
+        self.bold = True
+        self.changed()
+        self.draw_new()
+        self.changed()
+
+    def set_to_italic(self):
+        self.italic = True
+        self.changed()
+        self.draw_new()
+        self.changed()
+
+    def change_extent_to(self, point):
+        self.changed()
+        self.max_width = point.x
+        self.draw_new()
+        self.changed()
+
+

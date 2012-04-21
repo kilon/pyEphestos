@@ -82,27 +82,54 @@ import bgl
 import blf
 from bpy.props import *
 
-mymorph= morpheas.Morph()
-morph2= morpheas.Morph()
+text = morpheas.Text("PKHG = Peter\nline 2\nand this too and more and more")
+text.set_position(morpheas.Point(70,70))
+p1 = morpheas.Point(40,50)
+p2 = morpheas.Point(80,120) 
+mymorph= morpheas.Morph( top_right = p2,rounded = True, with_name = True)
+morph2= morpheas.Morph(bot_left = p1, top_right = p2)
 morph3= morpheas.Morph()
 world= morpheas.World()
+
 world.add(mymorph)
 world.add(morph2)
 world.add(morph3)
+world.add(text)
+
 morph2.set_position(morpheas.Point(150,150))
 morph3.set_position(morpheas.Point(350,350))
 hand = morpheas.Hand()
+
 hand.attach_to_world(world)
 mymorph.color= (1.0,0.0,0.0)
+mymorph.name = "red"
 morph2.color= (0.0,1.0,0.0)
+morph2.name = "green"
 morph3.color= (0.0,0.0,1.0)
+morph3.name = "blue"
+
+class World:
+    running = False
+    mouse_region_x = 0
+    mouse_region_y = 0
+
+def draw_World(self,context):
+    global world
+    mW = world #morpheas.World() #was Morph
+    bgl.glEnable(bgl.GL_BLEND)
+#for world    morpheas.draw_rounded_morph(mW)
+    mW.draw_new()    
+    return
+
+show_world = True 
+
 
 class ephestos:
     running = False
     
 
 def draw_ephestos(self,context):
-    
+    global show_world
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 0.5)
     bgl.glLineWidth(1.5)
@@ -117,10 +144,13 @@ def draw_ephestos(self,context):
     print("y_region : ",y_region)
     bgl.glRecti(5,5,x_region, y_region)
     """
-    
+#    if show_world:
+    world.draw_new()
+#        show_world = False
     mymorph.draw_new(ephestos)
     morph2.draw_new(ephestos)
     morph3.draw_new(ephestos)
+    text.draw_new(ephestos)
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
@@ -137,15 +167,18 @@ class open_ephestos(bpy.types.Operator):
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('ESC'):
             context.region.callback_remove(self._handle)
             ephestos.running = False
-            
+            print("CANCELLED")
             return {'CANCELLED'}
         elif context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('MOUSEMOVE','LEFTMOUSE','RIGHTMOUSE') and event.mouse_region_x > 0 and event.mouse_region_x < bpy.context.area.regions[4].width and event.mouse_region_y > 0  and event.mouse_region_y < bpy.context.area.regions[4].height :
-           
+            print("RUNNING_MODAL")
+            print("event type :" ,event.type)
+            print("event value : ",event.value)
             hand.bounds.origin = morpheas.Point(event.mouse_region_x, event.mouse_region_y)
-            
-            return hand.process_mouse_event(event) 
+            return hand.process_mouse_event(event) #{'RUNNING_MODAL'}   
         else:
-            
+            print("event type :" ,event.type)
+            print("event value : ",event.value)
+            print("PASS THROUGH")
             return {'PASS_THROUGH'}
          
 
@@ -158,6 +191,7 @@ class open_ephestos(bpy.types.Operator):
             # Add the region OpenGL drawing callback
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
             self._handle = context.region.callback_add(draw_ephestos, (self, context), 'POST_PIXEL')
+#PKHG.notneeded            self._handle_world = context.region.callback_add(draw_World, (self, context), 'POST_PIXEL')            
             ephestos.running = True
             return {'RUNNING_MODAL'}
         else:
