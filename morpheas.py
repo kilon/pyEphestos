@@ -132,8 +132,7 @@ class Point:
         return (other - self).r()
 
     def rotate(self, direction, center):
-        """ getter (direction,center) : return the the rotation point relative to a center and towards a direction"""
-        "direction must be 'right', 'left' or 'pi'"
+        """ getter (direction,center) : return the the rotation point relative to a center and towards a direction. Direction must be 'right', 'left' or 'pi'"""
         offset = self - center
         if direction == 'right':
             return Point(-offset.y, offset.y) + center
@@ -145,7 +144,7 @@ class Point:
             return NotImplemented
 
     def flip(self, direction, center):
-        """ getter (direction,center) : return the fliped point relative to a center and towards a direction.Direction must be 'vertical' or 'horizontal"""
+        """ getter (direction,center) : return the fliped point relative to a center and towards a direction.D irection must be 'vertical' or 'horizontal"""
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
         elif direction == 'horizontal':
@@ -416,6 +415,7 @@ class Node(object):
         return None
 
 class Morph(Node ): 
+    
     def __init__(self, bounds = None, rounded = False, with_name = False):
         super(Morph, self).__init__()
         if bounds:
