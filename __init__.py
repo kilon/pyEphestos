@@ -161,26 +161,29 @@ class open_ephestos(bpy.types.Operator):
     bl_label = "Ephestos"
 
     def modal(self, context, event):
-        context.area.tag_redraw()
-        
-        
+        result =  {'PASS_THROUGH'}
+        context.area.tag_redraw()                
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('ESC'):
             context.region.callback_remove(self._handle)
             ephestos.running = False
             print("CANCELLED")
-            return {'CANCELLED'}
-        elif context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('MOUSEMOVE','LEFTMOUSE','RIGHTMOUSE') and event.mouse_region_x > 0 and event.mouse_region_x < bpy.context.area.regions[4].width and event.mouse_region_y > 0  and event.mouse_region_y < bpy.context.area.regions[4].height :
+            result = {'CANCELLED'}
+        elif context.area.type == 'VIEW_3D' and ephestos.running \
+                 and event.type in ('MOUSEMOVE','LEFTMOUSE','RIGHTMOUSE')\
+                 and event.mouse_region_x > 0 \
+                 and event.mouse_region_x < bpy.context.area.regions[4].width\
+                 and event.mouse_region_y > 0 \
+                 and event.mouse_region_y < bpy.context.area.regions[4].height :
             print("RUNNING_MODAL")
             print("event type :" ,event.type)
             print("event value : ",event.value)
             hand.bounds.origin = morpheas.Point(event.mouse_region_x, event.mouse_region_y)
-            return hand.process_mouse_event(event) #{'RUNNING_MODAL'}   
+            hand.process_mouse_event(event) #{'RUNNING_MODAL'}            
         else:
             print("event type :" ,event.type)
             print("event value : ",event.value)
             print("PASS THROUGH")
-            return {'PASS_THROUGH'}
-         
+        return result
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
