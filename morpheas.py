@@ -1495,7 +1495,7 @@ class Text(Morph):
 #        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
         self.font = blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
-        self.background_color = (0,1,0)
+        self.background_color = (0,0,0)
         self.text = text
         self.words = []
         self.fontname = fontname
@@ -1589,20 +1589,17 @@ class Text(Morph):
         hei = yy - y
         nr = len(self.lines)
         lineHei = hei // nr 
-#        blf.position(self.font,x,y,0)
         colo = self.color
         color = (colo[0],colo[1],colo[2],1)
-        print("\n-------dbg draw_new of text called", tmp, color, self.lines[0])
-
-#        blf.draw(self.font,self.lines[0])
-
         bgcol = self.background_color
-        bgl.glColor4f(bgcol[0],bgcol[1],bgcol[2] ,0)
+        bgl.glEnable(bgl.GL_BLEND) #PKHG. needed for color of rectangle!
+        bgl.glColor4f(bgcol[0], bgcol[1], bgcol[2] ,0.1) 
         dime = self.extent().as_list()
-        bgl.glRecti(self.position().x, self.position().y, self.position().x + dime[0], self.position().y + dime[1])         
+        bgl.glRecti(self.position().x, self.position().y, self.position().x + dime[0], self.position().y + dime[1])
         for el in range(nr):
             DrawStringToViewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
         return
+        '''
         height = 0
         self.parse()
         for line in self.lines:
@@ -1613,9 +1610,6 @@ class Text(Morph):
             self.set_extent(Point(self.max_line_width, height))
         else:
             self.set_extent(Point(self.max_width, height))
-#        self.image = pygame.Surface(self.extent().as_list())
-#        self.image.fill(self.background_color)
-#        self.image.set_alpha(self.alpha)
         y = 0
         for s in surfaces:
             if self.alignment == 'right':
@@ -1626,7 +1620,7 @@ class Text(Morph):
                 x = 0
             self.image.blit(s, (x,y))
             y += s.get_height()
-
+        '''
     #Text menu:
 
     def developers_menu(self):
