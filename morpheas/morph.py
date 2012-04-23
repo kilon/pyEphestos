@@ -1,6 +1,6 @@
 import bgl, blf
 
-from .point import  *
+
 from .rectangle import *
 from .node import *
 #PKHG.circular  from . class_Text import Text

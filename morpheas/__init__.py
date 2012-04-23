@@ -53,7 +53,7 @@
 #    - better string editing
 #    - multi-line edits
 
-from .point import *
+#from .point import *
 from .rectangle import *
 from .node import *
 from .morph import *
@@ -61,3 +61,4 @@ from .frame import *
 from .world import *
 from .hand import *
 from .RoundedBox import *
+from .text import *

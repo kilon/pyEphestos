@@ -1,4 +1,4 @@
-from .point  import Point
+from .rectangle  import Point
 from .hand  import *
 #from . class_Frame import Frame
 from .morph  import *

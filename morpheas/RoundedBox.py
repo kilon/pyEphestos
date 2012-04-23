@@ -1,5 +1,5 @@
 from .morph import *
-from .point import *
+from .rectangle import *
 
 class RoundedBox(Morph):
 

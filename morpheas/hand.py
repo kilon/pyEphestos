@@ -1,4 +1,4 @@
-from .point import *
+from .rectangle import *
 from .morph import *
 
 class Hand(Morph):

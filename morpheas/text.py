@@ -1,5 +1,5 @@
 import bgl, blf
-from .point import *
+from .rectangle import *
 from .morph import *
 
 
