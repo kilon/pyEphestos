@@ -32,14 +32,10 @@ class morphas_1_Test(unittest.TestCase):
             import Ephestos
             imp.reload(Ephestos.morpheas)
             morph = Ephestos.morpheas
-#            imp.reload(morph)
         else:
             import Ephestos
-#PKHG.= ['__addon_enabled__', '__builtins__', '__cached__', '__doc__', '__file__', '__name__', '__package__', '__path__', '__time__', 'bl_info', 'bpy', 'morpheas', 'register', 'test_ephestos', 'unregister']
-#            print(dir(Ephestos))
+            print(dir(Ephestos))
             from Ephestos import morpheas as morph
-            from Ephestos import test_ephestos
-#            print("L36 no bpy")
 #        check_contains(Ephestos,"ephestos")# , print_value = True, no_underscore = True)
 
     def test_load_Ephestos(self):
@@ -276,8 +272,7 @@ class morphas_1_Test(unittest.TestCase):
         Minit.name ="mymorph"
 #PKHG.= 'node'        print(Minit.name)
         assertEqual(Minit.name, "mymorph")
-        assertEqual(Minit.color, (0.3, 0.3, 0.3, 0.3))
-        assertEqual(Minit.alpha, 1)
+        assertEqual(Minit.color, (0.3, 0.3, 0.3, 1.0))
         assertTrue(Minit.is_visible)
         assertTrue(Minit.is_draggable)
         assertEqual(Minit.fps, 0)
@@ -293,7 +288,7 @@ class morphas_1_Test(unittest.TestCase):
 
         M0 = morph.Morph()
 #PKHG.= <class 'Ephestos.morpheas.Rectangle'>        print(type(M0.bounds))
-        assertEqual(M0.bounds.area(), 2000)
+        assertEqual(M0.bounds.area(), 6000)
         assertEqual(M0.delete(), None)
         M0 = morph.Morph()
         M1 = morph.Morph()
@@ -342,8 +337,7 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
 
-#        mW = Ephestos.myWorld
-        mW = Ephestos.test_ephestos.myWorld
+        mW = morph.World() 
         mW_bounds = mW.bounds
 #PKHG.= a long list ;-)        check_contains(mW,"World")
 #PKHG.= (0@0 | 800@600)        print(mW.bounds)
