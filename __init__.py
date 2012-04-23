@@ -83,27 +83,28 @@ import blf
 from bpy.props import *
 pwBot = morpheas.Point(30,30)
 pwTop = morpheas.Point(200,400)
-good_bounded_box = morpheas.RoundedBox(bot_left = pwBot, top_right = pwTop )
-#good_bounded_box.bounds = morpheas.Point(30,30).corner(morpheas.Point(200,400))
-good_bounded_box.set_position(morpheas.Point(40,40))
-good_bounded_box.name = "roundedBox"
-good_bounded_box.color = (1, 0, 0)
-good_bounded_box.alpha = 0.7
+good_rounded_box = morpheas.RoundedBox( )
+#good_rounded_box.bounds = morpheas.Point(30,30).corner(morpheas.Point(200,400))
+good_rounded_box.set_position(morpheas.Point(40,40))
+good_rounded_box.name = "roundedBox"
+good_rounded_box.color = (1, 0, 0, 1)
+good_rounded_box.alpha = 0.8
 
 text = morpheas.Text("PKHG = Peter\nline 2\nand this too and more and more")
 text.set_position(morpheas.Point(70,70))
 p1 = morpheas.Point(40,50)
 p2 = morpheas.Point(80,120)
 bounds_red = p1.corner(p2)
+
 red_morph= morpheas.Morph( bounds = bounds_red, rounded = True, with_name = True)
 green_morph= morpheas.Morph()
 blue_morph= morpheas.Morph()
 world= morpheas.World()
 
-rounded_box = morpheas.RoundedBox()#does not work yet why???b bottom_left= p1, top_right = p2)
+rounded_box = morpheas.RoundedBox(border = 30)#does not work yet why???b bottom_left= p1, top_right = p2)
 rounded_box.bounds = morpheas.Point(0,0).corner(morpheas.Point(200,400))
-rounded_box.color = (0,1,1)
-rounded_box.alpha = 0.2
+rounded_box.color = (1, 1, 1, .5)
+rounded_box.bordercolor = (0, 0, 0, 1)
 
 rounded_box.set_position(morpheas.Point(200,200))
 
@@ -112,19 +113,18 @@ world.add(green_morph)
 world.add(blue_morph)
 world.add(text)
 world.add(rounded_box)
-world.add(good_bounded_box)
+world.add(good_rounded_box)
 
 green_morph.set_position(morpheas.Point(150,150))
 blue_morph.set_position(morpheas.Point(350,350))
 hand = morpheas.Hand()
-
 hand.attach_to_world(world)
-red_morph.color= (1.0,0.0,0.0)
-red_morph.name = "red"
-green_morph.color= (0.0,1.0,0.0)
-green_morph.name = "green"
-blue_morph.color= (0.0,0.0,1.0)
-blue_morph.name = "blue"
+red_morph.color= (1.0,0.0,0.0, 1.0)
+red_morph.name = "RED"
+green_morph.color= (0.0,1.0,0.0, 0.5)
+green_morph.name = "GREEN"
+blue_morph.color= (0.0,0.0,1.0, 0.3)
+blue_morph.name = "BLUE"
 
 class World:
     running = False
@@ -163,7 +163,7 @@ def draw_ephestos(self,context):
     bgl.glRecti(5,5,x_region, y_region)
     """
 #    if show_world:
-    good_bounded_box.draw_new(ephestos)
+    good_rounded_box.draw_new(ephestos)
     world.draw_new(ephestos)
 #        show_world = False
     red_morph.draw_new(ephestos)
@@ -194,15 +194,16 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-            print("RUNNING_MODAL")
-            print("event type :" ,event.type)
-            print("event value : ",event.value)
+#            print("RUNNING_MODAL")
+#            print("event type :" ,event.type)
+#            print("event value : ",event.value)
             hand.bounds.origin = morpheas.Point(event.mouse_region_x, event.mouse_region_y)
             hand.process_mouse_event(event) #{'RUNNING_MODAL'}            
         else:
-            print("event type :" ,event.type)
-            print("event value : ",event.value)
-            print("PASS THROUGH")
+#            print("event type :" ,event.type)
+#            print("event value : ",event.value)
+#            print("PASS THROUGH")
+            pass
         return result
 
     def invoke(self, context, event):
