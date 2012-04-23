@@ -20,7 +20,7 @@
 #    written by Kilon Alios
 #    thekilons@yahoo.co.uk
 #
-#    version March-2012
+#    version April-2012
 #
 #    Copyright (C) 2012 by Kilon Alios
 #---------------------------------------
@@ -63,8 +63,8 @@ bl_info = {
     "version": (0, 0, 1),
     "blender": (2, 6, 3),
     "location": "View3D > Left panel ",
-    "warning": '',  # used for warning icon and text in addons panel
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/System/Gyes",
+    "warning": 'warn',  # used for warning icon and text in addons panel
+    "wiki_url": "",
     "tracker_url": "https://github.com/kilon/Ephestos",
     "category": "Development"}
 
@@ -72,22 +72,15 @@ bl_info = {
 
 if "bpy" in locals():
     import imp
-    print("\n++++++if part  bpy seen in __init__ of Ephestos")
     if "morpheas" in locals():
         imp.reload(morpheas) 
     if "test_1_morpheas" in locals():
         imp.reload(test_1_morpheas)
 else:
     import Ephestos
-    print(type(Ephestos))
-    print(dir(Ephestos))
-    print("\n----else part------n in __init__ of Ephestos")
-    from Ephestos import  test_1_morpheas #, basics_morpheas,  morph_class
-#    print(dir(morpheas))
+    from Ephestos import  test_1_morpheas
     
 import bpy
-#from Ephestos import morpheas , test_1_morpheas
-   
 
 def register():
     bpy.utils.register_module(__name__)
@@ -95,7 +88,6 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
 
- 
 if __name__ == "__main__":
     register()
     
