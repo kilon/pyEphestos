@@ -132,7 +132,8 @@ class Point:
         return (other - self).r()
 
     def rotate(self, direction, center):
-        """ getter (direction,center) : return the the rotation point relative to a center and towards a direction. Direction must be 'right', 'left' or 'pi'"""
+        """ getter (direction,center) : return the the rotation point relative to a center and towards a direction"""
+        "direction must be 'right', 'left' or 'pi'"
         offset = self - center
         if direction == 'right':
             return Point(-offset.y, offset.y) + center
@@ -144,7 +145,7 @@ class Point:
             return NotImplemented
 
     def flip(self, direction, center):
-        """ getter (direction,center) : return the fliped point relative to a center and towards a direction.D irection must be 'vertical' or 'horizontal"""
+        """ getter (direction,center) : return the fliped point relative to a center and towards a direction.Direction must be 'vertical' or 'horizontal"""
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
         elif direction == 'horizontal':
@@ -415,15 +416,13 @@ class Node(object):
         return None
 
 class Morph(Node ): 
-    
     def __init__(self, bounds = None, rounded = False, with_name = False):
         super(Morph, self).__init__()
         if bounds:
             self.bounds = bounds
         else:
             self.bounds = Point(0, 0).corner(Point(100,60))
-        self.color = (0.3, 0.3, 0.3)
-        self.alpha = 1
+        self.color = (0.3, 0.3, 0.3, 1.0)
         self.is_visible = True
         self.is_draggable = True
         self.fps = 0
@@ -432,7 +431,7 @@ class Morph(Node ):
         self.with_name = with_name
 
     def __repr__(self):
-        return self.__class__.__name__
+        return self.__class__.__name__ + "(" + self.name + ")"
 
     def delete(self):
         if self.parent != None:
@@ -569,7 +568,7 @@ class Morph(Node ):
     def draw_new(self,event):
         "initialize my surface"
         # print("I use color : ", self.color)
-        bgl.glColor4f(self.color[0],self.color[1],self.color[2] ,self.alpha)
+        bgl.glColor4f(*self.color)
         # new_position = Point(event.mouse_region_x,event.mouse_region_y)
 
         # self.set_position(new_position)
@@ -579,7 +578,7 @@ class Morph(Node ):
 
         # print("dimensions : ", dimensions)
         if self.rounded:
-            draw_rounded_morph(self, small = 0.2)        
+            draw_rounded_morph(self, 0.3, self.color, rectangle = False)
         else:
             bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
         # print ("I draw a rect : ", [self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1]])
@@ -653,11 +652,11 @@ class Morph(Node ):
             w.broken.append(copy.copy(self.full_bounds()))
 
     #Morph accessing - structure:
-    """
+    
     def world(self):
         if isinstance(self.root(), World):
             return self.root()
-    """
+    
     def add(self, morph):
         parent = morph.parent
         if parent is not None:
@@ -878,7 +877,7 @@ class Morph(Node ):
         else:
             return None
 
-    def pick_color(self, msg, default=(0,0,0,)):
+    def pick_color(self, msg, default=(0,0,0,1)):
         m = SelectionMenu()
         m.title = msg.__str__()
         m.add_color_picker(default)
@@ -928,8 +927,7 @@ class World(Frame):
         self.keyboard_receiver = None
         self.text_cursor = None
         self.bounds = Point(0, 0).corner(Point(x, y))
-        self.color = (0.,1.0,1)#(130, 130, 130)
-        self.alpha = 0.2 #PKHG
+        self.color = (0.0, 1.0 , 1.0, 0.4)#(130, 130, 130)
 #PKHG.INFO World is a Frames, a Frame  is a Morph, a Morh has color and alpha (yet!)
         self.open_menu = None
         self.is_visible = True
@@ -943,15 +941,17 @@ class World(Frame):
         return 'World(' + self.extent().__str__() + ')'
 
     def draw_new(self, event):
-        draw_rounded_morph(self, small = 0.2)        
+        draw_rounded_morph(self, 0.2, self.color, rectangle = False)        
         return
+        '''
         icon = Ellipse().image
         pygame.display.set_icon(icon)
         self.image = pygame.display.set_mode(self.extent().as_list(),
                                              pygame.RESIZABLE)
         pygame.display.set_caption('Morphic')
         self.image.fill(self.color)
-
+        '''
+        
     def broken_for(self, morph):
         "private"
         result = []
@@ -1325,37 +1325,30 @@ class Hand(Morph):
 class RoundedBox(Morph):
 
 #    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
-    def __init__(self, edge=4, border=20, bordercolor=(0,0,0), alpha = .7, bot_left = Point(0,0), top_right = Point(100,100)):
+    def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,1)):
         super(RoundedBox, self).__init__()
-        self.bounds = bot_left.corner(top_right)
+        self.bounds = Point(0,0).corner( Point(100,100))
         self.edge = edge
         self.border = border
+        self.color = color
         self.bordercolor = bordercolor        
-        self.alpha = alpha #PKHG.ADDED
-        print("RoundedBox created")
+        print("****RoundedBox created with color and backgroundcelor",self.color, self.bordercolor)
         
     def draw_new(self, event):
-#        self.image = pygame.Surface(self.extent().as_list())
-#        self.image.set_colorkey(TRANSPARENT)
-#        self.image.set_alpha(self.alpha)
-#        self.image.fill(TRANSPARENT)
-        self.fill_rounded(max(self.edge - (self.border // 2),0),
-                          self.color, self.border)
-
         self.fill_rounded(self.edge, self.bordercolor, 0)
+        self.fill_rounded(max(self.edge - (self.border // 2),0),
+                          self.bordercolor, self.border)
 #PKHG.means no inset black color if not changed at creation-time
 
     def fill_rounded(self, edge, color, inset):        
         "private"
-        print("fill rounded color = ", color, " inset = ",  inset)
         if inset == 0:
-            draw_rounded_morph(self, small = 0.05, color = color, alpha = self.alpha)
+            draw_rounded_morph(self, 0.5, color, rectangle = False)
         else:
             rect = self.bounds.inset_by(inset)
-            draw_rounded_morph(rect, small = 0.1, rectangle=True, color=(0,0,1), alpha = 1)
+            draw_rounded_morph(rect,  0.1,  color, rectangle = True )
 
     #RoundedBox menu:
-
     def developers_menu(self):
         menu = super(RoundedBox, self).developers_menu()
         menu.add_line()
@@ -1399,7 +1392,7 @@ def ellipsePoint(center, a, b, t):
     Pt = Point(x,y)
     return center + Pt
 
-def draw_rounded_morph(morph, small = 0.1, rectangle = False , color=(0,0,0), alpha = 1 ):
+def draw_rounded_morph(morph, small , color , rectangle = -1):
     def rounded_corners(cornerPT, offset,  NSEW, a):
 #        print("\n === dbg ronded corn", cornerPT, offset, NSEW, a)
         point_list = []
@@ -1411,9 +1404,8 @@ def draw_rounded_morph(morph, small = 0.1, rectangle = False , color=(0,0,0), al
             res = ellipsePoint(midPt,a,a,t)
             point_list.append(res)
         return point_list
-        
     if debug_world and not rectangle and  morph.name == "World":
-        print("\n======DBG my name is", morph.name, " my color is", morph.color, morph.alpha)
+        print("\n======DBG my name is", morph.name, " my color is", morph.color)
     small = abs(small)
     if rectangle:
         bounds = morph
@@ -1440,9 +1432,9 @@ def draw_rounded_morph(morph, small = 0.1, rectangle = False , color=(0,0,0), al
     draw_all_points.append(draw_all_points[0]) #top to end!
     bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed??? YES!!!
     if rectangle:
-        bgl.glColor4f(color[0], color[1], color[2], alpha)
+        bgl.glColor4f(*color)
     else:
-        bgl.glColor4f(morph.color[0], morph.color[1], morph.color[2], morph.alpha)
+        bgl.glColor4f(*morph.color)
     bgl.glBegin(bgl.GL_POLYGON)
 
 #PKHG works for Morph    bgl.glColor4f(1, 1, 0, .5)
@@ -1499,7 +1491,7 @@ class Text(Morph):
 #        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
         self.font = blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
-        self.background_color = (0,0,0)
+        self.background_color = (0,0,0, 0.5)
         self.text = text
         self.words = []
         self.fontname = fontname
@@ -1510,30 +1502,29 @@ class Text(Morph):
 #PKHG.??? is complicated   20<= max_width <= world width
         self.max_width = max(20, min(max_width, 800))
         super(Text, self).__init__()
-        self.color = (1,1,1) # PKHG.???BLACK pygame.Color(0,0,0)
+        self.color = (1.0, 1.0, 1.0, 1.0) # PKHG.???BLACK pygame.Color(0,0,0)
 #PKHG.not yet        self.draw_new()
         self.max_line_width = 0
         self.lines = []
 #PKHG>???        
         self.parse() #once?!
-        print("\n text init after parse ============lines============",self.lines)
 #        w = blf.dimensions(self.font,"Af")
 #        hight_line = round(w[1] + 1.51)
         nr_of_lines = len(self.lines)
-        print("nr_of_lines", nr_of_lines)
+#        print("nr_of_lines", nr_of_lines)
         res = ""
         for el in self.lines:
-            print(el)
+#            print(el)
             if len(el) > len(res):
                 res = el
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         w = blf.dimensions(self.font, res)
-        print("res =  and w max_line_width", res, w, self.max_line_width)
+#        print("res =  and w max_line_width", res, w, self.max_line_width)
         hight_line = round(w[1] + 1.51)
-        print("Text init nr of lines, w",nr_of_lines, w)
+#        print("Text init nr of lines, w",nr_of_lines, w)
         wi,hei = int(max(self.max_line_width, w[0]+2)), nr_of_lines * hight_line        
         self.bounds = Point(0,0).corner(Point(wi, hei ))
-        print("size of text", self.bounds)
+#        print("size of text", self.bounds)
 
 
     def __repr__(self):
@@ -1580,11 +1571,11 @@ class Text(Morph):
                         oldline = newline
                 else:
                     oldline = oldline + word + ' '
-        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
+#        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
 #Text ...    
     def draw_new(self, event):
 #PKHG.??? it is a morph!        surfaces = []
-        print("\n\n++++++++++++++++++ text draw new called")
+#        print("\n\n++++++++++++++++++ text draw new called")
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
@@ -1593,11 +1584,10 @@ class Text(Morph):
         hei = yy - y
         nr = len(self.lines)
         lineHei = hei // nr 
-        colo = self.color
-        color = (colo[0],colo[1],colo[2],1)
+        color = self.color
         bgcol = self.background_color
         bgl.glEnable(bgl.GL_BLEND) #PKHG. needed for color of rectangle!
-        bgl.glColor4f(bgcol[0], bgcol[1], bgcol[2] ,0.1) 
+        bgl.glColor4f(*bgcol)
         dime = self.extent().as_list()
         bgl.glRecti(self.position().x, self.position().y, self.position().x + dime[0], self.position().y + dime[1])
         for el in range(nr):
@@ -1705,3 +1695,267 @@ class Text(Morph):
         self.changed()
 
 
+class Menu(RoundedBox):
+    def __init__(self, target=None, title=None):
+        self.target = target
+        self.title = title
+        if target == None:
+            self.target = self
+        self.items = []
+        self.label = None
+        super(Menu, self).__init__()
+        self.is_draggable = False
+
+    def add_item(self, label="close", action='nop'):
+        self.items.append((label, action))
+
+    def add_line(self, width=1):
+        self.items.append((0,width))
+
+    def add_entry(self, default='', width=100):
+        field = StringField(default, width)
+        field.is_editable = True
+        self.items.append(field)
+
+#    def add_color_picker(self, default=pygame.Color(0,0,0)):
+    def add_color_picker(self, default = (0,0,0,1.0)):
+        field = ColorPicker(default)
+        field.is_draggable = False
+        self.items.append(field)
+
+    def get_entries(self):
+        entries = []
+        for item in self.items:
+            if isinstance (item, StringField):
+                entries.append(item.string())
+        return entries
+
+    def get_color_picks(self):
+        picks = []
+        for item in self.items:
+            if isinstance (item, ColorPicker):
+                picks.append(item.get_choice())
+        return picks
+
+    def index_of(self, item):
+        list = []
+        for child in self.children:
+            if isinstance(child, MenuItem):
+                list.append(child)
+        return list.index(item)
+       
+    def perform(self, item):
+        self.delete()
+        item.target.__getattribute__(item.action)()
+
+    def nop(self):
+        pass
+
+    def create_label(self):
+        if self.label != None:
+            self.label.delete()
+        text = Text(self.title,
+                    fontname="verdana",
+                    fontsize=10,
+                    bold=True,
+                    italic=False,
+                    alignment='center')
+        text.color = (1.0, 1.0, 1.0, 1.0) #pygame.Color(254,254,254)
+        text.background_color = self.bordercolor
+        text.draw_new()
+        self.label = RoundedBox(3,0)
+        self.label.color = self.bordercolor
+        self.label.set_extent(text.extent() + 4)
+        self.label.draw_new()
+        self.label.add(text)
+        self.label.text = text
+        
+    def draw_new(self):
+        for m in self.children:
+            m.delete()
+        self.children = []
+        self.edge = 5
+        self.border = 2
+        self.color = (1.0, 1.0, 1.0, 1.0) #pygame.Color(254,254,254)
+        self.bordercolor = (.24, .24, .24, 0.5) #pygame.Color(60,60,60)
+        self.set_extent(Point(0, 0))
+        if self.title != None:
+            self.create_label()
+            self.label.set_position(self.bounds.origin + 4)
+            self.add(self.label)
+            y = self.label.bottom()
+        else:
+            y = self.top() + 4
+        x = self.left() + 4
+        for pair in self.items:
+            if isinstance(pair,StringField) or isinstance(pair,ColorPicker):
+                item = pair
+            elif pair[0] == 0:
+                item = Morph()
+                item.color = self.bordercolor
+                item.set_height(pair[1])
+            else:
+                item = MenuItem(self.target, pair[1], pair[0])
+            item.set_position(Point(x, y))
+            self.add(item)
+            y += item.height()
+        fb = self.full_bounds()
+        self.set_extent(fb.extent() + 4)
+        self.adjust_widths()
+        super(Menu, self).draw_new()
+
+    def max_width(self):
+        w = 0
+        for item in self.children:
+            if isinstance(item, Widget):
+                w = max(w, item.width())
+        if self.label != None:
+            w = max(w, self.label.width())
+        return w
+
+    def adjust_widths(self):
+        w = self.max_width()
+        for item in self.children:
+            item.set_width(w)
+            if isinstance(item, MenuItem):
+                item.create_backgrounds()
+            else:
+                item.draw_new()
+                if item is self.label:
+                    item.text.set_position(
+                        item.center() - (item.text.extent() // 2))
+
+    def popup(self, world, pos):
+        self.draw_new()
+        self.set_position(pos)
+        self.add_shadow("shade", Point(2,2), 80)
+        self.keep_within(world)
+        world.add(self)
+        world.open_menu = self
+        self.full_changed()
+        for item in self.items:
+            if isinstance(item, StringField):
+                item.text.edit()
+                return
+
+    def popup_at_hand(self):
+        self.popup(world, world.hand.position())
+
+    def popup_centered_at_hand(self):
+        self.draw_new()
+        self.popup(world, (world.hand.position() - (self.extent() // 2)))
+
+    def popup_centered_in_world(self):
+        self.draw_new()
+        self.popup(world, (world.center() - (self.extent() // 2)))
+
+class SelectionMenu(Menu):
+
+    def __init__(self, target=None, title=None):
+        super(SelectionMenu, self).__init__(None, title)
+        self.choice = None
+
+    def perform(self, item):
+        if item.action != 'nop':
+            self.choice = item.action
+        else:
+            self.choice = item.label_string
+
+    def get_user_choice(self):
+        self.choice = None
+        self.popup_at_hand()
+        while self.choice == None:
+            world.do_one_cycle()
+        self.delete()
+        return self.choice
+
+class ListMenu(object):
+
+    def __init__(self,
+                 list=['one' 'two' 'three'],
+                 label=None,
+                 maxitems=30):
+        self.list = list
+        self.maxitems = maxitems
+        self.label = label
+        self.build_menus()
+
+    def build_menus(self):
+        self.menus = []
+        count = 0
+        sm = SelectionMenu()
+        if self.label != None:
+            sm.title = self.label
+            sm.is_draggable = True
+        for item in self.list:
+            count += 1
+            if count > self.maxitems:
+                self.menus.append(sm)
+                count = 1
+                sm = SelectionMenu()
+                sm.add_item("back...", self.menus[len(self.menus) - 1])
+                sm.add_line()
+                if self.label != None:
+                    sm.title = self.label
+                    sm.is_draggable = True
+            sm.add_item(item)
+        self.menus.append(sm)
+        for menu in self.menus[:len(self.menus) - 1]:
+            menu.add_line()
+            menu.add_item("more...", self.menus[self.menus.index(menu) + 1])
+
+    def get_user_choice(self):
+        choice = self.menus[0].get_user_choice()
+        while isinstance(choice, SelectionMenu):
+            choice = choice.get_user_choice()
+        return choice        
+
+class Widget(Morph):
+    """needd in Stringfield"""    
+    def __init__(self):
+        super(Widget, self).__init__()
+
+class StringField(Frame, Widget):
+
+    def __init__(self, default='',
+                 minwidth=100,
+                 fontname="verdana",
+                 fontsize=12,
+                 bold=False,
+                 italic=False):
+        self.default = default
+        self.minwidth = minwidth
+        self.fontname = fontname
+        self.fontsize = fontsize
+        self.bold = bold
+        self.italic = italic
+        super(StringField, self).__init__()
+        self.color = (1.0, 1.0, 1.0, 1.0) #pygame.Color(254,254,254)
+        self.draw_new()
+
+    def draw_new(self):
+        "initialize my surface"
+        super(StringField, self).draw_new()
+        self.text = None
+        for m in self.children:
+            m.delete()
+        self.children = []
+        self.text = String(self.default,
+                           self.fontname,
+                           self.fontsize,
+                           self.bold,
+                           self.italic)
+        self.text.is_editable = True
+        self.text.is_draggable = False
+        self.set_extent(Point(self.minwidth, self.text.height()))
+        self.text.set_position(self.position())
+        self.add(self.text)
+
+    def string(self):
+        return self.text.text
+
+    def handles_mouse_click(self):
+        return False
+
+    def mouse_click_left(self, pos):
+        self.text.edit()
