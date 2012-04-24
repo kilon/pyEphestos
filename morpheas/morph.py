@@ -25,10 +25,18 @@ class Morph(Node ):
         self.rounded = rounded
         # self.last_time = pygame.time.get_ticks()
         self.with_name = with_name
-
+        self.path_to_local_fonts  = self.local_font_path()
+        self.default_font = self.path_to_local_fonts + "/verdana.ttf"
+        self.font_id = blf.load(self.default_font)
+        
     def __repr__(self):
         return self.__class__.__name__ + "(" + self.name + ")"
 
+    def local_font_path(self):
+        import  addon_utils
+        result = addon_utils.paths()[0] + "/Ephestos/fonts"
+        return result
+    
     def delete(self):
         if self.parent != None:
             self.full_changed()
@@ -169,9 +177,10 @@ class Morph(Node ):
             Morph.draw_rounded_morph(self, 0.3, self.color, rectangle = False)
         else:
             bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
-#PKHG.TODO
-        font_id = blf.load("c:/Windows/Fonts/arialbd.ttf")
-        size = 36
+#PKHG.TODO font stuff
+#        font_id = blf.load("c:/Windows/Fonts/arialbd.ttf")
+        font_id = self.font_id 
+        size = 16
         blf.size(font_id, size, 72)
         dims_x,dims_y = blf.dimensions(font_id, self.name)
         x = self.bounds.origin.x 
