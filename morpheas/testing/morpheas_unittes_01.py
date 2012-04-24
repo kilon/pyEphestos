@@ -39,6 +39,7 @@ class morphas_1_Test(unittest.TestCase):
 #        check_contains(Ephestos,"ephestos")# , print_value = True, no_underscore = True)
 
     def test_load_Ephestos(self):
+        print("test_load_Ephestos")
 #PKHG.OK        print("------ test_morphas_1")
         import Ephestos
 
@@ -48,6 +49,7 @@ class morphas_1_Test(unittest.TestCase):
         self.assertTrue(Ephestos)
 
     def test_morphas_point_1(self):
+        print("test_morphas_point_1")
         global Ephestos
         from Ephestos import morpheas as morph
         assertTrue = self.assertTrue
@@ -131,6 +133,7 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual( R2.corner, P3 + P5)
 
     def test_rectangle(self):
+        print("test_rectangle")
         global Ephestos, morph
 #PKHG.OK        check_contains(morph,'morph')
         assertEqual = self.assertEqual
@@ -216,7 +219,8 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual(R8.translate_by(morph.Point(2,4)),
                     morph.Rectangle(morph.Point(17.5,19.5),
                                     morph.Point(36.5,58.5)))
-    def test_Node(self):        
+    def test_Node(self):
+        print("test_Node")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
@@ -264,6 +268,7 @@ class morphas_1_Test(unittest.TestCase):
         '''
 
     def test_Morph_init(self):
+        print("test_Morph_init")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
 #PKHG.Error        Minit = morph.Morph(name="mymorph")
@@ -278,6 +283,7 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual(Minit.fps, 0)
 
     def test_Morph_other(self):
+        print("test_Morph_other")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
@@ -306,6 +312,7 @@ class morphas_1_Test(unittest.TestCase):
 #PKHG.= (-3@-5 | 50@60)        print(M0.full_bounds())
 
     def test_Hand_init(self):
+        print("test_Hand_init")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
@@ -316,6 +323,7 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual(H1.bounds, morph.Rectangle(morph.Point(0,0),morph.Point(0,0)))
 
     def test_Hand_functions(self):
+        print("test_Hand_functions")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
@@ -333,6 +341,7 @@ class morphas_1_Test(unittest.TestCase):
 #PKHG.= []        print(H1.world.broken)
 
     def test_World_from_init(self):
+        print("test_World_from_init")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
@@ -360,6 +369,17 @@ class morphas_1_Test(unittest.TestCase):
         assertEqual(PZE, morph.Point(800, 0))        
         PZ = mW_bounds.bottom_center()
         assertEqual(PZ, morph.Point(400, 0))        
+
+    def test_font(self):
+        print("test_font")
+        import blf
+        import addon_utils
+#PKHG.e.g. paths()        check_contains(addon_utils,'addons')
+        addon_path = addon_utils.paths()[0]
+        local_font_path = addon_path +"/Ephestos/fonts"
+        verdana = local_font_path + "/verdana.ttf"
+        res = blf.load(verdana)
+        self.assertNotEqual(res, -1)
 
 
         
