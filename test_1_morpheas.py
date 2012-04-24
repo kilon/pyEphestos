@@ -14,7 +14,7 @@ good_rounded_box = RoundedBox( )
 good_rounded_box.set_position(Point(40,40))
 good_rounded_box.name = "roundedBox"
 good_rounded_box.color = (1, 0, 0, 1)
-good_rounded_box.alpha = 0.8
+#good_rounded_box.alpha = 0.8
 
 text = Text("PKHG = Peter\nline 2\nand this too and more and more")
 text.set_position(Point(70,70))
@@ -27,7 +27,7 @@ green_morph= Morph()
 blue_morph= Morph()
 world= World()
 
-rounded_box = RoundedBox(border = 30)#does not work yet why???b bottom_left= p1, top_right = p2)
+rounded_box = RoundedBox(border = 30, outer_per =.1, inner_per = 0.5)#does not work yet why???b bottom_left= p1, top_right = p2)
 rounded_box.bounds = Point(0,0).corner(Point(200,400))
 rounded_box.color = (1, 1, 1, .5)
 rounded_box.bordercolor = (0, 0, 0, 1)
