@@ -571,7 +571,6 @@ class Morph(Node ):
     #    print("\ndbg after dims = ", dims)
         blf.draw(font_id, text)
     
-
 class Frame(Morph):
     " I clip my submorphs at my bounds "
 

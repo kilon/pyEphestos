@@ -5,7 +5,7 @@ class Point:
     def __init__(self, x, y):
         """ Point is initialised with 2 parameters (x,y) defining the coordinates"""
         self.x = x
-        self.y = y
+        self.y = y        
 
     def __repr__(self):
         """ getter : return the string representation of point object"""
