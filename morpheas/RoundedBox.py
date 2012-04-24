@@ -4,13 +4,15 @@ from .rectangle import *
 class RoundedBox(Morph):
 
 #    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
-    def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,1)):
+    def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,1), outer_per = 0.5, inner_per = 0.2):
         super(RoundedBox, self).__init__()
         self.bounds = Point(0,0).corner( Point(100,100))
         self.edge = edge
         self.border = border
         self.color = color
-        self.bordercolor = bordercolor        
+        self.bordercolor = bordercolor
+        self.outer_per = outer_per
+        self.inner_per = inner_per
         print("****RoundedBox created with color and backgroundcelor",self.color, self.bordercolor)
         
     def draw_new(self, event):
@@ -22,10 +24,10 @@ class RoundedBox(Morph):
     def fill_rounded(self, edge, color, inset):        
         "private"
         if inset == 0:
-            Morph.draw_rounded_morph(self, 0.5, color, rectangle = False)
+            Morph.draw_rounded_morph(self, self.outer_per, color, rectangle = False)
         else:
             rect = self.bounds.inset_by(inset)
-            Morph.draw_rounded_morph(rect,  0.1,  color, rectangle = True )
+            Morph.draw_rounded_morph(rect,  self.inner_per,  color, rectangle = True )
 
     #RoundedBox menu:
     def developers_menu(self):
