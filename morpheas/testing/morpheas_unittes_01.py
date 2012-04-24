@@ -381,9 +381,30 @@ class morphas_1_Test(unittest.TestCase):
         res = blf.load(verdana)
         self.assertNotEqual(res, -1)
 
+    def test_String(self):
+        print("test_String")
+        assertTrue = self.assertTrue
+        assertEqual = self.assertEqual
+        assertFalse = self.assertFalse        
+        my_string = morph.String("Hallo, I should be one line")
+        assertTrue(my_string)
+        assertEqual(my_string.text, "Hallo, I should be one line")
+#PKHG.??? not all methods visible?        check_contains(my_string,"String", print_value=True)
+
+    def test_Stringfield(self):
+        print("test_String")
+        assertTrue = self.assertTrue
+        assertEqual = self.assertEqual
+        assertFalse = self.assertFalse        
+        string_field = morph.StringField()
+        assertTrue(string_field)
+        assertTrue(string_field.widget)
+#PKHG.
+#        check_contains(string_field,"Field", print_value = True, no_underscore = False)
+        assertEqual(string_field.widget_name, "Widget")
+
 
         
-
 ########activate the test
 if __name__ == '__main__':
     suite =     unittest.TestLoader().loadTestsFromTestCase(morphas_1_Test)
