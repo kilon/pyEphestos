@@ -9,7 +9,7 @@ class Text(Morph):
 
     def __init__(self,
                  text,
-                 fontname="verdana",
+                 fontname="arialbd.ttf",
                  fontsize=24,
                  bold=False,
                  italic=False,
@@ -24,7 +24,12 @@ class Text(Morph):
 #        self.font = blf.load("c:/Windows/Fonts/arial.ttf") #this works
 #        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
 #PKHG.TODO font stuff
-        self.font = blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
+        import addon_utils
+        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
+        self.font = blf.load(tmp) #blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
+#        self.font = Morph.font_id
+        print("TEXT init: tmp and font_id ", tmp, self.font)
+
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         self.background_color = (0,0,0, 0.5)
         self.text = text
