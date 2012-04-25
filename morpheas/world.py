@@ -148,8 +148,8 @@ class World(Frame):
 
     def about(self):
         self.inform("morphic.py\n\n\
-a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
-" + version + "\n\nwritten by Jens Monig\njens@moenig.org")
+a lively GUI for Blender\ninspired by Squeak\nbased on Pygame\n\
+" + version + "\n\nwritten by k & p ")
 
     #World utilities:
 

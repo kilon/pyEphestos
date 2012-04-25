@@ -232,3 +232,8 @@ class Text(Morph):
         self.draw_new()
         self.changed()
 
+    def test_change_text(self,words):
+        self.__init__(words)
+            
+    def wants_drop_of(self, morph): #PKHG.test?
+        return {'FINISHED'} 

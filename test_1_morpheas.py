@@ -1,3 +1,4 @@
+from bpy.props import  StringProperty, BoolProperty
 
 import bpy
 import bgl
@@ -9,6 +10,10 @@ from .morpheas import *
 
 pwBot = Point(30,30)
 pwTop = Point(200,400)
+#PKHG>not yet ok
+one_String = String("Hallo everybody")
+one_String.set_position(Point(60,60))
+
 good_rounded_box = RoundedBox( )
 #good_rounded_box.bounds = Point(30,30).corner(Point(200,400))
 good_rounded_box.set_position(Point(40,40))
@@ -16,7 +21,7 @@ good_rounded_box.name = "roundedBox"
 good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
 
-text = Text("PKHG = Peter\nline 2\nand this too and more and more")
+text = Text("PKHG = Peter\nline 2\nand this too and more and more", max_width = 400)
 text.set_position(Point(70,70))
 p1 = Point(40,50)
 p2 = Point(80,120)
@@ -28,18 +33,19 @@ blue_morph= Morph()
 world= World()
 
 rounded_box = RoundedBox(border = 30, outer_per =.1, inner_per = 0.5)#does not work yet why???b bottom_left= p1, top_right = p2)
-rounded_box.bounds = Point(0,0).corner(Point(200,400))
+rounded_box.bounds = Point(0,200).corner(Point(400,400))
 rounded_box.color = (1, 1, 1, .5)
 rounded_box.bordercolor = (0, 0, 0, 1)
 
 rounded_box.set_position(Point(200,200))
-
 world.add(red_morph)
 world.add(green_morph)
 world.add(blue_morph)
 world.add(text)
 world.add(rounded_box)
 world.add(good_rounded_box)
+#PKHG.not yet ok
+world.add(one_String)
 
 green_morph.set_position(Point(150,150))
 blue_morph.set_position(Point(350,350))
@@ -97,6 +103,8 @@ def draw_ephestos(self,context):
     blue_morph.draw_new(ephestos)
     text.draw_new(ephestos)
     rounded_box.draw_new(ephestos)
+#PKHG.not yet OK
+    one_String.draw_new(ephestos)
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
@@ -149,16 +157,37 @@ class open_ephestos(bpy.types.Operator):
             return {'CANCELLED'}
 
 # this the main panel
+bpy.types.Scene.text_for_text = StringProperty(name="change text",\
+           default= "Change me",description ="Test for changing morph text")
+
+old_text = "Change me"
+class change_text(bpy.types.Operator):
+    bl_idname = "textmorph.text"
+    bl_label = "TestchangeText"
+
+    def execute(self,context):
+        global text, old_text
+        sce = context.scene
+        if old_text != sce.text_for_text:
+            old_text = sce.text_for_text
+            text.test_change_text(old_text)            
+        return {'FINISHED'}        
+
 class ephestos_panel(bpy.types.Panel):
     bl_label = "Ephestos"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
-   
     def draw(self, context):
+        sce = context.scene
         layout = self.layout
         box = layout.box()
         box.label(text="Ephestos WIP not finished yet")
         box.operator("ephestos_button.modal")
+        col = layout.column()
+        col.prop(sce,'text_for_text')
+        col.operator("textmorph.text")
+
+        
         
 
 

@@ -60,6 +60,7 @@ class Hand(Morph):
 
     def drop_target_for(self, morph):
         target = self.morph_at_pointer()
+        print("DBG handle drop_target_for L63 morph = ", morph)
         while target.wants_drop_of(morph) == False:
             target = target.parent
         return target
@@ -116,6 +117,9 @@ class Hand(Morph):
             if morph.is_draggable:
                 self.moving_morph =True
             while not morph.handles_mouse_click():
+                print("dbg test PKHG morph.handles_mouse_click, from handle L173")
+                print("morph is", morph)
+                return {'FINISHED'}
                 morph = morph.parent
             self.mouse_down_morph = morph
             if event.type == 'LEFTMOUSE':
