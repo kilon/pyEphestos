@@ -21,8 +21,8 @@ good_rounded_box.name = "roundedBox"
 good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
 
-text = Text("PKHG = Peter\nline 2\nand this too and more and more", max_width = 400)
-text.set_position(Point(70,70))
+multiline_text = Text("PKHG = Peter\nline 2\nand this too and more and more", max_width = 400)
+multiline_text.set_position(Point(70,70))
 p1 = Point(40,50)
 p2 = Point(80,120)
 bounds_red = p1.corner(p2)
@@ -41,7 +41,7 @@ rounded_box.set_position(Point(200,200))
 world.add(red_morph)
 world.add(green_morph)
 world.add(blue_morph)
-world.add(text)
+world.add(multiline_text)
 world.add(rounded_box)
 world.add(good_rounded_box)
 #PKHG.not yet ok
@@ -101,7 +101,7 @@ def draw_ephestos(self,context):
     red_morph.draw_new(ephestos)
     green_morph.draw_new(ephestos)
     blue_morph.draw_new(ephestos)
-    text.draw_new(ephestos)
+    multiline_text.draw_new(ephestos)
     rounded_box.draw_new(ephestos)
 #PKHG.not yet OK
     one_String.draw_new(ephestos)
@@ -170,7 +170,7 @@ class change_text(bpy.types.Operator):
         sce = context.scene
         if old_text != sce.text_for_text:
             old_text = sce.text_for_text
-            text.test_change_text(old_text)            
+            multiline_text.adjust_text(old_text)            
         return {'FINISHED'}        
 
 class ephestos_panel(bpy.types.Panel):

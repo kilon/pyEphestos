@@ -2,8 +2,6 @@ import bgl, blf
 from .rectangle import *
 from .morph import *
 
-
-
 class Text(Morph):
     "I am a mult line, word wrapping string"
 
@@ -24,10 +22,8 @@ class Text(Morph):
 #        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
         import addon_utils
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
-        self.font = blf.load(tmp) #blf.load("c:/Windows/Fonts/bod_b.ttf") #this works but too small
-#        self.font = Morph.font_id
-        print("TEXT init: tmp and font_id ", tmp, self.font)
-
+        self.font = blf.load(tmp)
+        print("TEXT init: tmp and font_id ", tmp, self.font, text)
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         self.background_color = (0,0,0, 0.5)
         self.text = text
@@ -40,49 +36,35 @@ class Text(Morph):
 #PKHG.??? is complicated   20<= max_width <= world width
         self.max_width = max(20, min(max_width, 800))
         super(Text, self).__init__()
-        self.color = (1.0, 1.0, 1.0, 1.0) # PKHG.???BLACK pygame.Color(0,0,0)
+        self.color = (1.0, 1.0, 1.0, 1.0)
 #PKHG.not yet        self.draw_new()
         self.max_line_width = 0
-        self.lines = []
-#PKHG>???        
+        '''
         self.parse() #once?!
-#        w = blf.dimensions(self.font,"Af")
-#        hight_line = round(w[1] + 1.51)
         nr_of_lines = len(self.lines)
-#        print("nr_of_lines", nr_of_lines)
         res = ""
         for el in self.lines:
-#            print(el)
             if len(el) > len(res):
                 res = el
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         w = blf.dimensions(self.font, res)
-#        print("res =  and w max_line_width", res, w, self.max_line_width)
         hight_line = round(w[1] + 1.51)
-#        print("Text init nr of lines, w",nr_of_lines, w)
-        wi,hei = int(max(self.max_line_width, w[0]+2)), nr_of_lines * hight_line        
+        wi,hei = int(max(self.max_line_width, w[0]+2)),\
+                 nr_of_lines * hight_line        
         self.bounds = Point(0,0).corner(Point(wi, hei ))
-#        print("size of text", self.bounds)
-
-
+        '''
+        self.adjust_text(text)
+        
     def __repr__(self):
         return 'Text("' + self.text + '")'
 
     def parse(self):    
-#        print("\n===++++++444444444++++++++DBG parse L1508 w" , self.font, blf.dimensions(self.font,"PKHG "))
         self.words = []
         paragraphs = self.text.splitlines()
         self.max_line_width = 0
         for p in paragraphs:
             self.words.extend(p.split(' '))
             self.words.append('\n')
-        '''
-        self.font = pygame.font.SysFont(
-            self.fontname,
-            self.fontsize,
-            self.bold,
-            self.italic)
-        '''
         self.lines = []
         oldline = ''
         for word in self.words:
@@ -232,8 +214,21 @@ class Text(Morph):
         self.draw_new()
         self.changed()
 
-    def test_change_text(self,words):
-        self.__init__(words)
+    def adjust_text(self, words):
+        self.text = words
+        self.parse() #once?!
+        nr_of_lines = len(self.lines)
+        res = ""
+        for el in self.lines:
+            if len(el) > len(res):
+                res = el
+        blf.size(self.font, self.fontsize, 72) #DPI = 72 !!
+        w = blf.dimensions(self.font, res)
+        hight_line = round(w[1] + 1.51)
+        wi,hei = int(max(self.max_line_width, w[0]+2)),\
+                 nr_of_lines * hight_line        
+        self.bounds = Point(0,0).corner(Point(wi, hei ))
+         
             
     def wants_drop_of(self, morph): #PKHG.test?
         return {'FINISHED'} 
