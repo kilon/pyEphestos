@@ -1,20 +1,6 @@
 from .morph import *
 from .rectangle import *
 
-class Shadow(Morph):
-
-    def __init__(self):
-        super(Shadow, self).__init__()
-
-class Widget(Morph):
-
-    def __init__(self):
-        self.widget_name = "Widget"
-        print("\n---------------- Widge created\n-----------------")
-        
-    def __init__(self):
-        super(Widget, self).__init__()
-
 
 class String(Morph):
     "I am a single line of text"
@@ -136,7 +122,7 @@ class String(Morph):
 
 
 
-class StringField(Frame, Widget):
+class StringField(Frame):
 
     def __init__(self, default='',
                  minwidth=100,
@@ -144,6 +130,8 @@ class StringField(Frame, Widget):
                  fontsize=12,
                  bold=False,
                  italic=False):
+        
+        super(self, Widget).__init__()
         self.widget = Widget()        
         self.default = default
         self.minwidth = minwidth
