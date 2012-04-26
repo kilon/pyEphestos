@@ -91,9 +91,7 @@ class Text(Morph):
                     oldline = oldline + word + ' '
 #        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
 #Text ...    
-    def draw_new(self, event):
-#PKHG.??? it is a morph!        surfaces = []
-#        print("\n\n++++++++++++++++++ text draw new called")
+    def draw_new(self):
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
@@ -101,7 +99,7 @@ class Text(Morph):
         yy = self.bounds.corner.y 
         hei = yy - y
         nr = len(self.lines)
-        lineHei = hei // nr 
+        lineHei = -1 +  hei // nr 
         color = self.color
         bgcol = self.background_color
         bgl.glEnable(bgl.GL_BLEND) #PKHG. needed for color of rectangle!
@@ -223,9 +221,10 @@ class Text(Morph):
             if len(el) > len(res):
                 res = el
         blf.size(self.font, self.fontsize, 72) #DPI = 72 !!
-        w = blf.dimensions(self.font, res)
-        hight_line = round(w[1] + 1.51)
-        wi,hei = int(max(self.max_line_width, w[0]+2)),\
+        rubbish, use_font_h = blf.dimensions(self.font, ")fg")
+        max_width_text, rubbish  = blf.dimensions(self.font, res)
+        hight_line = round(use_font_h + 1.51)
+        wi,hei = int(min(self.max_line_width, max_width_text)),\
                  nr_of_lines * hight_line
         x = position.x
         y = position.y

@@ -10,18 +10,20 @@ from .morpheas import *
 
 pwBot = Point(30,30)
 pwTop = Point(200,400)
+
 #PKHG>not yet ok
 one_String = String("Hallo everybody")
 one_String.set_position(Point(60,60))
 
 good_rounded_box = RoundedBox( )
-#good_rounded_box.bounds = Point(30,30).corner(Point(200,400))
+#PKHG.works ;-)good_rounded_box.bounds = Point(30,30).corner(Point(200,400))
 good_rounded_box.set_position(Point(40,40))
 good_rounded_box.name = "roundedBox"
 good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
 
-multiline_text = Text("PKHG = Peter\nline 2\nand this too and more and more", max_width = 400)
+#PKHG.check size of brackets!
+multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200) 
 multiline_text.set_position(Point(70,70))
 p1 = Point(40,50)
 p2 = Point(80,120)
@@ -38,6 +40,8 @@ rounded_box.color = (1, 1, 1, .5)
 rounded_box.bordercolor = (0, 0, 0, 1)
 
 rounded_box.set_position(Point(200,200))
+
+
 world.add(red_morph)
 world.add(green_morph)
 world.add(blue_morph)
@@ -46,6 +50,13 @@ world.add(rounded_box)
 world.add(good_rounded_box)
 #PKHG.not yet ok
 world.add(one_String)
+
+#PKHG.stringfieldTest.???
+test_stringfield = StringField()
+#PKHG.stringfieldTest.???test_stringfield.name = "test_stringfield"
+#PKHG.stringfieldTest.???test_stringfield.with_name = True
+#PKHG.stringfieldTest.???
+world.add(test_stringfield)
 
 green_morph.set_position(Point(150,150))
 blue_morph.set_position(Point(350,350))
@@ -95,6 +106,8 @@ def draw_ephestos(self,context):
     bgl.glRecti(5,5,x_region, y_region)
     """
 #    if show_world:
+    world.draw_new()
+    '''
     good_rounded_box.draw_new(ephestos)
     world.draw_new(ephestos)
 #        show_world = False
@@ -103,8 +116,10 @@ def draw_ephestos(self,context):
     blue_morph.draw_new(ephestos)
     multiline_text.draw_new(ephestos)
     rounded_box.draw_new(ephestos)
-#PKHG.not yet OK
     one_String.draw_new(ephestos)
+#PKHG.stringfieldTest.???
+    test_stringfield.draw_new( ephestos)
+    '''
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
@@ -187,11 +202,7 @@ class ephestos_panel(bpy.types.Panel):
         col.prop(sce,'text_for_text')
         col.operator("textmorph.text")
 
-        
-        
-
-
-
+    
         
 def register():
     bpy.utils.register_module(__name__)

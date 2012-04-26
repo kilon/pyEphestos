@@ -22,14 +22,21 @@ class World(Frame):
         self.is_quitting = False
         #self.draw_new()
         self.broken = []
+        self.running = True
 
     def __repr__(self):
         return 'World(' + self.extent().__str__() + ')'
-
+    '''
     def draw_new(self, event):
         Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
         return
-        
+    '''
+    def draw_new(self):
+        if self.running:
+            Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
+            for el in self.children:
+                el.draw_new()
+    
     def broken_for(self, morph):
         "private"
         result = []

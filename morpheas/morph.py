@@ -168,7 +168,7 @@ class Morph(Node ):
             self.move_by(Point(0, -bottom_off))
 
     #Morph displaying:
-    def draw_new(self,event):
+    def draw_new(self):
         "initialize my surface"
         # print("I use color : ", self.color)
         bgl.glColor4f(*self.color)
