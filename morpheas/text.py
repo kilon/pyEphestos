@@ -213,8 +213,7 @@ class Text(Morph):
         self.changed()
 
     def adjust_text(self, word):
-#PKHG the sequence (:nl:) will become a newline        
-        words = word.replace("(:nl:)","\n")
+        words = word.replace("\\n","\n")
         position = self.position()
         self.text = words
         self.parse() #once?!
