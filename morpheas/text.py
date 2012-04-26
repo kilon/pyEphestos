@@ -12,18 +12,16 @@ class Text(Morph):
                  bold=False,
                  italic=False,
                  alignment='left',
-#PKHG.INFO a real Text nees a with > 0 !!!
+#PKHG.INFO a real Text needs a max_with > 0 !!!
                  max_width=200):
-#        pygame.font.init()
 #PKHG.TODO or always only font_id = 0 the default??
-#        self.font = blf.load("c:/Windows/Fonts/Verdana.ttf")
 #        self.font = blf.load("c:/Windows/Fonts/Verdana.ttf") #this works
 #        self.font = blf.load("c:/Windows/Fonts/arial.ttf") #this works
 #        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
         import addon_utils
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
-        print("TEXT init: tmp and font_id ", tmp, self.font, text)
+#PKHG not needed        print("TEXT init: tmp and font_id ", tmp, self.font, text)
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         self.background_color = (0,0,0, 0.5)
         self.text = text
@@ -214,7 +212,10 @@ class Text(Morph):
         self.draw_new()
         self.changed()
 
-    def adjust_text(self, words):
+    def adjust_text(self, word):
+#PKHG the sequence (:nl:) will become a newline        
+        words = word.replace("(:nl:)","\n")
+        position = self.position()
         self.text = words
         self.parse() #once?!
         nr_of_lines = len(self.lines)
@@ -226,9 +227,10 @@ class Text(Morph):
         w = blf.dimensions(self.font, res)
         hight_line = round(w[1] + 1.51)
         wi,hei = int(max(self.max_line_width, w[0]+2)),\
-                 nr_of_lines * hight_line        
-        self.bounds = Point(0,0).corner(Point(wi, hei ))
-         
+                 nr_of_lines * hight_line
+        x = position.x
+        y = position.y
+        self.bounds = position.corner(Point(wi + x , hei + y ))
             
     def wants_drop_of(self, morph): #PKHG.test?
         return {'FINISHED'} 
