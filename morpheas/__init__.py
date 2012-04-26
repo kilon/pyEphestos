@@ -60,6 +60,6 @@ from .morph import *
 from .frame import *
 from .world import *
 from .hand import *
-from .RoundedBox import *
+from .roundedbox import *
 from .text import *
 from .stringfield import *
