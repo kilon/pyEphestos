@@ -12,6 +12,8 @@ class Hand(Morph):
         self.morph_to_grab = None
         self.moving_morph= False
         self.bounds = Point(0, 0).corner(Point(0,0))
+        self.grabed_morph_offset_x = 0 # the relative position of the morph to the mouse cursor x axis
+        self.grabed_morph_offset_y = 0 # the relative position of the morph to the mouse cursor y axis
 
     def __repr__(self):
         return 'Hand(' + self.center().__str__() + ')'
@@ -70,6 +72,8 @@ class Hand(Morph):
             self.world.stop_editing()
             self.add(morph)
             self.changed()
+            self.grabed_morph_offset_x =  morph.bounds.origin.x - self.bounds.origin.x 
+            self.grabed_morph_offset_y =  morph.bounds.origin.y - self.bounds.origin.y 
             print("morph has been grabbed")
 
     def drop(self):
@@ -213,7 +217,8 @@ class Hand(Morph):
 
 
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
-            self.morph_to_grab.set_position(self.bounds.origin)
+            morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y) 
+            self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
             value_returned = {'RUNNING_MODAL'}
         self.mouse_over_list = mouse_over_new
