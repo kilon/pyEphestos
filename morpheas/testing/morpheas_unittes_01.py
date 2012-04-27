@@ -398,10 +398,6 @@ class morphas_1_Test(unittest.TestCase):
         assertFalse = self.assertFalse        
         string_field = morph.StringField()
         assertTrue(string_field)
-        assertTrue(string_field.widget)
-#PKHG.
-#        check_contains(string_field,"Field", print_value = True, no_underscore = False)
-        assertEqual(string_field.widget_name, "Widget")
 
 
         

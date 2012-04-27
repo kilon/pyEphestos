@@ -168,7 +168,7 @@ class Morph(Node ):
             self.move_by(Point(0, -bottom_off))
 
     #Morph displaying:
-    def draw_new(self,event):
+    def draw_new(self):
         "initialize my surface"
         # print("I use color : ", self.color)
         bgl.glColor4f(*self.color)
@@ -507,8 +507,8 @@ class Morph(Node ):
                 res = Morph.ellipsePoint(midPt,a,a,t)
                 point_list.append(res)
             return point_list
-        if debug_world and not rectangle and  morph.name == "World":
-            print("\n======DBG my name is", morph.name, " my color is", morph.color)
+#PKHG.ifdebug        if debug_world and not rectangle and  morph.name == "World":
+#PKHG.OK            print("\n======DBG my name is", morph.name, " my color is", morph.color)
         small = abs(small)
         if rectangle:
             bounds = morph
@@ -524,7 +524,6 @@ class Morph(Node ):
     
         offset = Point(a, a)
         draw_all_points = []
-    #    print("\n====DBG PZW, offset", PZW, offset)
         draw_all_points.extend(rounded_corners(PZW, offset,  180, a))
         offset = Point(-a, a)
         draw_all_points.extend( rounded_corners(PZE, offset, 270, a))
@@ -539,10 +538,6 @@ class Morph(Node ):
         else:
             bgl.glColor4f(*morph.color)
         bgl.glBegin(bgl.GL_POLYGON)
-
-#PKHG works for Morph    bgl.glColor4f(1, 1, 0, .5)
-#    if morph.name == "World":
-#        print("\n=======dBG color set =", morph.color[0], morph.color[1], morph.color[2], morph.alpha)
         for el in draw_all_points:
             bgl.glVertex2f(el.x,el.y)
         bgl.glEnd()
@@ -550,9 +545,9 @@ class Morph(Node ):
 
     def draw_string_to_viewport(text, morph, size, color, font_id, x, y):
         ''' my_string : the text we want to print
-            pos_x, pos_y : coordinates in integer values
+            x, y : coordinates in integer values
             size : font height.
-            colour_type : used for definining the colour'''
+            colour : used for definining the colour'''
     #    my_dpi, font_id = 72, 0 # dirty fast assignment
     #
         bgl.glColor4f(*color)

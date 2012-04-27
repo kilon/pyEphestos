@@ -1,6 +1,8 @@
 from .morph import *
 from .rectangle import *
 
+import addon_utils
+
 
 class String(Morph):
     "I am a single line of text"
@@ -21,7 +23,6 @@ class String(Morph):
         self.is_editable = False
         super(String, self).__init__()
         self.color = (1,1,1,1)
-        import addon_utils
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
 #PKHG.TODO DPI = ???        
@@ -31,7 +32,7 @@ class String(Morph):
     def __repr__(self):
         return 'String("' + self.text + '")'
 
-    def draw_new(self,event):
+    def draw_new(self):
         '''
         self.font = pygame.font.SysFont(
             self.fontname,
@@ -122,31 +123,33 @@ class String(Morph):
 
 
 
-class StringField(Frame):
+class StringField( Morph):
 
-    def __init__(self, default='',
+    def __init__(self, default='I am the default',
                  minwidth=100,
-                 fontname="verdana",
+                 fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
         
-        super(self, Widget).__init__()
-        self.widget = Widget()        
+#PKHG.??? Frame not ok        super(self, Frame).__init__() #PKHG Frame was Widget in pymorpheas
+#        self.widget = Widget()
+        super(StringField, self).__init__()
         self.default = default
         self.minwidth = minwidth
         self.fontname = fontname
         self.fontsize = fontsize
         self.bold = bold
         self.italic = italic
-        self.color = (1.0, 1.0, 1.0, 1.0) #pygame.Color(254,254,254)
+        self.color = (1.0, 0.0, 1.0, 0.5) #pygame.Color(254,254,254)
 
-    def draw_new(self, event):
+    def draw_new(self):
         "initialize my surface"
         super(StringField, self).draw_new()
         self.text = None
         for m in self.children:
-            m.delete()
+#PKHG.todo            m.delete()
+            print("DBG === draw_new(stringfield) === ? should be deleted?  m ", m) 
         self.children = []
         self.text = String(self.default,
                            self.fontname,
@@ -158,6 +161,7 @@ class StringField(Frame):
         self.set_extent(Point(self.minwidth, self.text.height()))
         self.text.set_position(self.position())
         self.add(self.text)
+        self.text.draw_new()
 
     def string(self):
         return self.text.text
