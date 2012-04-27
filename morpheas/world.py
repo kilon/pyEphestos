@@ -34,8 +34,9 @@ class World(Frame):
     def draw_new(self):
         if self.running:
             Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
-            for el in self.children:
-                el.draw_new()
+            for child in self.children:
+                child.draw_new()
+                
     
     def broken_for(self, morph):
         "private"

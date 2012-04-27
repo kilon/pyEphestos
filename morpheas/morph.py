@@ -3,6 +3,8 @@ import bgl, blf
 
 from .rectangle import *
 from .node import *
+
+
 #PKHG.circular  from . class_Text import Text
 from math import radians, sin, cos, sqrt
 debug_world = False
@@ -238,11 +240,10 @@ class Morph(Node ):
 
     def changed(self):
         w = self.root()
-        """
-        if isinstance(w, World):
-            w.broken.append(copy.copy(self.bounds))
-        """
-
+        
+        """if isinstance(w, World):
+            w.broken.append(copy.copy(self.bounds))"""
+        
     def full_changed(self):
         w = self.root()
         if isinstance(w, World):
