@@ -34,16 +34,44 @@ class Hand(Morph):
     def draw_on(self, rectangle=None):
         pass
 
-    def process_mouse_event(self, event):
-        """ Central method for processing all kind of events and calling approriate methods for diffirent kind of events """ 
-        
+    def process_all_events(self, event):
+        """ Central method for processing all kind of events and calling approriate methods for different kind of events """
+
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
+#            return self.process_mouse_down(event)
+             return self.distinguish_press_event(event)
+        elif event.value=='RELEASE':
+#            return self.process_mouse_up(event)
+             return self.distinguish_release_event(event)
+
+    def distinguish_press_event(self, event):
+        if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
+            return self.process_mouse_down(event)
+        else:
+            print("\n===DBG distinguish_press_event(hand.py L52)=== event.type", event.type)
+        return {'PASS_THROUGH'}    
+
+
+    def distinguish_release_event(self, event):
+        if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
+            return self.process_mouse_up(event)
+        else:
+            print("\n===DBG distinguish_release_event(hand.py L61)=== event.type", event.type)
+        return {'PASS_THROUGH'}    
+
+
+    def process_mouse_event(self, event):
+        """ Central method for processing all kind of events and calling approriate methods for different kind of events """
+
+        if event.type == 'MOUSEMOVE':
+            return self.process_mouse_move(event)
+        elif event.value in 'PRESS':
             return self.process_mouse_down(event)
         elif event.value=='RELEASE':
             return self.process_mouse_up(event)
-
+        
     def morph_at_pointer(self):
         """ return the top morph that is under the current position of the mouse cursor """
     

@@ -124,7 +124,8 @@ class String(Morph):
 
 
 class StringField( Morph):
-
+    """StringField is used to get a one-line input text-string"""
+    
     def __init__(self, default='I am the default',
                  minwidth=100,
                  fontname="verdana.ttf",
@@ -142,20 +143,22 @@ class StringField( Morph):
         self.bold = bold
         self.italic = italic
         self.color = (1.0, 0.0, 1.0, 0.5) #pygame.Color(254,254,254)
+        self.text_string = String(self.default, self.fontname, self.fontsize,\
+                           self.bold, self.italic)
+        self.add(self.text_string)
 
     def draw_new(self):
         "initialize my surface"
         super(StringField, self).draw_new()
+        self.text_string.draw_new()
+        return 
         self.text = None
         for m in self.children:
 #PKHG.todo            m.delete()
             print("DBG === draw_new(stringfield) === ? should be deleted?  m ", m) 
         self.children = []
-        self.text = String(self.default,
-                           self.fontname,
-                           self.fontsize,
-                           self.bold,
-                           self.italic)
+        self.text = String(self.default, self.fontname, self.fontsize,\
+                           self.bold, self.italic)
         self.text.is_editable = True
         self.text.is_draggable = False
         self.set_extent(Point(self.minwidth, self.text.height()))
@@ -170,4 +173,4 @@ class StringField( Morph):
         return False
 
     def mouse_click_left(self, pos):
-        self.text.edit()
+        self.text_string.edit()

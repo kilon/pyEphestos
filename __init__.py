@@ -69,16 +69,23 @@ bl_info = {
     "category": "Development"}
 
 
+PKHG_test = True
 
 if "bpy" in locals():
     import imp
     if "morpheas" in locals():
         imp.reload(morpheas) 
     if "test_1_morpheas" in locals():
-        imp.reload(test_1_morpheas)
+        if PKHG_test:
+            imp.reload(test_2_morpheas)
+        else:
+            imp.reload(test_1_morpheas)
 else:
     import Ephestos
-    from Ephestos import  test_1_morpheas
+    if PKHG_test:
+        from Ephestos import  test_2_morpheas
+    else:
+        from Ephestos import  test_1_morpheas
     
 import bpy
 
