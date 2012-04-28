@@ -1,6 +1,10 @@
 from .rectangle import *
 from .morph import *
 
+#PKHG.???temp_text_list =[]
+import re
+re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
+
 class Hand(Morph):
     "I represent the mouse cursor"
 
@@ -13,7 +17,9 @@ class Hand(Morph):
         self.bounds = Point(0, 0).corner(Point(0,0))
         self.grabed_morph_offset_x = 0 # the relative position of the morph to the mouse cursor x axis
         self.grabed_morph_offset_y = 0 # the relative position of the morph to the mouse cursor y axis
-
+        self.active_text_input_morph = None
+        self.temp_text_list = []
+        
     def __repr__(self):
         return 'Hand(' + self.center().__str__() + ')'
 
@@ -47,19 +53,67 @@ class Hand(Morph):
              return self.distinguish_release_event(event)
 
     def distinguish_press_event(self, event):
+        """mouse down, or keys to do"""
+        
+        global re_CAS
         if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
             return self.process_mouse_down(event)
         else:
-            print("\n===DBG distinguish_press_event(hand.py L52)=== event.type", event.type)
-        return {'PASS_THROUGH'}    
+#PKHG.info only CTrl Alt Shift (for this time...)            
+            key_seen = event.type
+            tmp = self.morph_at_pointer() #PKHG. at least world?!
+            print("\n===DBG distinguish_press_event pressed what and who", key_seen,tmp)
+            if tmp.name.startswith("input") and re_CAS.search(key_seen):
+                print("INPUT seen for", key_seen)
+                if self.active_text_input_morph and\
+                   tmp.name == self.active_text_input_morph.name:
+                    self.temp_text_list.append(key_seen)
+                    print("DBG L 70",self.temp_text_list)
+                else: #new input morph 
+                    self.temp_text_list = [key_seen]
+                    print("DBG L 73",self.temp_text_list)
+                    self.active_text_input_morph = tmp
+                return {'RUNNING_MODAL'}
+        return {'RUNNING_MODAL'}    
 
 
     def distinguish_release_event(self, event):
+        """handle keyboard release"""
+        
+#        global re_CAS
         if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
             return self.process_mouse_up(event)
         else:
-            print("\n===DBG distinguish_release_event(hand.py L61)=== event.type", event.type)
-        return {'PASS_THROUGH'}    
+            tmp = self.morph_at_pointer() #PKHG. at least world?!            
+            print("\n===DBG distinguish_release_event(hand.py L)=== event.type morph at pointer and its type", event.type, tmp)
+            if tmp.name.startswith("input"):                
+                if self.active_text_input_morph and tmp.name == \
+                       self.active_text_input_morph.name:
+                    print("\nDBG add keys")
+                    pass
+                elif self.active_text_input_morph: #new input morph 
+                    print("\n===DBG=== text input finished", self.temp_text_list)
+                    print("TODO set it to old  morph!", self.active_text_input_morph)
+                    self.temp_text_list = []
+                    self.active_text_input_morph = tmp
+                self.add_keys(event, tmp)
+                    
+#??                self.active_text_input_morph = tmp
+            else:
+                pass
+        return {'RUNNING_MODAL'}    
+
+    def add_keys(self, event, morph):
+        """eat a keyboard key"""
+#PKHG.???        global temp_text_list
+        tmp = event.type
+        if tmp == 'RET':
+            print("\n===DBG add_keys(hand.py L46)=== RETURN SEEN", self.temp_text_list, "for morph", morph)
+            self.temp_text_list = []
+            self.active_text_input_morph = None
+        else:
+            self.temp_text_list.append(tmp)
+        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
 
 
     def process_mouse_event(self, event):

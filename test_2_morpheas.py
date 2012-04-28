@@ -51,6 +51,7 @@ world.add(one_String)
 
 #PKHG.stringfieldTest.???
 test_stringfield = StringField()
+test_stringfield.name ="input ..."
 #PKHG.stringfieldTest.???test_stringfield.name = "test_stringfield"
 #PKHG.stringfieldTest.???test_stringfield.with_name = True
 #PKHG.stringfieldTest.???
