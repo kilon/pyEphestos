@@ -148,7 +148,7 @@ class open_ephestos(bpy.types.Operator):
 #            print("event type :" ,event.type)
 #            print("event value : ",event.value)
             hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
-            hand.process_all_events(event) #{'RUNNING_MODAL'}            
+            return hand.process_all_events(event) #{'RUNNING_MODAL'}            
         else:
 #            print("event type :" ,event.type)
 #            print("event value : ",event.value)
