@@ -52,6 +52,8 @@ world.add(one_String)
 #PKHG.stringfieldTest.???
 test_stringfield = StringField()
 test_stringfield.name ="input ..."
+test_stringfield.with_name = True
+
 #PKHG.stringfieldTest.???test_stringfield.name = "test_stringfield"
 #PKHG.stringfieldTest.???test_stringfield.with_name = True
 #PKHG.stringfieldTest.???
@@ -173,10 +175,13 @@ class open_ephestos(bpy.types.Operator):
 # this the main panel
 bpy.types.Scene.text_for_text = StringProperty(name="change text",\
            default= "Change me",description ="Test for changing morph text")
+bpy.types.Scene.text_for_input = StringProperty(name="input",default="for input",\
+             description="used for StringFields")
 bpy.types.Scene.world_is_running = BoolProperty(name="next action", default = False,\
            description="toggle showing the  world")
 
 old_text = "Change me"
+
 class the_world(bpy.types.Operator):
     bl_idname = "world.toggle"
     bl_label = "start or stop showing the world"
@@ -194,7 +199,8 @@ class the_world(bpy.types.Operator):
             result = {'FINISHED'}
             sce.world_is_running = True
         return result
-    
+
+stringfield_input = "for input"    
 class change_text(bpy.types.Operator):
     bl_idname = "textmorph.text"
     bl_label = "TestchangeText"
@@ -205,6 +211,17 @@ class change_text(bpy.types.Operator):
         if old_text != sce.text_for_text:
             old_text = sce.text_for_text
             multiline_text.adjust_text(old_text)            
+        return {'FINISHED'}        
+
+class for_stringfield_text(bpy.types.Operator):
+    bl_idname = "forinput.text"
+    bl_label = "change global stringfield"
+
+    def execute(self,context):
+        global stringfield_input
+        sce = context.scene
+        if  stringfield_input!= sce.text_for_input:
+            stringfield_input = sce.text_for_input
         return {'FINISHED'}        
 
 class ephestos_panel(bpy.types.Panel):
@@ -222,7 +239,8 @@ class ephestos_panel(bpy.types.Panel):
         col.operator('world.toggle')
         col.prop(sce,'text_for_text')
         col.operator('textmorph.text')
-        
+        col.prop(sce,'text_for_input')
+#        col.operator('forinput.text')
     
         
 def register():

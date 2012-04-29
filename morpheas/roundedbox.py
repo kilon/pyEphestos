@@ -13,7 +13,6 @@ class RoundedBox(Morph):
         self.bordercolor = bordercolor
         self.outer_per = outer_per
         self.inner_per = inner_per
-        print("****RoundedBox created with color and backgroundcelor",self.color, self.bordercolor)
         
     def draw_new(self):
         self.fill_rounded(self.edge, self.bordercolor, 0)

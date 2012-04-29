@@ -1,6 +1,7 @@
+import bpy
+
 from .rectangle import *
 from .morph import *
-
 #PKHG.???temp_text_list =[]
 import re
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
@@ -42,7 +43,7 @@ class Hand(Morph):
 
     def process_all_events(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
-
+        
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
@@ -51,20 +52,20 @@ class Hand(Morph):
         elif event.value=='RELEASE':
 #            return self.process_mouse_up(event)
              return self.distinguish_release_event(event)
-
+                
+            
     def distinguish_press_event(self, event):
         """mouse down, or keys to do"""
         
-        global re_CAS
-        if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
+        if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
+                          'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_down(event)
-        else:
-#PKHG.info only CTrl Alt Shift (for this time...)            
-            key_seen = event.type
+        '''
+            
             tmp = self.morph_at_pointer() #PKHG. at least world?!
             print("\n===DBG distinguish_press_event pressed what and who", key_seen,tmp)
-            if tmp.name.startswith("input") and re_CAS.search(key_seen):
-                print("INPUT seen for", key_seen)
+            if tmp.name.startswith("input") :
+                print("INPUT seen for", key_seen, "morph is ", tmp)
                 if self.active_text_input_morph and\
                    tmp.name == self.active_text_input_morph.name:
                     self.temp_text_list.append(key_seen)
@@ -74,19 +75,26 @@ class Hand(Morph):
                     print("DBG L 73",self.temp_text_list)
                     self.active_text_input_morph = tmp
                 return {'RUNNING_MODAL'}
+            '''
         return {'RUNNING_MODAL'}    
 
 
     def distinguish_release_event(self, event):
         """handle keyboard release"""
-        
-#        global re_CAS
-        if event.type in ['LEFTMOUSE','RIGHTMOUSE']:
+
+        if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
+                          'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
             tmp = self.morph_at_pointer() #PKHG. at least world?!            
-            print("\n===DBG distinguish_release_event(hand.py L)=== event.type morph at pointer and its type", event.type, tmp)
-            if tmp.name.startswith("input"):                
+            print("\n===DBG distinguish_release_event(hand.py)=== type =", event.type, " who =", tmp)
+            if tmp.name.startswith("input"):
+                if event.type == 'RET':
+                    stringfield_input = bpy.context.scene.text_for_input
+                    print("\n===RET seen: ", stringfield_input)
+
+                    tmp.text_string.text = stringfield_input
+                '''
                 if self.active_text_input_morph and tmp.name == \
                        self.active_text_input_morph.name:
                     print("\nDBG add keys")
@@ -99,10 +107,10 @@ class Hand(Morph):
                 self.add_keys(event, tmp)
                     
 #??                self.active_text_input_morph = tmp
-            else:
-                pass
+                '''
         return {'RUNNING_MODAL'}    
 
+    '''
     def add_keys(self, event, morph):
         """eat a keyboard key"""
 #PKHG.???        global temp_text_list
@@ -114,7 +122,7 @@ class Hand(Morph):
         else:
             self.temp_text_list.append(tmp)
         return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
-
+    '''
 
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
@@ -203,10 +211,11 @@ class Hand(Morph):
                 self.morph_to_grab = morph.root_for_grab()
             
                 if morph.is_draggable:
-                    self.moving_morph =True
+                    self.moving_morph = True
                 while not morph.handles_mouse_click():
-                    print("dbg test PKHG morph.handles_mouse_click, from handle L173")
+                    print("\ndbg test PKHG morph.handles_mouse_click, from handle L173")
                     print("morph is", morph)
+#PKHG.??? next line OK?                    
                     return {'FINISHED'}
                     morph = morph.parent
                 self.mouse_down_morph = morph
