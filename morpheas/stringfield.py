@@ -40,12 +40,13 @@ class String(Morph):
             self.bold,
             self.italic)
         '''
-        t_width, t_heigt  = blf.dimensions(self.font, self.text)
+        t_width, t_height  = blf.dimensions(self.font, self.text)
+        self.width = int(t_width + 2.0)
 #        self.image = self.font.render(self.text, 1, self.color)
 #        self.image.set_alpha(self.alpha)
 #        corner = Point(self.image.get_width(),
 #                                   self.image.get_height())
-        corner = Point(2 + int(t_width), 2 + int(t_heigt))
+        corner = Point(self.width, 2 + int(t_height))
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
@@ -151,7 +152,34 @@ class StringField( Morph):
         "initialize my surface"
         super(StringField, self).draw_new()
         self.text_string.draw_new()
+
+        input_width = self.text_string.width
+
+        print("====== width of stringfield", self.width(), input_width)
+        
+        if input_width < 100:
+            dif = 0
+            self.minwidth = 100
+        else:
+            dif = input_width - self.width()
+            print("dif = ", dif)
+        if dif > 0:
+            #adjust size of morph
+#            self.minwidth = input_width
+            new_corner = self.bounds.corner + Point(dif,0)
+            self.bounds = self.bounds.origin.corner(new_corner)
+        elif dif < 0:
+            x = self.bounds.origin.x
+            y = self.bounds.corner.y
+            if input_width < 100:
+                self.bounds = self.bounds.origin.corner(Point(x + 100, y))
+            else:        
+                self.bounds = self.bounds.origin.corner(Point(x + input_width, y))
+        super(StringField, self).draw_new()
+        self.text_string.draw_new()
+                
         return 
+        ''' 
         self.text = None
         for m in self.children:
 #PKHG.todo            m.delete()
@@ -165,6 +193,7 @@ class StringField( Morph):
         self.text.set_position(self.position())
         self.add(self.text)
         self.text.draw_new()
+        '''
 
     def string(self):
         return self.text.text
