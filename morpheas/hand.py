@@ -47,11 +47,17 @@ class Hand(Morph):
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
+#            return {'RUNNING_MODAL'}
+            
 #            return self.process_mouse_down(event)
-             return self.distinguish_press_event(event)
-        elif event.value=='RELEASE':
+            return self.distinguish_press_event(event)
+        elif event.value=='RELEASE':            
 #            return self.process_mouse_up(event)
-             return self.distinguish_release_event(event)
+            return self.distinguish_release_event(event)
+        else:
+            print("pr all_events (hand.py L56) event.value = ", event.value)
+            return {'RUNNING_MODAL'}
+            return {'PASS_THROUGH'}
                 
             
     def distinguish_press_event(self, event):
@@ -60,6 +66,9 @@ class Hand(Morph):
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_down(event)
+        else:
+            return {'RUNNING_MODAL'}
+            
         '''
             
             tmp = self.morph_at_pointer() #PKHG. at least world?!
@@ -86,6 +95,8 @@ class Hand(Morph):
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
+            return {'RUNNING_MODAL'}
+            
             tmp = self.morph_at_pointer() #PKHG. at least world?!            
             print("\n===DBG distinguish_release_event(hand.py)=== type =", event.type, " who =", tmp)
             if tmp.name.startswith("input"):
@@ -204,8 +215,7 @@ class Hand(Morph):
             morph = self.morph_at_pointer()
             pos = self.bounds.origin
             
-            if event.type == 'LEFTMOUSE':
-                
+            if event.type == 'LEFTMOUSE':                
                 
                 # mark morph for drag only if mouse cursor is top of it
                 self.morph_to_grab = morph.root_for_grab()
@@ -216,7 +226,7 @@ class Hand(Morph):
                     print("\ndbg test PKHG morph.handles_mouse_click, from handle L173")
                     print("morph is", morph)
 #PKHG.??? next line OK?                    
-                    return {'FINISHED'}
+#                    return {'FINISHED'}
                     morph = morph.parent
                 self.mouse_down_morph = morph
                 
@@ -309,7 +319,7 @@ class Hand(Morph):
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
 
-            print("I am dragging the  new morph")
+                    print("I am dragging the  new morph")
 
 
         # and finally if the moph is marked for drag and mouse moves , changes morph's position to match the movement of the mouse, taking into the account the offset of the mouse cursor so the mouse cursor stay always in the same position relative to them morph as the first time it was clicked. 

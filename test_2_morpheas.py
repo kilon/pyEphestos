@@ -144,11 +144,11 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-#            print("RUNNING_MODAL")
-#            print("event type :" ,event.type)
-#            print("event value : ",event.value)
+            print("test_2 L 147: RUNNING_MODAL event type :" ,event.type," event value : ",event.value)
             hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
-            return hand.process_all_events(event) #{'RUNNING_MODAL'}            
+            res = hand.process_all_events(event) #{'RUNNING_MODAL'}
+            print("                         DBG test_2 L150 result of process_all_events =",res, "\n")
+            return(res)
         else:
 #            print("event type :" ,event.type)
 #            print("event value : ",event.value)
