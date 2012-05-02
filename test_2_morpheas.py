@@ -15,7 +15,7 @@ one_String.set_position(Point(60,60))
 
 good_rounded_box = RoundedBox( )
 #PKHG.works ;-)good_rounded_box.bounds = Point(30,30).corner(Point(200,400))
-good_rounded_box.set_position(Point(40,40))
+good_rounded_box.set_position(Point(140,50))
 good_rounded_box.name = "roundedBox"
 good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
@@ -23,8 +23,8 @@ good_rounded_box.color = (1, 0, 0, 1)
 #PKHG.check size of brackets!
 multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200) 
 multiline_text.set_position(Point(70,70))
-p1 = Point(40,50)
-p2 = Point(80,120)
+p1 = Point(240,50)
+p2 = Point(280,120)
 bounds_red = p1.corner(p2)
 
 red_morph= Morph( bounds = bounds_red, rounded = True, with_name = True)
@@ -134,7 +134,7 @@ class open_ephestos(bpy.types.Operator):
     def modal(self, context, event):
         result =  {'PASS_THROUGH'}
         context.area.tag_redraw()                
-        if context.area.type == 'VIEW_3D' and ephestos.running and event.type in ('ESC'):
+        if context.area.type == 'VIEW_3D' and ephestos.running and event.type in {'ESC',}:
             context.region.callback_remove(self._handle)
             ephestos.running = False
             print("CANCELLED")
@@ -144,10 +144,10 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-            print("test_2 L 147: RUNNING_MODAL event type :" ,event.type," event value : ",event.value)
+            print("test L147 event type :" ,event.type," event value : ",event.value)
             hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
             res = hand.process_all_events(event) #{'RUNNING_MODAL'}
-            print("                         DBG test_2 L150 result of process_all_events =",res, "\n")
+            print("test L150  result of process_all_events =",res, "\n")
             return(res)
         else:
 #            print("event type :" ,event.type)
