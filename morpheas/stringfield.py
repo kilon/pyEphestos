@@ -3,7 +3,6 @@ from .rectangle import *
 
 import addon_utils
 
-
 class String(Morph):
     "I am a single line of text"
                       
@@ -14,7 +13,7 @@ class String(Morph):
                  bold=False,
                  italic=False):
         super(String, self).__init__()
-        print("String created = ", text)
+#PKHG.OK         print("String created = ", text)
         self.text = text
         self.fontname = fontname
         self.fontsize=fontsize
@@ -53,7 +52,8 @@ class String(Morph):
         bgl.glEnable(bgl.GL_BLEND)
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
-        blf.draw(self.font, self.text)
+        if self.is_visible:
+            blf.draw(self.font, self.text)
 
     #String menu:
 
@@ -154,15 +154,13 @@ class StringField( Morph):
         self.text_string.draw_new()
 
         input_width = self.text_string.width
-
-        print("====== width of stringfield", self.width(), input_width)
-        
         if input_width < 100:
+#PKHG.ok            print("stringfield L158 (dif set to 0) input_width =",input_width)
             dif = 0
             self.minwidth = 100
         else:
             dif = input_width - self.width()
-            print("dif = ", dif)
+#PKHG.ok        print("stringfield L163: dif =", dif)
         if dif > 0:
             #adjust size of morph
 #            self.minwidth = input_width
@@ -175,6 +173,13 @@ class StringField( Morph):
                 self.bounds = self.bounds.origin.corner(Point(x + 100, y))
             else:        
                 self.bounds = self.bounds.origin.corner(Point(x + input_width, y))
+        children = self.children
+#PKHG.OK        print("\n================stringfield children", children)
+        for child in children:
+            if child.is_visible:
+                print("stringfield drawing" , child)
+                child.draw_new()
+        
         super(StringField, self).draw_new()
         self.text_string.draw_new()
                 

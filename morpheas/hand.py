@@ -6,6 +6,16 @@ from .morph import *
 import re
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
+used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
+     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
+     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
+     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
+     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
+     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
+     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~'}
+
+delete_list= ['DEL','BACK_SPACE']
+
 class Hand(Morph):
     "I represent the mouse cursor"
 
@@ -47,94 +57,135 @@ class Hand(Morph):
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
-#            return {'RUNNING_MODAL'}
-            
+#            return {'RUNNING_MODAL'}            
 #            return self.process_mouse_down(event)
             return self.distinguish_press_event(event)
         elif event.value=='RELEASE':            
 #            return self.process_mouse_up(event)
+            print("\n===============process_all_events RELEASE seen")
             return self.distinguish_release_event(event)
         else:
-            print("pr all_events (hand.py L56) event.value = ", event.value)
-            return {'RUNNING_MODAL'}
+            print("hand.py L57) not eaton up  event.value = ", event.value)
+#            return {'RUNNING_MODAL'}
             return {'PASS_THROUGH'}
                 
             
     def distinguish_press_event(self, event):
         """mouse down, or keys to do"""
         
+        result = {'RUNNING_MODAL'}
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
-            return self.process_mouse_down(event)
-        else:
-            return {'RUNNING_MODAL'}
-            
-        '''
-            
-            tmp = self.morph_at_pointer() #PKHG. at least world?!
-            print("\n===DBG distinguish_press_event pressed what and who", key_seen,tmp)
-            if tmp.name.startswith("input") :
-                print("INPUT seen for", key_seen, "morph is ", tmp)
-                if self.active_text_input_morph and\
-                   tmp.name == self.active_text_input_morph.name:
-                    self.temp_text_list.append(key_seen)
-                    print("DBG L 70",self.temp_text_list)
-                else: #new input morph 
-                    self.temp_text_list = [key_seen]
-                    print("DBG L 73",self.temp_text_list)
-                    self.active_text_input_morph = tmp
-                return {'RUNNING_MODAL'}
-            '''
-        return {'RUNNING_MODAL'}    
+            result =  self.process_mouse_down(event)
+#        else:
+#PKHG.info eat the key pressed event            
+#            return {'RUNNING_MODAL'}
+        return result  
+
 
 
     def distinguish_release_event(self, event):
         """handle keyboard release"""
+        def set_Info_input(tmp, visi):
+            info_morph = [child for child in tmp.children if child.name == "Info_input"]
+            if info_morph:
+                info_morph[-1].is_visible = visi
+                info_morph[-1].draw_new()
 
+        print("distinguish_release_event called")
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
-            return {'RUNNING_MODAL'}
-            
-            tmp = self.morph_at_pointer() #PKHG. at least world?!            
-            print("\n===DBG distinguish_release_event(hand.py)=== type =", event.type, " who =", tmp)
+#PKHG.activate for tests            return {'RUNNING_MODAL'}
+            tmp = self.morph_at_pointer() #PKHG. at least world?!
+            print("\n--------------------------- L101 distinguish_release_event(hand.py) event.type =", event.type, " who =", tmp.name)
             if tmp.name.startswith("input"):
-                if event.type == 'RET':
-                    stringfield_input = bpy.context.scene.text_for_input
-                    print("\n===RET seen: ", stringfield_input)
-
-                    tmp.text_string.text = stringfield_input
-                '''
+                set_Info_input(tmp, True)                
                 if self.active_text_input_morph and tmp.name == \
                        self.active_text_input_morph.name:
-                    print("\nDBG add keys")
-                    pass
-                elif self.active_text_input_morph: #new input morph 
-                    print("\n===DBG=== text input finished", self.temp_text_list)
-                    print("TODO set it to old  morph!", self.active_text_input_morph)
+                    if event.type == 'RET':
+                        self.insert_committed_text(tmp)
+                        set_Info_input(tmp, False)
+#PKHG.attention  return used:                        
+                        return {'RUNNING_MODAL'} #keys eaton up
+                    self.add_keys(event, tmp)
+                    return {'RUNNING_MODAL'}
+                else: #new input morph
+                    if self.active_text_input_morph:
+                        self.insert_committed_text(self.active_text_input_morph)
+                        print("text inserted for ",self.active_text_input_morph)
+                    else:
+                        self.active_text_input_morph = tmp
+                        
+                    print("DBG L119 distinguish_release_event(hand.py) new inputmorp")
                     self.temp_text_list = []
                     self.active_text_input_morph = tmp
-                self.add_keys(event, tmp)
+                    self.add_keys(event, tmp)
                     
 #??                self.active_text_input_morph = tmp
-                '''
-        return {'RUNNING_MODAL'}    
-
-    '''
+                
+                return {'RUNNING_MODAL'}
+            else:                                  
+                return {'PASS_THROUGH'}
+        
+    
     def add_keys(self, event, morph):
         """eat a keyboard key"""
 #PKHG.???        global temp_text_list
-        tmp = event.type
-        if tmp == 'RET':
+        type_val = "" + event.type
+        if type_val == 'RET':
             print("\n===DBG add_keys(hand.py L46)=== RETURN SEEN", self.temp_text_list, "for morph", morph)
             self.temp_text_list = []
             self.active_text_input_morph = None
-        else:
-            self.temp_text_list.append(tmp)
-        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
-    '''
+#PKHG.TODO ignor_lst ?!            
+        elif re_CAS.search(type_val):
+            pass
+        elif type_val in delete_list: #remove last key if possible
+            if self.temp_text_list:
+                del(self.temp_text_list[-1])
+            pass
+        elif type_val == "SPCACE":
+            self.temp_text_list.append(" ")
+        else:            
+            if event.shift: 
+                type_val += "_SHIFT"
+            self.temp_text_list.append(type_val)
+#        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
+    
 
+    def insert_committed_text(self, morph):
+        def convert_it(element):
+            print("element to convert", element)
+            result = element
+            if result in used_keyboard_dict_for_digits.keys():
+                result = used_keyboard_dict_for_digits[result]
+            elif result.endswith('_SHIFT'):
+                result = result[0]
+            elif result == "SPACE":
+                result = " "
+            elif len(result) == 1:
+                result = result.lower()
+            print("converted to ", result)
+            return result
+            
+        def convert_list_to_text(letter_list):
+            print("TODO convert ", self.temp_text_list, " into a str")
+            converted_list = [convert_it(el) for el in letter_list]
+            print("------ converted list=",converted_list)
+            result = ""
+            for el in converted_list:
+                result = result + el
+            return result               
+        
+        result =  convert_list_to_text(self.temp_text_list)
+        print("------------ result = ", result)
+        morph.text_string.text = result
+                                                
+        
+        self.temp_text_list = []
+        return "PKHG finished inputting string"
+    
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
 

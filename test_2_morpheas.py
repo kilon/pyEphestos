@@ -21,7 +21,8 @@ good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
 
 #PKHG.check size of brackets!
-multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200) 
+#multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200)
+multiline_text = Text("PKHG  was here", max_width = 200) 
 multiline_text.set_position(Point(70,70))
 p1 = Point(240,50)
 p2 = Point(280,120)
@@ -48,16 +49,23 @@ world.add(rounded_box)
 world.add(good_rounded_box)
 #PKHG.not yet ok
 world.add(one_String)
-
+#????world.add(info_String)
 #PKHG.stringfieldTest.???
-test_stringfield = StringField()
-test_stringfield.name ="input ..."
+
+info_String = String("Mouse over FieldString ")
+info_String.is_visible = False
+info_String.name = "Info_input"
+#info_String.set_position(Point(5,5))
+
+test_stringfield = StringField(default="input test")
+test_stringfield.name ="input..."
 test_stringfield.with_name = True
 
-#PKHG.stringfieldTest.???test_stringfield.name = "test_stringfield"
-#PKHG.stringfieldTest.???test_stringfield.with_name = True
-#PKHG.stringfieldTest.???
+test_stringfield.add(info_String)
+info_String.set_position(test_stringfield.bounds.corner)
+
 world.add(test_stringfield)
+#via test_stringfield: world.add(info_String)
 
 green_morph.set_position(Point(150,150))
 blue_morph.set_position(Point(350,350))
