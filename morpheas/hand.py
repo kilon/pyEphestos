@@ -12,8 +12,16 @@ used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
      'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
      'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
      'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
-     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~'}
+     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
+     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
+     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
+     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
+     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
+     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
+     
 
+numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
+     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
 delete_list= ['DEL','BACK_SPACE']
 
 class Hand(Morph):
@@ -134,8 +142,8 @@ class Hand(Morph):
         """eat a keyboard key"""
 #PKHG.???        global temp_text_list
         type_val = "" + event.type
-        if type_val == 'RET':
-            print("\n===DBG add_keys(hand.py L46)=== RETURN SEEN", self.temp_text_list, "for morph", morph)
+        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
+            print("\n===DBG add_keys(hand.py L46)=== (numpad)RETURN SEEN", self.temp_text_list, "for morph", morph)
             self.temp_text_list = []
             self.active_text_input_morph = None
 #PKHG.TODO ignor_lst ?!            
@@ -166,6 +174,11 @@ class Hand(Morph):
                 result = " "
             elif len(result) == 1:
                 result = result.lower()
+            elif result.startswith('NUMPAD_'):
+                if len(result) == 8:
+                    result = result[-1]
+                elif result in numpad_dict_specials.keys():
+                    result = numpad_dict_specials[result]
             print("converted to ", result)
             return result
             
