@@ -32,7 +32,9 @@ class World(Frame):
         return
     '''
     def draw_new(self):
-        if self.running:
+        """If ... is running show the world as rounded morph"""
+        
+        if self.running:            
             Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
             for child in self.children:
                 child.draw_new()
