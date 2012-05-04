@@ -177,7 +177,7 @@ class StringField( Morph):
 #PKHG.OK        print("\n================stringfield children", children)
         for child in children:
             if child.is_visible:
-                print("stringfield drawing" , child)
+#PKHG.OK                print("stringfield drawing" , child)
                 child.draw_new()
         
         super(StringField, self).draw_new()
