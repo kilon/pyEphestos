@@ -21,12 +21,13 @@ ValueError: list.remove(x): x not in list
 ++++L80+++++ draw_new of Menu called
 '''
 debug050512 = False #width checking ...
+debug050512_1659 = True #MenuItem test
 
 
 from .roundedbox import *
 from .text import *
 from .stringfield import * #see Menu add_entry
-
+from .world import * #PKHG test 0505012
 
 class Menu(RoundedBox):
 
@@ -39,7 +40,7 @@ class Menu(RoundedBox):
         self.label = None
         super(Menu, self).__init__()
         self.is_draggable = False
-        if debug050512_0908:
+        if debug050512_1659:
             print("menu.py Menu: children: ", self.children[:])
 
     def add_item(self, label="close", action='nop'):
@@ -52,7 +53,8 @@ class Menu(RoundedBox):
         field = StringField(default, width)
         field.is_editable = True
         self.items.append(field)
-
+        field.draw_new() #PKHG.??? needed?
+        
 #    def add_color_picker(self, default=(0,0,0,0)):
 #        field = ColorPicker(default)
 #        field.is_draggable = False
@@ -87,8 +89,10 @@ class Menu(RoundedBox):
         pass
 
     def create_label(self):
+        '''PKHG 050512_1516 because of error message ValueError: list.remove(x): x not in list
         if self.label != None:
             self.label.delete()
+        '''
         text = Text(self.title,
                     fontname="verdana.ttf",
                     fontsize=10,
@@ -107,32 +111,51 @@ class Menu(RoundedBox):
         self.label.text = text
         
     def draw_new(self):
-        print("++++L80+++++ draw_new of Menu called")
+        print("++++L114+++++ draw_new of Menu called")
+
+        #PKHG 050512 seems to be necessary!
         for m in self.children:
             m.delete()
-        self.children = []
+        
+#PKHG.050512_1657???        self.children = []
+
+        if debug050512_1659:
+            print("debug050512_1659 children = ",self.children[:])
         self.edge = 5
         self.border = 2
-        self.color = (1.0, 1.0, 1.0, 1.0) #pygame.Color(254,254,254)
-        self.bordercolor = (0.4, 0.4, 0.4, 0.4) #pygame.Color(60,60,60)
+        self.color = (1.0, 1.0, .0, 0) #outer color of RoundedBox invisible
+        self.bordercolor = (0., 0., 0., 0) #inner color RoundedBox invisble
         self.set_extent(Point(0, 0))
         if self.title != None:
             self.create_label()
             self.label.set_position(self.bounds.origin + 4)
             self.add(self.label)
+            self.label.draw_new() #PKHG. to show it?
             y = self.label.bottom()
         else:
             y = self.top() + 4
         x = self.left() + 4
+        if debug050512_1659:
+            print("will be position ",(x,y))
         for pair in self.items:
+            if debug050512_1659:
+                print("pair is",pair)
             if isinstance(pair,StringField): #PKHG.TODO or isinstance(pair,ColorPicker):
                 item = pair
             elif pair[0] == 0:
                 item = Morph()
-                item.color = self.bordercolor
-                item.set_height(pair[1])
+                #item.bounds = Point(0,0).corner(Point(x,y))
+                item.name = "0_type_item"
+                item.color = (0,0,1,1)#debug050512_1659 self.bordercolor
+#debug050512_1659                item.set_height(pair[1])
+                item.set_height(pair[1]+2)
             else:
                 item = MenuItem(self.target, pair[1], pair[0])
+                item.color = (1,0,0,1) #PKHG test
+                item.name = pair[0]
+                item.with_name = True
+                item.bounds = Point(0,0).corner(Point(0,25))
+#                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
             y += item.height()
@@ -140,7 +163,9 @@ class Menu(RoundedBox):
         self.set_extent(fb.extent() + 4)
         self.adjust_widths()
         super(Menu, self).draw_new()
-
+        
+#        print("menu.py draw_new; super(Menu, self) and type ", super(Menu, self), type(super(Menu, self)))  
+#PKHG.errro no bounds        super(Menu, self).bounds = Point(0,0).corner( Point(200,200))
     def max_width(self):
         w = 0
         if debug050512:
@@ -287,7 +312,7 @@ class Trigger(Morph):
         self.label = None
         super(Trigger, self).__init__()
 #        self.color = pygame.Color(254,254,254)
-        self.color = (.5, .5, .0 , .5)
+        self.color = (.5, .5, .0 , 0) #geel weg 
         self.draw_new()
         self.target = target
         self.action = action
@@ -354,7 +379,7 @@ class Trigger(Morph):
         print("mouse_click_left of Trigger called")
         print("pymorpheas calls", self.target.__getattribute__(self.action))
         
-class MenuItem(Trigger, Morph): #PKHG>TODOWidget):
+class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>TODOWidget):
 
     def create_label(self):
         if self.label != None:

@@ -16,23 +16,33 @@ world.add(hand)
 
 test_Menu = Menu(title="Menu I am ")
 test_Menu.name = "I am a Menu"
-test_Menu.is_draggable = True
+#test_Menu.is_draggable = True #should be fixed?!
 test_Menu.with_name = True
 #PKHG.no effect: test_Menu.bounds = Point(0,200).corner(Point(10,220))
-test_Menu.set_position(Point(10,200))
+#test test_Menu.set_position(Point(50,200))
+test_Menu.set_position(Point(10,10))
+#test_Menu.color = (1,0,0,0)
 
-test_Menu.color = (1,0,0,1)
 #PKHG test 5-5-2012 8:24
-test_Menu.add_line()
-test_Menu.add_item()
+test_Menu.add_line() #debug050512_1659 shows a blue line
+test_Menu.add_item(label = '1') #no params ==> label="close", action='nop'
+test_Menu.add_line() #debug050512_1659 shows a blue line
+test_Menu.add_item(label = '2') #no params ==> label="close", action='nop'
+test_Menu.add_line() #debug050512_1659 shows a blue line
+test_Menu.add_item(label = 'add abracadabra') #no params ==> label="close", action='nop'
+test_Menu.add_line() #debug050512_1659 shows a blue line
+test_Menu.add_item() #no params ==> label="close", action='nop'
+
+
 #PKHG.0505: not at good place:  test_Menu.add_entry(default='I am Text field and may be changed')
 
-#test_MenuItem = MenuItem()
-#test_MenuItem.name = "I am a MenuItem"
+test_MenuItem = MenuItem(label = "test_menu_item")
+test_MenuItem.set_position(Point(100,150))
+test_MenuItem.create_label()
+test_MenuItem.name = "I am a MenuItem"
 #test_MenuItem.with_name = True
-#test_MenuItem.set_position(Point(20,300))
-#world.add(test_MenuItem)
-#test_Menu.add(test_MenuItem)
+#???test_MenuItem.set_position(Point(20,300))
+test_Menu.add(test_MenuItem)
 print("test L51 items of test_Menu", test_Menu.items[:])
 print("childrens of test_Menu = ",test_Menu.children[:])
 
