@@ -2,6 +2,7 @@ import bpy
 
 from .rectangle import *
 from .morph import *
+
 #PKHG.???temp_text_list =[]
 import re
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
@@ -112,7 +113,8 @@ class Hand(Morph):
                 set_Info_input(tmp, True)                
                 if self.active_text_input_morph and tmp.name == \
                        self.active_text_input_morph.name:
-                    if event.type == 'RET':
+#                    if event.type == 'RET':
+                    if event.type in {'RET','NUMPAD_ENTER'}:
                         self.insert_committed_text(tmp)
                         set_Info_input(tmp, False)
 #PKHG.attention  return used:                        
@@ -142,7 +144,8 @@ class Hand(Morph):
         """eat a keyboard key"""
 #PKHG.???        global temp_text_list
         type_val = "" + event.type
-        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
+#        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
+        if type_val in {'RET','NUMPAD_ENTER'}:
             print("\n===DBG add_keys(hand.py L46)=== (numpad)RETURN SEEN", self.temp_text_list, "for morph", morph)
             self.temp_text_list = []
             self.active_text_input_morph = None

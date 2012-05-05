@@ -1,7 +1,8 @@
 from .rectangle  import Point
-from .hand  import *
-#from . class_Frame import Frame
 from .morph  import *
+from .hand  import *
+from .menu import *
+#from . class_Frame import Frame
 
 class World(Frame):
     "I represent the screen"

@@ -37,9 +37,38 @@ rounded_box = RoundedBox(border = 30, outer_per =.1, inner_per = 0.5)#does not w
 rounded_box.bounds = Point(0,200).corner(Point(400,400))
 rounded_box.color = (1, 1, 1, .5)
 rounded_box.bordercolor = (0, 0, 0, 1)
-
 rounded_box.set_position(Point(200,200))
 
+test_Menu = Menu(title="I am a Menu kjshjfhskjfhkashfkashf ")
+test_Menu.name = "I am a Menu"
+test_Menu.with_name = True
+test_Menu.bounds = Point(0,200).corner(Point(300,400))
+test_Menu.set_position(Point(50,220))
+#PKHG test 5-5-2012 8:24
+test_Menu.add_line()
+test_Menu.add_item()
+test_Menu.add_entry(default='may be changed')
+print("test L51 items of test_Menu", test_Menu.items[:])
+print("childrens of test_Menu = ",test_Menu.children[:])
+world.add(test_Menu)
+
+test_Bouncer = Bouncer()
+test_Bouncer.set_position(Point(30,250))
+test_Bouncer.color = (0,1,0,.4)
+world.add(test_Bouncer)
+
+#PKHG test 5-5-2012 8:24
+test_ListMenu = ListMenu()
+test_ListMenu.build_menus()
+test_ListMenu.set_position(Point(25,240))
+world.add(test_ListMenu)
+
+
+test_Trigger = Trigger()
+test_Trigger.name = "I am a Trigger"
+test_Trigger.with_name = True
+test_Trigger.set_position(Point(20,300))
+world.add(test_Trigger)
 
 world.add(red_morph)
 world.add(green_morph)
@@ -51,7 +80,7 @@ world.add(good_rounded_box)
 world.add(one_String)
 #????world.add(info_String)
 #PKHG.stringfieldTest.???
-
+world.start_all_bouncers()
 info_String = String("Mouse over FieldString ")
 info_String.is_visible = False
 info_String.name = "Info_input"

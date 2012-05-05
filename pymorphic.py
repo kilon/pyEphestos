@@ -2740,7 +2740,7 @@ class World(Frame):
         string.pick_up()
 
     def user_create_text(self):
-        text = Text("Ich weiß nicht, was soll es bedeuten, das ich so traurig bin, ein Märchen aus uralten Zeiten, das kommt mir nicht aus dem Sinn. Die Luft ist kühl und es dunkelt, und ruhig fließt der Rhein; der Gipfel des Berges funkelt im Abendsonnenschein. Die schönste Jungfrau sitzet dort oben wunderbar, ihr gold'nes Geschmeide blitzet, sie kämmt ihr goldenes Haar, sie kämmt es mit goldenem Kamme, und singt ein Lied dabei; das hat eine wundersame, gewalt'ge Melodei. Den Schiffer im kleinen Schiffe, ergreift es mit wildem Weh; er schaut nicht die Felsenriffe, er schaut nur hinauf in die Höh'. Ich glaube, die Wellen verschlingen am Ende Schiffer und Kahn, und das hat mit ihrem Singen, die Loreley getan. ")
+        text = Text("Ich wei nicht, was soll es bedeuten, das ich so traurig bin, at mit ihrem Singen, die Loreley getan. ")
         text.max_width = 400
         text.draw_new()
         text.pick_up()
@@ -2811,7 +2811,7 @@ class World(Frame):
     def about(self):
         self.inform("morphic.py\n\n\
 a lively GUI for Python\ninspired by Squeak\nbased on Pygame\n\
-" + version + "\n\nwritten by Jens Mönig\njens@moenig.org")
+" + version + "\n\nwritten by Jens @moenig.org")
 
     #World utilities:
 

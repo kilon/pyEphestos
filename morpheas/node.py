@@ -1,3 +1,8 @@
+debug050512_0851 = True #got error testing test_Menu:
+#File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\node.py", line 18, in remove_child
+#    self.children.remove(node)
+#ValueError: list.remove(x): x not in list
+
 class Node(object):
 
     def __init__(self, name = 'node'):
@@ -15,6 +20,8 @@ class Node(object):
         node.parent = self
 
     def remove_child(self, node):
+        if debug050512_0851:
+            print("node.py remove_child; node =  ", node) 
         self.children.remove(node)
         node.parent = None
 

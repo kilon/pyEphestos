@@ -70,7 +70,6 @@ bl_info = {
 
 
 PKHG_test = True
-
 if "bpy" in locals():
     import imp
     if "morpheas" in locals():

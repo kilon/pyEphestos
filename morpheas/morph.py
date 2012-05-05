@@ -1,9 +1,27 @@
+debug050512_0900 = True #problem with test_Menu
+'''
+++++L80+++++ draw_new of Menu called
+node.py remove_child; node =   RoundedBox(node)
+node.py remove_child; node =   MenuItem(node)
+node.py remove_child; node =   StringField(node)
+Traceback (most recent call last):
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\test_2_morpheas.py", line 147, in draw_ephestos
+    world.draw_new()
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\world.py", line 41, in draw_new
+    child.draw_new()
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\menu.py", line 111, in draw_new
+    self.add(item)
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\morph.py", line 266, in add
+    parent.remove_child(morph)
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\node.py", line 25, in remove_child
+    self.children.remove(node)
+ValueError: list.remove(x): x not in list
+'''
+
 import bgl, blf
-
-
 from .rectangle import *
 from .node import *
-
+#from .world import *
 
 #PKHG.circular  from . class_Text import Text
 from math import radians, sin, cos, sqrt
@@ -171,8 +189,13 @@ class Morph(Node ):
 
     #Morph displaying:
     def draw_new(self):
+#        print("morph", self, "visibility = ", self.is_visible) 
+#        if not self.is_visible:
+#            return
+
         "initialize my surface"
         # print("I use color : ", self.color)
+        bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
         bgl.glColor4f(*self.color)
         dimensions = self.extent().as_list()
         if self.rounded:
@@ -246,8 +269,8 @@ class Morph(Node ):
         
     def full_changed(self):
         w = self.root()
-        if isinstance(w, World):
-            w.broken.append(copy.copy(self.full_bounds()))
+#PKHG.TODO        if isinstance(w, World):
+#            w.broken.append(copy.copy(self.full_bounds()))
 
     #Morph accessing - structure:
     
@@ -258,6 +281,8 @@ class Morph(Node ):
     def add(self, morph):
         parent = morph.parent
         if parent is not None:
+            if debug050512_0900:
+                print("morph.py add; morph = ", morph, " parent of morph", parent)
             parent.remove_child(morph)
         self.add_child(morph)
 

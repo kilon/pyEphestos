@@ -61,5 +61,6 @@ from .frame import *
 from .world import *
 from .hand import *
 from .roundedbox import *
+from .menu import *
 from .text import *
 from .stringfield import *
