@@ -25,7 +25,7 @@ class RoundedBox(Morph):
         if inset == 0:
             Morph.draw_rounded_morph(self, self.outer_per, color, rectangle = False)
         else:
-            rect = self.bounds.inset_by(inset)
+            rect = self.bounds.inset_by(inset + 1)
             Morph.draw_rounded_morph(rect,  self.inner_per,  color, rectangle = True )
 
     #RoundedBox menu:

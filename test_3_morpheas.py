@@ -16,11 +16,11 @@ world.add(hand)
 
 test_Menu = Menu(title="Menu I am ")
 test_Menu.name = "I am a Menu"
-#test_Menu.is_draggable = True #should be fixed?!
+test_Menu.is_draggable = False #should be fixed?!
 test_Menu.with_name = True
 #PKHG.no effect: test_Menu.bounds = Point(0,200).corner(Point(10,220))
 #test test_Menu.set_position(Point(50,200))
-test_Menu.set_position(Point(10,10))
+test_Menu.set_position(Point(0,0))
 #test_Menu.color = (1,0,0,0)
 
 #PKHG test 5-5-2012 8:24
@@ -32,7 +32,8 @@ test_Menu.add_line() #debug050512_1659 shows a blue line
 test_Menu.add_item(label = 'add abracadabra') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
 test_Menu.add_item() #no params ==> label="close", action='nop'
-
+test_Menu.add_line() #debug050512_1659 shows a blue line
+test_Menu.add_entry(default = 'change me',width = 300)
 
 #PKHG.0505: not at good place:  test_Menu.add_entry(default='I am Text field and may be changed')
 

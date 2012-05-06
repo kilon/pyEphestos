@@ -1,28 +1,8 @@
-debug050512_0908 = False #reason test_Menu
-#at creation time childrens are [] => True to False set
-'''
-++++L80+++++ draw_new of Menu called
-node.py remove_child; node =   RoundedBox(node)
-node.py remove_child; node =   MenuItem(node)
-morpy.py add; morph =  StringField(node)  parent of morph Menu(I am a Menu)
-node.py remove_child; node =   StringField(node)
-Traceback (most recent call last):
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\test_2_morpheas.py", line 147, in draw_ephestos
-    world.draw_new()
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\world.py", line 41, in draw_new
-    child.draw_new()
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\menu.py", line 111, in draw_new
-    self.add(item)
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\morph.py", line 286, in add
-    parent.remove_child(morph)
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\node.py", line 25, in remove_child
-    self.children.remove(node)
-ValueError: list.remove(x): x not in list
-++++L80+++++ draw_new of Menu called
-'''
-debug050512 = False #width checking ...
-debug050512_1659 = True #MenuItem test
 
+debug050512 = False #width checking ...
+debug050512_1659 = False #MenuItem test
+debug_stringfield_060512_0723 = 0 #for stringfield test
+debug_mouseclick_060812_0756 = True #self and pos
 
 from .roundedbox import *
 from .text import *
@@ -51,9 +31,11 @@ class Menu(RoundedBox):
 
     def add_entry(self, default='', width=100):
         field = StringField(default, width)
+        field.name = "input"
+        field.with_name = True
         field.is_editable = True
         self.items.append(field)
-        field.draw_new() #PKHG.??? needed?
+#        field.draw_new() #PKHG.??? needed? Answer no!
         
 #    def add_color_picker(self, default=(0,0,0,0)):
 #        field = ColorPicker(default)
@@ -93,6 +75,10 @@ class Menu(RoundedBox):
         if self.label != None:
             self.label.delete()
         '''
+
+        if self.label != None:
+            self.label.delete()
+        
         text = Text(self.title,
                     fontname="verdana.ttf",
                     fontsize=10,
@@ -111,7 +97,8 @@ class Menu(RoundedBox):
         self.label.text = text
         
     def draw_new(self):
-        print("++++L114+++++ draw_new of Menu called")
+        global debug_stringfield_060512_0723 
+#PKHG.OK        print("++++L114+++++ draw_new of Menu called")
 
         #PKHG 050512 seems to be necessary!
         for m in self.children:
@@ -123,7 +110,7 @@ class Menu(RoundedBox):
             print("debug050512_1659 children = ",self.children[:])
         self.edge = 5
         self.border = 2
-        self.color = (1.0, 1.0, .0, 0) #outer color of RoundedBox invisible
+        self.color = (1.0, 1.0, .0, 0.3) #outer color of RoundedBox invisible
         self.bordercolor = (0., 0., 0., 0) #inner color RoundedBox invisble
         self.set_extent(Point(0, 0))
         if self.title != None:
@@ -142,6 +129,10 @@ class Menu(RoundedBox):
                 print("pair is",pair)
             if isinstance(pair,StringField): #PKHG.TODO or isinstance(pair,ColorPicker):
                 item = pair
+                item.with_name = True
+                if not debug_stringfield_060512_0723: #show properties of a StringField
+                    print("\n--------stringfield.bounnds = ", item.bounds)
+                    debug_stringfield_060512_0723 += 1
             elif pair[0] == 0:
                 item = Morph()
                 #item.bounds = Point(0,0).corner(Point(x,y))
@@ -395,6 +386,8 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         self.add(self.label)
 
     def mouse_click_left(self, pos):
+        if debug_mouseclick_060812_0756:
+            print("mouse_click_left self = ",self," pos = ", pos)
         if isinstance(self.parent, Menu):
             self.world().open_menu = None
         self.parent.perform(self)

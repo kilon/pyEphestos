@@ -49,7 +49,7 @@ class String(Morph):
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
-        bgl.glEnable(bgl.GL_BLEND)
+#        bgl.glEnable(bgl.GL_BLEND)
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:

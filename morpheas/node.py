@@ -1,4 +1,4 @@
-debug050512_0851 = True #got error testing test_Menu:
+debug050512_0851 = False #got error testing test_Menu: is needed! L23
 #File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\node.py", line 18, in remove_child
 #    self.children.remove(node)
 #ValueError: list.remove(x): x not in list

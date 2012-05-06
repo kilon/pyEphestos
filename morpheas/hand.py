@@ -44,13 +44,13 @@ class Hand(Morph):
         return 'Hand(' + self.center().__str__() + ')'
 
     def changed(self):
-        print("\n--dbg pkgh changed called")
+        print("--info-- hand.py L47;  changed called from self = ", self)
         if self.parent != None:
             b = self.full_bounds()
-            print("--dbg pkhg b = self.full_bounds() extent", b, b.extent())
+            print("--info-- hand.py L50; self.full_bounds()", b," extent= ", b.extent())
             if b.extent() != Point(0, 0):
                 self.parent.broken.append(self.full_bounds())
-                print("--dbg pkhg world.broken", self.parent.broken[:])
+                print("--info-- hand.py L53; world.broken", self.parent.broken[:])
    
     def draw_new(self):
         """ hand has nothing more to draw than its children which are the morph that are marked for grab """

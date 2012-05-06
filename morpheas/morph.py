@@ -1,27 +1,14 @@
-debug050512_0900 = True #problem with test_Menu
-'''
-++++L80+++++ draw_new of Menu called
-node.py remove_child; node =   RoundedBox(node)
-node.py remove_child; node =   MenuItem(node)
-node.py remove_child; node =   StringField(node)
-Traceback (most recent call last):
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\test_2_morpheas.py", line 147, in draw_ephestos
-    world.draw_new()
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\world.py", line 41, in draw_new
-    child.draw_new()
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\menu.py", line 111, in draw_new
-    self.add(item)
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\morph.py", line 266, in add
-    parent.remove_child(morph)
-  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\node.py", line 25, in remove_child
-    self.children.remove(node)
-ValueError: list.remove(x): x not in list
-'''
+debug050512_0900 = False #problem with test_Menu
 
 import bgl, blf
 from .rectangle import *
 from .node import *
-#from .world import *
+#from .world import * #error ==> 050512_1225
+'''
+  File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\hand.py", line 28, in <module>
+    class Hand(Morph):
+NameError: name 'Morph' is not defined
+'''
 
 #PKHG.circular  from . class_Text import Text
 from math import radians, sin, cos, sqrt
@@ -283,7 +270,11 @@ class Morph(Node ):
         if parent is not None:
             if debug050512_0900:
                 print("morph.py add; morph = ", morph, " parent of morph", parent)
-            parent.remove_child(morph)
+            if debug050512_0900:
+                print("---------------->>>> morph.py add: not deleting", morph)
+                pass
+            else:
+                parent.remove_child(morph)
         self.add_child(morph)
 
     def morph_at(self, point):
