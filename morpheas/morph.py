@@ -1,4 +1,4 @@
-debug050512_0900 = False #problem with test_Menu
+debug050512_0900 = False #060512, seems to be OK now (problem with test_Menu)
 
 import bgl, blf
 from .rectangle import *

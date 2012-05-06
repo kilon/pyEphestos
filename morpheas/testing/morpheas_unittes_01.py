@@ -318,7 +318,9 @@ class morphas_1_Test(unittest.TestCase):
         assertFalse = self.assertFalse
         H1 = morph.Hand()
         assertTrue(H1)
-        assertFalse(H1.world)
+        world = morph.Hand()
+        world.add(H1)
+        assertEqual(H1.parent, world)
         assertEqual(H1.mouse_over_list,[])
         assertEqual(H1.bounds, morph.Rectangle(morph.Point(0,0),morph.Point(0,0)))
 
@@ -329,6 +331,8 @@ class morphas_1_Test(unittest.TestCase):
         assertFalse = self.assertFalse
         H1 = morph.Hand()
         H1.world = morph.World()
+        assertTrue(H1.distinguish_press_event)
+        assertTrue(H1.distinguish_release_event)        
 #        check_contains(H1,'H1',print_value= True)
 #PKHG:  H1 contains children
 #PKHG,= []        print(H1.world.broken)

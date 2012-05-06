@@ -31,7 +31,7 @@ test_Menu.add_item(label = '2') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
 test_Menu.add_item(label = 'add abracadabra') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_item() #no params ==> label="close", action='nop'
+test_Menu.add_item(action='close_my_Menu') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
 test_Menu.add_entry(default = 'change me',width = 300)
 
@@ -124,10 +124,12 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-            print("test L147 event type :" ,event.type," event value : ",event.value)
+            print("=======> start hand actions: test_3 L127 event type :", \
+                  event.type," event value : ",event.value,\
+                  " next hand is called!")
             hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
             res = hand.process_all_events(event) #{'RUNNING_MODAL'}
-            print("test L150  result of process_all_events =",res, "\n")
+            print("=======> end hand actions result of process_all_events =",res, "\n")
             return(res)
         else:
 #            print("event type :" ,event.type)

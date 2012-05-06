@@ -362,7 +362,8 @@ class Trigger(Morph):
 
     def mouse_down_left(self, pos):
 #        self.image = self.press_image
-        print("mouse_down_left of Trigger")
+        print("=L365= meny.py mouse_down_left of Trigger; self = ", self, " pos = ", pos)
+        print("self.action =", self.action )
         self.changed()
 
     def mouse_click_left(self, pos):
@@ -387,7 +388,7 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
 
     def mouse_click_left(self, pos):
         if debug_mouseclick_060812_0756:
-            print("mouse_click_left self = ",self," pos = ", pos)
+            print("MenuItem L390: mouse_click_left self = ",self," pos = ", pos)
         if isinstance(self.parent, Menu):
             self.world().open_menu = None
         self.parent.perform(self)

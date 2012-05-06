@@ -1,3 +1,4 @@
+debug_left_mouse_click_060512_1048 = True
 import bpy
 
 from .rectangle import *
@@ -289,15 +290,17 @@ class Hand(Morph):
             
                 if morph.is_draggable:
                     self.moving_morph = True
+                #searh for a morph(parent) to handle a click!
                 while not morph.handles_mouse_click():
-                    print("\ndbg test PKHG morph.handles_mouse_click, from handle L173")
-                    print("morph is", morph)
-#PKHG.??? next line OK?                    
-#                    return {'FINISHED'}
+                    if debug_left_mouse_click_060512_1048:
+                        print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
                     morph = morph.parent
-                self.mouse_down_morph = morph
-                
-                # trigger also the approriate moph event
+                if debug_left_mouse_click_060512_1048:
+                    print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
+                self.mouse_down_morph = morph                
+                # trigger also the approriate moRph event
+                if debug_left_mouse_click_060512_1048:
+                    print("-L303-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
                 morph.mouse_down_left(pos)
 
 
