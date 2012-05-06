@@ -31,11 +31,12 @@ test_Menu.add_item(label = '2') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
 test_Menu.add_item(label = 'add abracadabra') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
+    
 test_Menu.add_item(action='close_my_Menu') #no params ==> label="close", action='nop'
 test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_entry(default = 'change me',width = 300)
+test_Menu.add_input_StringField(default = 'change me',width = 300)
 
-#PKHG.0505: not at good place:  test_Menu.add_entry(default='I am Text field and may be changed')
+#PKHG.0505: not at good place:  test_Menu.add_input_StringField(default='I am Text field and may be changed')
 
 test_MenuItem = MenuItem(label = "test_menu_item")
 test_MenuItem.set_position(Point(100,150))
@@ -46,6 +47,10 @@ test_MenuItem.name = "I am a MenuItem"
 test_Menu.add(test_MenuItem)
 print("test L51 items of test_Menu", test_Menu.items[:])
 print("childrens of test_Menu = ",test_Menu.children[:])
+
+#060512 add a Trigger to show the Menu!
+trigger_show_Menu = Trigger(action='show_Menu')
+
 
 world.add(test_Menu)
 

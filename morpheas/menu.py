@@ -6,7 +6,7 @@ debug_mouseclick_060812_0756 = True #self and pos
 
 from .roundedbox import *
 from .text import *
-from .stringfield import * #see Menu add_entry
+from .stringfield import * #see Menu add_input_StringField
 from .world import * #PKHG test 0505012
 
 class Menu(RoundedBox):
@@ -29,7 +29,7 @@ class Menu(RoundedBox):
     def add_line(self, width=1):
         self.items.append((0,width))
 
-    def add_entry(self, default='', width=100):
+    def add_input_StringField(self, default='', width=100):
         field = StringField(default, width)
         field.name = "input"
         field.with_name = True
