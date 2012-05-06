@@ -364,6 +364,16 @@ class Trigger(Morph):
 #        self.image = self.press_image
         print("=L365= meny.py mouse_down_left of Trigger; self = ", self, " pos = ", pos)
         print("self.action =", self.action )
+        if self.action == "close_my_Menu":
+            self.parent.delete()
+            print("my parent and root is", self.parent, self.root())
+            self.parent.is_visible = False
+            
+#            close_my_Menu(self.root())
+#def close_my_Menu(menu):
+#    menu.is_visible = False
+#    print("Menu made invisible")
+
         self.changed()
 
     def mouse_click_left(self, pos):
