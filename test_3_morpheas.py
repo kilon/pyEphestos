@@ -45,6 +45,7 @@ test_MenuItem.name = "I am a MenuItem"
 #test_MenuItem.with_name = True
 #???test_MenuItem.set_position(Point(20,300))
 test_Menu.add(test_MenuItem)
+
 print("test L51 items of test_Menu", test_Menu.items[:])
 print("childrens of test_Menu = ",test_Menu.children[:])
 
@@ -54,6 +55,10 @@ trigger_show_Menu = Trigger(action='show_Menu')
 
 world.add(test_Menu)
 
+button1 = Button(label="button")
+button1.set_position(Point(200,200))
+button1.set_color(1,0,0,1)
+world.add(button1)
 
 '''
 class World:

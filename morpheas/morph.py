@@ -48,7 +48,15 @@ class Morph(Node ):
         if self.parent != None:
             self.full_changed()
             self.parent.remove_child(self)
-
+    
+    def get_color(self):
+        """ getter: get the color of the morph"""
+        return self.color
+    
+    def set_color(self,r,g,b,alpha):
+        """ getter : (red , green , blue , alpha ) Set the color of the morph RGB plus alpha for transparency , all floats starting from 0 (0.0) and ending in 1 (1.0)"""
+        self.color=(r,g,b,alpha)
+        
     #stepping:
 
     def wants_to_step(self):

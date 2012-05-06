@@ -288,6 +288,7 @@ class Trigger(Morph):
                  fontsize=10,
                  bold=False,
                  italic=False):
+        super(Trigger, self).__init__()
         self.name = "trigger"
 #        self.hilite_color = pygame.Color(192,192,192)
         grey_192 = 192./255.
@@ -301,7 +302,7 @@ class Trigger(Morph):
         self.bold = bold
         self.italic = italic
         self.label = None
-        super(Trigger, self).__init__()
+        
 #        self.color = pygame.Color(254,254,254)
         self.color = (.5, .5, .0 , 0) #geel weg 
         self.draw_new()
