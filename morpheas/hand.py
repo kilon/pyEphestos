@@ -108,7 +108,7 @@ class Hand(Morph):
             return self.process_mouse_up(event)
         else:
 #PKHG.activate for tests            return {'RUNNING_MODAL'}
-            tmp = self.morph_at_pointer() #PKHG. at least world?!
+            tmp = self.get_morph_at_pointer() #PKHG. at least world?!
             print("\n--------------------------- L101 distinguish_release_event(hand.py) event.type =", event.type, " who =", tmp.name)
             if tmp.name.startswith("input"):
                 set_Info_input(tmp, True)                
