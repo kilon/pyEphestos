@@ -162,7 +162,7 @@ class Point:
     def as_list(self):
         """ getter : return the current point as a list"""
         return [self.x, self.y]
-
+#PKHG.ERROR, not a gette but a setter but should be removed.
     def get_corner(self, cornerPoint):
         """ getter : return the rectangle of the current point with another point"""
         return Rectangle(self, cornerPoint)

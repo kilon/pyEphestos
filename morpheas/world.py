@@ -13,7 +13,7 @@ class World(Frame):
         self.hand.world = self
         self.keyboard_receiver = None
         self.text_cursor = None
-        self.bounds = Point(0, 0).get_corner(Point(x, y))
+        self.bounds = Rectangle(Point(0, 0), Point(x, y))
         self.color = (0.0, 1.0 , 1.0, 0.4)#(130, 130, 130)
 #PKHG.INFO World is a Frames, a Frame  is a Morph, a Morh has color and alpha (yet!)
         self.open_menu = None

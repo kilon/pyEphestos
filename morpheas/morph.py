@@ -24,7 +24,8 @@ class Morph(Node ):
         if bounds:
             self.bounds = bounds
         else:
-            self.bounds = Point(0, 0).get_corner(Point(100,60))
+#            self.bounds = Point(0, 0).get_corner(Point(100,60))
+            self.bounds = Rectangle(Point(0, 0), Point(100,60))
         self.color = (0.3, 0.3, 0.3, 1.0)
         self.is_visible = True
         self.is_draggable = True
