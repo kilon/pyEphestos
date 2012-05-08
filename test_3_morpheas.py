@@ -98,7 +98,7 @@ def draw_ephestos(self,context):
     bgl.glRecti(5,5,x_region, y_region)
     """
 #    if show_world:
-    world.draw_new()
+    world.draw()
     '''
     good_rounded_box.draw_new(ephestos)
     world.draw_new(ephestos)

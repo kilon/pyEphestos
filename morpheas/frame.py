@@ -3,11 +3,11 @@ from .morph import *
 class Frame(Morph):
     " I clip my submorphs at my bounds "
 
-    def full_bounds(self):
+    def get_full_bounds(self):
 
         return self.bounds
 
-    def wants_drop_of(self, morph):
+    def get_wants_drop_of(self, morph):
         return True
 
     def full_draw_on(self, surface, rectangle=None):

@@ -24,7 +24,7 @@ class Morph(Node ):
         if bounds:
             self.bounds = bounds
         else:
-            self.bounds = Point(0, 0).corner(Point(100,60))
+            self.bounds = Point(0, 0).get_corner(Point(100,60))
         self.color = (0.3, 0.3, 0.3, 1.0)
         self.is_visible = True
         self.is_draggable = True
@@ -32,14 +32,14 @@ class Morph(Node ):
         self.rounded = rounded
         # self.last_time = pygame.time.get_ticks()
         self.with_name = with_name
-        self.path_to_local_fonts  = self.local_font_path()
+        self.path_to_local_fonts  = self.get_local_font_path()
         self.default_font = self.path_to_local_fonts + "/verdana.ttf"
         self.font_id = blf.load(self.default_font)
         
     def __repr__(self):
         return self.__class__.__name__ + "(" + self.name + ")"
 
-    def local_font_path(self):
+    def get_local_font_path(self):
         import  addon_utils
         result = addon_utils.paths()[0] + "/Ephestos/fonts"
         return result
@@ -59,81 +59,81 @@ class Morph(Node ):
         
     #stepping:
 
-    def wants_to_step(self):
+    def get_wants_to_step(self):
         return self.is_visible
 
-    def step(self):
+    def get_step(self):
         pass
 
     #Morph accessing - geometry getting:
 
-    def left(self):
-        return self.bounds.left()
+    def get_left(self):
+        return self.bounds.get_left()
 
-    def right(self):
-        return self.bounds.right()
+    def get_right(self):
+        return self.bounds.get_right()
 
-    def top(self):
-        return self.bounds.top()
+    def get_top(self):
+        return self.bounds.get_top()
 
-    def bottom(self):
-        return self.bounds.bottom()
+    def get_bottom(self):
+        return self.bounds.get_bottom()
 
-    def center(self):
-        return self.bounds.center()
+    def get_center(self):
+        return self.bounds.get_center()
 
-    def bottom_center(self):
-        return self.bounds.bottom_center()
+    def get_bottom_center(self):
+        return self.bounds.get_bottom_center()
 
-    def bottom_left(self):
-        return self.bounds.bottom_left()
+    def get_bottom_left(self):
+        return self.bounds.get_bottom_left()
 
-    def bottom_right(self):
-        return self.bounds.bottom_right()
+    def get_bottom_right(self):
+        return self.bounds.get_bottom_right()
 
-    def bounding_box(self):
+    def get_bounding_box(self):
         return self.bounds
 
-    def corners(self):
-        return self.bounds.corners()
+    def get_corners(self):
+        return self.bounds.get_corners()
 
-    def left_center(self):
-        return self.bounds.left_center()
+    def get_left_center(self):
+        return self.bounds.get_left_center()
 
-    def right_center(self):
-        return self.bounds.right_center()
+    def get_right_center(self):
+        return self.bounds.get_right_center()
 
-    def top_center(self):
-        return self.bounds.top_center()
+    def get_top_center(self):
+        return self.bounds.get_top_center()
 
-    def top_left(self):
-        return self.bounds.top_left()
+    def get_top_left(self):
+        return self.bounds.get_top_left()
 
-    def top_right(self):
-        return self.bounds.top_right()
+    def get_top_right(self):
+        return self.bounds.get_top_right()
 
-    def position(self):
+    def get_position(self):
         return self.bounds.origin
 
-    def extent(self):
-        return self.bounds.extent()
+    def get_extent(self):
+        return self.bounds.get_extent()
 
-    def width(self):
-        return self.bounds.width()
+    def get_width(self):
+        return self.bounds.get_width()
 
-    def height(self):
-        return self.bounds.height()
+    def get_height(self):
+        return self.bounds.get_height()
 
-    def full_bounds(self):
+    def get_full_bounds(self):
         result = self.bounds
         for child in self.children:
-            result = result.merge(child.full_bounds())
+            result = result.get_merge(child.get_full_bounds())
         return result
 
     #Morph accessing - changing:
 
     def set_position(self, aPoint):
-        delta = aPoint - self.bottom_left()
+        delta = aPoint - self.get_bottom_left()
         if delta.x != 0 or delta.y != 0:
             self.move_by(delta)
 
@@ -162,28 +162,28 @@ class Morph(Node ):
     def move_by(self, delta):
         "move myself by a delta point value"
         self.changed()
-        self.bounds = self.bounds.translate_by(delta)
+        self.bounds = self.bounds.get_translate_by(delta)
         for child in self.children:
             child.move_by(delta)
         self.changed()
 
     def keep_within(self, morph):
         "make sure I am completely within another morph's bounds"
-        left_off = self.full_bounds().left() - morph.left()
+        left_off = self.get_full_bounds().left() - morph.left()
         if left_off < 0:
             self.move_by(Point(-left_off, 0))
-        right_off = self.full_bounds().right() - morph.right()
+        right_off = self.get_full_bounds().get_right() - morph.get_right()
         if right_off > 0:
             self.move_by(Point(-right_off, 0))
-        top_off = self.full_bounds().top() - morph.top()
+        top_off = self.get_full_bounds().get_top() - morph.get_top()
         if top_off < 0:
             self.move_by(Point(0, -top_off))
-        bottom_off = self.full_bounds().bottom() - morph.bottom()
+        bottom_off = self.get_full_bounds().get_bottom() - morph.get_bottom()
         if bottom_off > 0:
             self.move_by(Point(0, -bottom_off))
 
     #Morph displaying:
-    def draw_new(self):
+    def draw(self):
 #        print("morph", self, "visibility = ", self.is_visible) 
 #        if not self.is_visible:
 #            return
@@ -192,11 +192,11 @@ class Morph(Node ):
         # print("I use color : ", self.color)
         bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
         bgl.glColor4f(*self.color)
-        dimensions = self.extent().as_list()
+        dimensions = self.get_extent().as_list()
         if self.rounded:
             Morph.draw_rounded_morph(self, 0.3, self.color, rectangle = False)
         else:
-            bgl.glRecti(self.position().x, self.position().y, self.position().x+dimensions[0], self.position().y+dimensions[1])
+            bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x+dimensions[0], self.get_position().y+dimensions[1])
 #PKHG.TODO font stuff
 #        font_id = blf.load("c:/Windows/Fonts/arialbd.ttf")
         font_id = self.font_id 
@@ -214,28 +214,7 @@ class Morph(Node ):
         if self.with_name:
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
 
-
-    def draw_on(self, rectangle=None):
-        if not self.is_visible:
-            return
-        if rectangle == None:
-            rectangle = self.bounds
-        area = rectangle.intersect(self.bounds)
-        if area.extent() > Point(0,0):
-            p = area.origin.as_list()
-            area.origin = area.origin - self.bounds.origin
-            area.corner = area.corner - self.bounds.origin
-            self.draw_new()
-
-    def full_draw_on(self, rectangle=None):
-        if not self.is_visible:
-            return
-        if rectangle == None:
-            rectangle = self.full_bounds()
-        self.draw_on(rectangle)
-        for child in self.children:
-            child.full_draw_on(rectangle)
-
+    
     def hide(self):
         self.is_visible = False
         self.changed()
@@ -257,13 +236,13 @@ class Morph(Node ):
     #Morph updating:
 
     def changed(self):
-        w = self.root()
+        w = self.get_root()
         
         """if isinstance(w, World):
             w.broken.append(copy.copy(self.bounds))"""
         
     def full_changed(self):
-        w = self.root()
+        w = self.get_root()
 #PKHG.TODO        if isinstance(w, World):
 #            w.broken.append(copy.copy(self.full_bounds()))
 
@@ -285,10 +264,10 @@ class Morph(Node ):
                 parent.remove_child(morph)
         self.add_child(morph)
 
-    def morph_at(self, point):
-        morphs = self.all_children()
+    def get_morph_at(self, point):
+        morphs = self.get_all_children()
         for m in morphs[::-1]:
-            if m.full_bounds().contains_point(point):
+            if m.get_full_bounds().get_contains_point(point):
                 return m
 
     #Morph duplicating:
@@ -310,13 +289,13 @@ class Morph(Node ):
 
     #Morph dragging and dropping:
 
-    def root_for_grab(self):
+    def get_root_for_grab(self):
         if self.parent == None or isinstance(self.parent, Frame):
             return self
         else:
-            return self.parent.root_for_grab()
+            return self.parent.get_root_for_grab()
 
-    def wants_drop_of(self, morph):
+    def get_wants_drop_of(self, morph):
         "default is False - change for subclasses"
         return False
 
@@ -326,13 +305,13 @@ class Morph(Node ):
 
     #Morph events:
 
-    def handles_mouse_over(self):
+    def get_handles_mouse_over(self):
         return False
 
-    def handles_mouse_click(self):
+    def get_handles_mouse_click(self):
         return False
 
-    def handles_mouse_move(self):
+    def get_handles_mouse_move(self):
         return False
 
     def mouse_down_left(self, pos):
@@ -401,23 +380,6 @@ class Morph(Node ):
         menu.add_item("hide", 'hide')
         menu.add_item("close", 'delete')
         return menu
-
-    def choose_alpha(self):
-        result = self.prompt(self.__class__.__name__ + "\nalpha\nvalue:",
-                            str(self.alpha),
-                            50)
-        if result != None:
-            self.alpha = min(max(int(result),0),254)
-            self.draw_new()
-            self.changed()
-
-    def choose_color(self):
-        result = self.pick_color(self.__class__.__name__ + "\ncolor:",
-                            self.color)
-        if result != None:
-            self.color = result
-            self.draw_new()
-            self.changed()
 
     def resize(self):
         handle = Resizer(self)
@@ -539,12 +501,12 @@ class Morph(Node ):
             bounds = morph
         else:
             bounds = morph.bounds
-        PNW = bounds.top_left()
-        PZW = bounds.bottom_left()
-        PZE = bounds.bottom_right()
-        PNE = bounds.top_right()
-        disUp = PNW.distance_to(PZW)
-        disSide = PZW.distance_to(PZE)
+        PNW = bounds.get_top_left()
+        PZW = bounds.get_bottom_left()
+        PZE = bounds.get_bottom_right()
+        PNE = bounds.get_top_right()
+        disUp = PNW.get_distance_to(PZW)
+        disSide = PZW.get_distance_to(PZE)
         a = min(disUp, disSide) * small
     
         offset = Point(a, a)

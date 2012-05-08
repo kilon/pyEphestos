@@ -107,19 +107,19 @@ class Point:
 
     #Point functions:
 
-    def dot_product(self, other):
+    def get_dot_product(self, other):
         """ getter (point) : return the the dot product between the current point and another point"""
         return self.x * other.x + self.y * other.y
 
-    def cross_product(self, other):
+    def get_cross_product(self, other):
         """ getter (point) : return the the cross product between the current point and another point"""
         return self.x * other.y - self.y * other.x
 
-    def distance_to(self, other):
+    def get_distance_to(self, other):
         """ getter (point) : return the the distance between the current point and another point"""
-        return (other - self).r()
+        return (other - self).get_r()
 
-    def rotate(self, direction, center):
+    def get_rotate(self, direction, center):
         """ getter (direction,center) : return the the rotation point relative to a center and towards a direction"""
         "direction must be 'right', 'left' or 'pi'"
         offset = self - center
@@ -132,7 +132,7 @@ class Point:
         else:
             return NotImplemented
 
-    def flip(self, direction, center):
+    def get_flip(self, direction, center):
         """ getter (direction,center) : return the fliped point relative to a center and towards a direction.Direction must be 'vertical' or 'horizontal"""
         if direction == 'vertical':
             return Point(self.x, center.y * 2 - self.y)
@@ -143,17 +143,17 @@ class Point:
 
     #Point polar coordinates:
 
-    def r(self):
+    def get_r(self):
 #PKHG        return math.sqrt(self.dot_product(self))
-        return sqrt(self.dot_product(self))
+        return sqrt(self.get_dot_product(self))
 
     #Point transforming:
 
-    def scale_by(self, scalePoint):
+    def get_scale_by(self, scalePoint):
         """ getter (point) : return the current point scaled by another point"""
         return Point(scalePoint.x * self.x, scalePoint.y * self.y)
 
-    def translate_by(self, deltaPoint):
+    def get_translate_by(self, deltaPoint):
         """ getter (point) : return the current point translated by another point"""
         return Point(deltaPoint.x + self.x, deltaPoint.y + self.y)
 
@@ -163,15 +163,15 @@ class Point:
         """ getter : return the current point as a list"""
         return [self.x, self.y]
 
-    def corner(self, cornerPoint):
+    def get_corner(self, cornerPoint):
         """ getter : return the rectangle of the current point with another point"""
         return Rectangle(self, cornerPoint)
 
-    def rectangle(self, aPoint):
+    def get_rectangle(self, aPoint):
         """ getter : return the rectangle of the current point with another point using min and max"""
         return Rectangle(self.min(aPoint), self.max(aPoint))
 
-    def extent(self, extentPoint):
+    def get_extent(self, extentPoint):
         """ getter : return the rectangle of the current point with another point using extend"""
         return Rectangle(self, self + extentPoint)
 
@@ -188,80 +188,80 @@ class Rectangle:
 
     #Rectangle accessing - getting:
 
-    def area(self):
+    def get_area(self):
         w = self.width()
         if w < 0:
             return 0
         else:
-            return max(w * self.height(), 0)
+            return max(w * self.get_height(), 0)
 
-    def bottom(self):
+    def get_bottom(self):
 #        return self.corner.y
         return self.origin.x
 
-    def bottom_center(self):
-        return Point(self.center().x, self.bottom())
+    def get_bottom_center(self):
+        return Point(self.get_center().x, self.get_bottom())
 
-    def bottom_left(self):
+    def get_bottom_left(self):
 #        return Point(self.origin.x, self.corner.y)
         return Point(self.origin.x, self.origin.y)
 
-    def bottom_right(self):
+    def get_bottom_right(self):
 #        return self.corner
         return Point(self.corner.x, self.origin.y)
 
-    def bounding_box(self):
+    def get_bounding_box(self):
         return self
 
-    def center(self):
+    def get_center(self):
 #        return (self.top_left() + self.bottom_right()) // 2
         return Point(self.origin.x + self.corner.x, self.origin.y +self.corner.y) // 2
 
-    def corners(self):
-        return [self.top_left(),
-                self.bottom_left(),
-                self.bottom_right(),
-                self.top_right()]
+    def get_corners(self):
+        return [self.get_top_left(),
+                self.get_bottom_left(),
+                self.get_bottom_right(),
+                self.get_top_right()]
 
-    def extent(self):
+    def get_extent(self):
         return self.corner - self.origin
 
-    def height(self):
+    def get_height(self):
         return self.corner.y - self.origin.y
 
-    def left(self):
+    def get_left(self):
         return self.origin.x
 
-    def left_center(self):
+    def get_left_center(self):
 #        return Point(self.left(), self.center().y)
-        return Point(self.origin.x, self.center().y)
+        return Point(self.origin.x, self.get_center().y)
 
-    def right(self):
+    def get_right(self):
         return self.corner.x
 
-    def right_center(self):
+    def get_right_center(self):
 #        return Point(self.right(), self.center().y)
-        return Point(self.corner.x, self.center().y)
+        return Point(self.corner.x, self.get_center().y)
 
-    def top(self):
+    def get_top(self):
         return self.origin.y
 
-    def top_center(self):
+    def get_top_center(self):
 #        return Point(self.center().x, self.top())
-        return Point(self.center().x, self.corner.y)
+        return Point(self.get_center().x, self.corner.y)
 
-    def top_left(self):
+    def get_top_left(self):
 #        return self.origin
         return Point(self.origin.x, self.corner.y)
 
-    def top_right(self):
+    def get_top_right(self):
 #        return Point(self.corner.x, self.origin.y)
         return self.corner
 
-    def width(self):
+    def get_width(self):
         return self.corner.x - self.origin.x
 
-    def position(self):
+    def get_position(self):
         return self.origin
 
     #Rectangle comparison:
@@ -277,33 +277,33 @@ class Rectangle:
 
     #Rectangle functions:
 
-    def inset_by(self, delta):
+    def get_inset_by(self, delta):
         if isinstance(delta, Rectangle):
             return Rectangle(self.origin + delta.origin, self.corner - delta.corner)
         else:
             return Rectangle(self.origin + delta, self.corner - delta)
 
-    def expand_by(self, integer):
+    def get_expand_by(self, integer):
         return Rectangle(self.origin - integer, self.corner + integer)
 
-    def intersect(self, aRectangle):
+    def get_intersect(self, aRectangle):
         return Rectangle(self.origin.max(aRectangle.origin),
                          self.corner.min(aRectangle.corner))
 
-    def merge(self, aRectangle):
+    def get_merge(self, aRectangle):
         return Rectangle(self.origin.min(aRectangle.origin),
                          self.corner.max(aRectangle.corner))
 
     #Rectangle testing:
 
-    def contains_point(self, point):
+    def get_contains_point(self, point):
         return self.origin <= point and point < self.corner
 
-    def contains_rectangle(self, rectangle):
+    def get_contains_rectangle(self, rectangle):
         return (rectangle.origin >= self.origin
                 and rectangle.corner <= self.corner)
 
-    def intersects(self, rectangle):
+    def get_intersects(self, rectangle):
         ro = rectangle.origin
         rc = rectangle.corner
         if rc.x < self.origin.x:
@@ -319,10 +319,10 @@ class Rectangle:
 
     #Rectangle transforming:
 
-    def scale_by(self, scale):
+    def get_scale_by(self, scale):
         "scale can be either a Point or a scalar"
         return Rectangle(self.origin * scale, self.corner * scale)
 
-    def translate_by(self, factor):
+    def get_translate_by(self, factor):
         "factor can be either a Point or a scalar"
         return Rectangle(self.origin + factor, self.corner + factor)

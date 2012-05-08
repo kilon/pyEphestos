@@ -13,7 +13,7 @@ class World(Frame):
         self.hand.world = self
         self.keyboard_receiver = None
         self.text_cursor = None
-        self.bounds = Point(0, 0).corner(Point(x, y))
+        self.bounds = Point(0, 0).get_corner(Point(x, y))
         self.color = (0.0, 1.0 , 1.0, 0.4)#(130, 130, 130)
 #PKHG.INFO World is a Frames, a Frame  is a Morph, a Morh has color and alpha (yet!)
         self.open_menu = None
@@ -26,25 +26,25 @@ class World(Frame):
         self.running = True
 
     def __repr__(self):
-        return 'World(' + self.extent().__str__() + ')'
+        return 'World(' + self.get_extent().__str__() + ')'
     '''
     def draw_new(self, event):
         Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
         return
     '''
-    def draw_new(self):
+    def draw(self):
         """If ... is running show the world as rounded morph"""
         
         if self.running:            
             Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
             for child in self.children:
-                child.draw_new()
+                child.draw()
                 
     
     def broken_for(self, morph):
         "private"
         result = []
-        fb = morph.full_bounds()
+        fb = morph.get_full_bounds()
         for r in self.broken:
             if r.intersects(fb):
                 result.append(r)
@@ -62,7 +62,7 @@ class World(Frame):
     def full_draw_on(self, surface, rectangle=None):
         if rectangle == None:
             rectangle = self.bounds
-        if rectangle.extent() > Point(0,0):
+        if rectangle.get_extent() > Point(0,0):
             self.image.fill(self.color, rectangle.as_rect())
             for child in self.children:
                 child.full_draw_on(surface, rectangle)
@@ -177,10 +177,10 @@ a lively GUI for Blender\ninspired by Squeak\nbased on Pygame\n\
 
     #World events / dragging and dropping:
 
-    def wants_drop_of(self, morph):
+    def get_wants_drop_of(self, morph):
         return True
 
-    def handles_mouse_click(self):
+    def get_handles_mouse_click(self):
         return True
 
     #World mainloop:

@@ -91,7 +91,7 @@ class Text(Morph):
                     oldline = oldline + word + ' '
 #        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
 #Text ...    
-    def draw_new(self):
+    def draw(self):
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
@@ -100,12 +100,12 @@ class Text(Morph):
         hei = yy - y
         nr = len(self.lines)
         lineHei = -1 +  hei // nr 
-        color = self.color
+        color = self.get_color()
         bgcol = self.background_color
         bgl.glEnable(bgl.GL_BLEND) #PKHG. needed for color of rectangle!
         bgl.glColor4f(*bgcol)
-        dime = self.extent().as_list()
-        bgl.glRecti(self.position().x, self.position().y, self.position().x + dime[0], self.position().y + dime[1])
+        dime = self.get_extent().as_list()
+        bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x + dime[0], self.get_position().y + dime[1])
         for el in range(nr):
             Morph.draw_string_to_viewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
         return
@@ -140,7 +140,7 @@ class Text(Morph):
         if fontname != None:
             self.fontname = fontname
             self.changed()
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def choose_font_size(self):
@@ -150,7 +150,7 @@ class Text(Morph):
         if fontsize != None:
             self.fontsize = int(fontsize)
             self.changed()
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def choose_background_color(self):
@@ -158,7 +158,7 @@ class Text(Morph):
                             self.background_color)
         if result != None:
             self.background_color = result
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def edit_contents(self):
@@ -168,7 +168,7 @@ class Text(Morph):
         if text != None:
             self.text = text
             self.changed()
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def set_alignment_to_left(self):
@@ -182,37 +182,37 @@ class Text(Morph):
 
     def set_alignment(self, alignment):
         self.alignment = alignment
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def set_to_normal(self):
         self.bold = False
         self.italic = False
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def set_to_bold(self):
         self.bold = True
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def set_to_italic(self):
         self.italic = True
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def change_extent_to(self, point):
         self.changed()
         self.max_width = point.x
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def adjust_text(self, word):
         words = word.replace("\\n","\n")
-        position = self.position()
+        position = self.get_position()
         self.text = words
         self.parse() #once?!
         nr_of_lines = len(self.lines)
@@ -228,7 +228,7 @@ class Text(Morph):
                  nr_of_lines * hight_line
         x = position.x
         y = position.y
-        self.bounds = position.corner(Point(wi + x , hei + y ))
+        self.bounds = position.get_corner(Point(wi + x , hei + y ))
             
     def wants_drop_of(self, morph): #PKHG.test?
         return {'FINISHED'} 

@@ -6,7 +6,7 @@ class RoundedBox(Morph):
 #    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
     def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,1), outer_per = 0.5, inner_per = 0.2):
         super(RoundedBox, self).__init__()
-        self.bounds = Point(0,0).corner( Point(100,100))
+        self.bounds = Point(0,0).get_corner( Point(100,100))
         self.edge = edge
         self.border = border
         self.color = color
@@ -14,7 +14,7 @@ class RoundedBox(Morph):
         self.outer_per = outer_per
         self.inner_per = inner_per
         
-    def draw_new(self):
+    def draw(self):
         self.fill_rounded(self.edge, self.bordercolor, 0)
         self.fill_rounded(max(self.edge - (self.border // 2),0),
                           self.bordercolor, self.border)
@@ -25,7 +25,7 @@ class RoundedBox(Morph):
         if inset == 0:
             Morph.draw_rounded_morph(self, self.outer_per, color, rectangle = False)
         else:
-            rect = self.bounds.inset_by(inset + 1)
+            rect = self.bounds.get_inset_by(inset + 1)
             Morph.draw_rounded_morph(rect,  self.inner_per,  color, rectangle = True )
 
     #RoundedBox menu:
@@ -44,7 +44,7 @@ class RoundedBox(Morph):
         if result != None:
             self.changed()
             self.border = min(max(int(result),0),self.width()//3)
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def choose_edge(self):
@@ -54,7 +54,7 @@ class RoundedBox(Morph):
         if result != None:
             self.changed()
             self.edge = min(max(int(result),0),self.width()//3)
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def choose_border_color(self):
@@ -62,6 +62,6 @@ class RoundedBox(Morph):
                             self.bordercolor)
         if result != None:
             self.bordercolor = result
-            self.draw_new()
+            self.draw()
             self.changed()
 

@@ -27,54 +27,54 @@ class Node(object):
 
     #Node functions:
 
-    def root(self):
+    def get_root(self):
         if self.parent == None:
             return self
         else:
-            return self.parent.root()
+            return self.parent.get_root()
 
-    def depth(self):
+    def get_depth(self):
         if self.parent == None:
             return 0
         else:
-            return self.parent.depth() + 1
+            return self.parent.get_depth() + 1
 
-    def all_children(self):
+    def get_all_children(self):
         "includes myself"
         result = [self]
         for child in self.children:
-            result.extend(child.all_children())
+            result.extend(child.get_all_children())
         return result
 
-    def all_leafs(self):
+    def get_all_leafs(self):
         result = []
         for element in self.all_children():
             if element.children == []:
                 result.append(element)
         return(result)
 
-    def all_parents(self):
+    def get_all_parents(self):
         "includes myself"
         result = [self]
         if self.parent != None:
-            result.extend(self.parent.all_parents())
+            result.extend(self.parent.get_all_parents())
         return result
 
-    def siblings(self):
+    def get_siblings(self):
         result = []
         for element in self.parent.children:
             if element is not self:
                 result.append(element)
         return result
 
-    def parent_of_class(self, aClass):
+    def get_parent_of_class(self, aClass):
         "answer the first of my parents which is an instance of aClass"
         for element in self.all_parents():
             if isinstance(element, aClass):
                 return element
         return None
 
-    def child_of_class(self, aClass):
+    def get_child_of_class(self, aClass):
         "answer the first of my children which is an instance of aClass"
         for element in self.all_children():
             if isinstance(element, aClass):

@@ -1,6 +1,6 @@
 from .menu import *
 
-class Button(Trigger, RoundedBox):
+class Button(RoundedBox):
     def __init__(self, target=None,
                  action= None, 
                  label=None,

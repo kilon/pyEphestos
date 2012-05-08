@@ -88,15 +88,15 @@ class Menu(RoundedBox):
         text.color = (1.0, 1.0, 1.0, 1.0)
         text.background_color = self.bordercolor
 
-        text.draw_new()
+        text.draw()
         self.label = RoundedBox(3,0)
         self.label.color = self.bordercolor
-        self.label.set_extent(text.extent() + 4)
-        self.label.draw_new()
+        self.label.set_extent(text.get_extent() + 4)
+        self.label.draw()
         self.label.add(text)
         self.label.text = text
         
-    def draw_new(self):
+    def draw(self):
         global debug_stringfield_060512_0723 
 #PKHG.OK        print("++++L114+++++ draw_new of Menu called")
 
@@ -117,11 +117,11 @@ class Menu(RoundedBox):
             self.create_label()
             self.label.set_position(self.bounds.origin + 4)
             self.add(self.label)
-            self.label.draw_new() #PKHG. to show it?
-            y = self.label.bottom()
+            self.label.draw() #PKHG. to show it?
+            y = self.label.get_bottom()
         else:
-            y = self.top() + 4
-        x = self.left() + 4
+            y = self.get_top() + 4
+        x = self.get_left() + 4
         if debug050512_1659:
             print("will be position ",(x,y))
         for pair in self.items:
@@ -145,15 +145,15 @@ class Menu(RoundedBox):
                 item.color = (1,0,0,1) #PKHG test
                 item.name = pair[0]
                 item.with_name = True
-                item.bounds = Point(0,0).corner(Point(0,25))
+                item.bounds = Point(0,0).get_corner(Point(0,25))
 #                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
-            y += item.height()
-        fb = self.full_bounds()
-        self.set_extent(fb.extent() + 4)
+            y += item.get_height()
+        fb = self.get_full_bounds()
+        self.set_extent(fb.get_extent() + 4)
         self.adjust_widths()
-        super(Menu, self).draw_new()
+        super(Menu, self).draw()
         
 #        print("menu.py draw_new; super(Menu, self) and type ", super(Menu, self), type(super(Menu, self)))  
 #PKHG.errro no bounds        super(Menu, self).bounds = Point(0,0).corner( Point(200,200))
@@ -167,13 +167,13 @@ class Menu(RoundedBox):
 #PKHG.TODO no widget at this moment 25Apr12            
 #PKHG>???            if isinstance(item, Morph): #PKHG.TODO Widget):
 #                w = max(w, item.width())
-            w = max(w, item.width())
+            w = max(w, item.get_width())
             if debug050512:
                 print("Menu max_width w = ", w)
         if self.label != None:
             if debug050512:
                 print("Menu max_width label.width = ", self.label.width())
-            w = max(w, self.label.width())
+            w = max(w, self.label.get_width())
             if debug050512:
                 print("Menu max_width = ", w)
         return w
@@ -185,13 +185,13 @@ class Menu(RoundedBox):
             if isinstance(item, MenuItem):
                 item.create_backgrounds()
             else:
-                item.draw_new()
+                item.draw()
                 if item is self.label:
                     item.text.set_position(
-                        item.center() - (item.text.extent() // 2))
+                        item.get_center() - (item.text.get_extent() // 2))
 
     def popup(self, world, pos):
-        self.draw_new()
+        self.draw()
         self.set_position(pos)
         self.add_shadow("shade", Point(2,2), 80)
         self.keep_within(world)
@@ -207,12 +207,12 @@ class Menu(RoundedBox):
         self.popup(world, world.hand.position())
 
     def popup_centered_at_hand(self):
-        self.draw_new()
-        self.popup(world, (world.hand.position() - (self.extent() // 2)))
+        self.draw()
+        self.popup(world, (world.hand.get_position() - (self.get_extent() // 2)))
 
     def popup_centered_in_world(self):
-        self.draw_new()
-        self.popup(world, (world.center() - (self.extent() // 2)))
+        self.draw()
+        self.popup(world, (world.get_center() - (self.get_extent() // 2)))
 
 class SelectionMenu(Menu):
 
@@ -319,7 +319,7 @@ class Trigger(Morph):
 
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
-        super(Trigger, self).draw_new()
+        super(Trigger, self).draw()
 #        self.normal_image = pygame.Surface(self.extent().as_list())
 #        self.normal_image.fill(self.color)
 #        self.normal_image.set_alpha(self.alpha)
@@ -340,15 +340,15 @@ class Trigger(Morph):
                                  self.fontsize,
                                  self.bold,
                                  self.italic)
-        self.label.set_position(self.center() - (self.label.extent() // 2))
+        self.label.set_position(self.get_center() - (self.label.get_extent() // 2))
         self.add(self.label)
 
     #Trigger events:
 
-    def handles_mouse_over(self):
+    def get_handles_mouse_over(self):
         return True
 
-    def handles_mouse_click(self):
+    def get_handles_mouse_click(self):
         return True
 #PKHG.TODO self.image ..
     def mouse_enter(self):
@@ -367,7 +367,7 @@ class Trigger(Morph):
         print("self.action =", self.action )
         if self.action == "close_my_Menu":
             self.parent.delete()
-            print("my parent and root is", self.parent, self.root())
+            print("my parent and root is", self.parent, self.get_root())
             self.parent.is_visible = False
             
 #            close_my_Menu(self.root())
@@ -392,16 +392,16 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
                                  self.fontsize,
                                  self.bold,
                                  self.italic)
-        self.set_extent(self.label.extent() + Point(8,0))
-        np = self.position() + Point(4,0)
-        self.label.bounds = np.extent(self.label.extent())
+        self.set_extent(self.label.get_extent() + Point(8,0))
+        np = self.get_position() + Point(4,0)
+        self.label.bounds = np.get_extent(self.label.get_extent())
         self.add(self.label)
 
     def mouse_click_left(self, pos):
         if debug_mouseclick_060812_0756:
             print("MenuItem L390: mouse_click_left self = ",self," pos = ", pos)
         if isinstance(self.parent, Menu):
-            self.world().open_menu = None
+            self.get_world().open_menu = None
         self.parent.perform(self)
 
 class Bouncer(Morph):
@@ -436,10 +436,10 @@ class Bouncer(Morph):
                     self.move_down()
                 else:
                     self.move_up()
-                if (self.full_bounds().top() < self.parent.top()
+                if (self.get_full_bounds().get_top() < self.parent.get_top()
                     and self.direction == "up"):
                     self.direction = "down"
-                if (self.full_bounds().bottom() > self.parent.bottom()
+                if (self.get_full_bounds().get_bottom() > self.parent.get_bottom()
                     and self.direction == "down"):
                     self.direction = "up"
             elif self.type == "horizontal":     
@@ -447,10 +447,10 @@ class Bouncer(Morph):
                     self.move_right()
                 else:
                     self.move_left()
-                if (self.full_bounds().left() < self.parent.left()
+                if (self.get_full_bounds().get_left() < self.parent.get_left()
                     and self.direction == "left"):
                     self.direction = "right"
-                if (self.full_bounds().right() > self.parent.right()
+                if (self.get_full_bounds().get_right() > self.parent.get_right()
                     and self.direction == "right"):
                     self.direction = "left"
 

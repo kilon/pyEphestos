@@ -31,7 +31,7 @@ class String(Morph):
     def __repr__(self):
         return 'String("' + self.text + '")'
 
-    def draw_new(self):
+    def draw(self):
         '''
         self.font = pygame.font.SysFont(
             self.fontname,
@@ -81,7 +81,7 @@ class String(Morph):
         if fontname != None:
             self.fontname = fontname
             self.changed()
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def choose_font_size(self):
@@ -91,26 +91,26 @@ class String(Morph):
         if fontsize != None:
             self.fontsize = int(fontsize)
             self.changed()
-            self.draw_new()
+            self.draw()
             self.changed()
 
     def set_to_normal(self):
         self.bold = False
         self.italic = False
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def set_to_bold(self):
         self.bold = True
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     def set_to_italic(self):
         self.italic = True
         self.changed()
-        self.draw_new()
+        self.draw()
         self.changed()
 
     #String events:
@@ -148,10 +148,10 @@ class StringField( Morph):
                            self.bold, self.italic)
         self.add(self.text_string)
 
-    def draw_new(self):
+    def draw(self):
         "initialize my surface"
-        super(StringField, self).draw_new()
-        self.text_string.draw_new()
+        super(StringField, self).draw()
+        self.text_string.draw()
 
         input_width = self.text_string.width
         if input_width < 100:
@@ -159,29 +159,29 @@ class StringField( Morph):
             dif = 0
             self.minwidth = 100
         else:
-            dif = input_width - self.width()
+            dif = input_width - self.get_width()
 #PKHG.ok        print("stringfield L163: dif =", dif)
         if dif > 0:
             #adjust size of morph
 #            self.minwidth = input_width
             new_corner = self.bounds.corner + Point(dif,0)
-            self.bounds = self.bounds.origin.corner(new_corner)
+            self.bounds = self.bounds.origin.get_corner(new_corner)
         elif dif < 0:
             x = self.bounds.origin.x
             y = self.bounds.corner.y
             if input_width < 100:
-                self.bounds = self.bounds.origin.corner(Point(x + 100, y))
+                self.bounds = self.bounds.origin.get_corner(Point(x + 100, y))
             else:        
-                self.bounds = self.bounds.origin.corner(Point(x + input_width, y))
+                self.bounds = self.bounds.origin.get_corner(Point(x + input_width, y))
         children = self.children
 #PKHG.OK        print("\n================stringfield children", children)
         for child in children:
             if child.is_visible:
 #PKHG.OK                print("stringfield drawing" , child)
-                child.draw_new()
+                child.draw()
         
-        super(StringField, self).draw_new()
-        self.text_string.draw_new()
+        super(StringField, self).draw()
+        self.text_string.draw()
                 
         return 
         ''' 
@@ -200,10 +200,10 @@ class StringField( Morph):
         self.text.draw_new()
         '''
 
-    def string(self):
+    def get_string(self):
         return self.text.text
 
-    def handles_mouse_click(self):
+    def get_handles_mouse_click(self):
         return False
 
     def mouse_click_left(self, pos):

@@ -35,28 +35,28 @@ class Hand(Morph):
         self.mouse_down_morph = None
         self.morph_to_grab = None
         self.moving_morph= False
-        self.bounds = Point(0, 0).corner(Point(0,0))
+        self.bounds = Point(0, 0).get_corner(Point(0,0))
         self.grabed_morph_offset_x = 0 # the relative position of the morph to the mouse cursor x axis
         self.grabed_morph_offset_y = 0 # the relative position of the morph to the mouse cursor y axis
         self.active_text_input_morph = None
         self.temp_text_list = []
         
     def __repr__(self):
-        return 'Hand(' + self.center().__str__() + ')'
+        return 'Hand(' + self.get_center().__str__() + ')'
 
     def changed(self):
         print("--info-- hand.py L47;  changed called from self = ", self)
         if self.parent != None:
-            b = self.full_bounds()
-            print("--info-- hand.py L50; self.full_bounds()", b," extent= ", b.extent())
-            if b.extent() != Point(0, 0):
-                self.parent.broken.append(self.full_bounds())
+            b = self.get_full_bounds()
+            print("--info-- hand.py L50; self.get_full_bounds()", b," extent= ", b.get_extent())
+            if b.get_extent() != Point(0, 0):
+                self.parent.broken.append(self.get_full_bounds())
                 print("--info-- hand.py L53; world.broken", self.parent.broken[:])
    
-    def draw_new(self):
+    def draw(self):
         """ hand has nothing more to draw than its children which are the morph that are marked for grab """
         for child in self.children:
-            child.draw_new()
+            child.draw()
             
     def draw_on(self, rectangle=None):
         pass
@@ -213,33 +213,32 @@ class Hand(Morph):
         elif event.value=='RELEASE':
             return self.process_mouse_up(event)
         
-    def morph_at_pointer(self):
+    def get_morph_at_pointer(self):
         """ return the top morph that is under the current position of the mouse cursor """
     
         morphs = self.parent.children
         for m in morphs: # morphs[::-1]:
-            if m.full_bounds().contains_point(self.bounds.origin) and m.is_visible and not isinstance(m,Hand):
-                return m.morph_at(self.bounds.origin)
+            if m.get_full_bounds().get_contains_point(self.bounds.origin) and m.is_visible and not isinstance(m,Hand):
+                return m.get_morph_at(self.bounds.origin)
         return self.parent
 
-    def all_morphs_at_pointer(self):
+    def get_all_morphs_at_pointer(self):
         """ return all the morphs are under the current position of the mouse cursor """
     
         answer = []
         # morphs = self.world.all_children()
         morphs = self.parent.children
         for m in morphs:
-            if m.is_visible and (m.full_bounds().contains_point
-                                 (self.bounds.origin)):
+            if m.is_visible and (m.get_full_bounds().get_contains_point(self.bounds.origin)):
                 answer.append(m)
         return answer
 
     #Hand dragging and dropping:
 
     def drop_target_for(self, morph):
-        target = self.morph_at_pointer()
+        target = self.get_morph_at_pointer()
         print("DBG handle drop_target_for L63 morph = ", morph)
-        while target.wants_drop_of(morph) == False:
+        while target.get_wants_drop_of(morph) == False:
             target = target.parent
         return target
 #Hand
@@ -262,7 +261,7 @@ class Hand(Morph):
             self.changed()
             target.add(morph)
             morph.changed()
-            self.morph_to_grab = None
+            self.get_morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
 
@@ -280,18 +279,18 @@ class Hand(Morph):
             self.drop()
         else:
             
-            morph = self.morph_at_pointer()
+            morph = self.get_morph_at_pointer()
             pos = self.bounds.origin
             
             if event.type == 'LEFTMOUSE':                
                 
                 # mark morph for drag only if mouse cursor is top of it
-                self.morph_to_grab = morph.root_for_grab()
+                self.morph_to_grab = morph.get_root_for_grab()
             
                 if morph.is_draggable:
                     self.moving_morph = True
                 #searh for a morph(parent) to handle a click!
-                while not morph.handles_mouse_click():
+                while not morph.get_handles_mouse_click():
                     if debug_left_mouse_click_060512_1048:
                         print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
                     morph = morph.parent
@@ -322,9 +321,9 @@ class Hand(Morph):
         else:
             pos = Point(event.mouse_region_x,
                         event.mouse_region_y)
-            morph = self.morph_at_pointer()
+            morph = self.get_morph_at_pointer()
 
-            while not morph.handles_mouse_click():
+            while not morph.get_handles_mouse_click():
                 morph = morph.parent
 
             if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
@@ -352,18 +351,18 @@ class Hand(Morph):
         """ here we process all the mouse_move events and trigger approriate events of the morph depending on the specific action performed """
         
         value_returned = {'PASS_THROUGH'}
-        mouse_over_new = self.all_morphs_at_pointer()
+        mouse_over_new = self.get_all_morphs_at_pointer()
         
         # trigger mouse move event and trigger the approriate mouse move event of the morph
         
         if self.children == [] and event.type == 'MOUSEMOVE':
-            top_morph = self.morph_at_pointer()
+            top_morph = self.get_morph_at_pointer()
             
-            if top_morph.handles_mouse_move():
+            if top_morph.get_handles_mouse_move():
                 pos = Point(event.mouse_region_x,
                             event.mouse_region_y)
                 top_morph.mouse_move(pos)
-            morph = top_morph.root_for_grab()
+            morph = top_morph.get_root_for_grab()
             
             # if morph is marked for grab and the mouse moves then drag it
             
