@@ -60,7 +60,7 @@ button1.border = 10
 button1.bounds = Rectangle(Point(0,0), Point(40,40))
 button1.set_position(Point(200,200))
 col = (1,0,0,1)
-button1.color = col
+button1.set_color(color = 'sfgreen')
 col = (0,0,1,1)
 print("default button bounds ", button1.bounds, " extent = ", button1.get_extent())
 world.add(button1)
