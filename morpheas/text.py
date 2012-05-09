@@ -228,7 +228,8 @@ class Text(Morph):
                  nr_of_lines * hight_line
         x = position.x
         y = position.y
-        self.bounds = position.get_corner(Point(wi + x , hei + y ))
+#        self.bounds = position.get_corner(Point(wi + x , hei + y ))
+        self.bounds = Rectangle(position, Point(wi + x , hei + y ))
             
     def wants_drop_of(self, morph): #PKHG.test?
         return {'FINISHED'} 

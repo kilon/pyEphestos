@@ -165,14 +165,17 @@ class StringField( Morph):
             #adjust size of morph
 #            self.minwidth = input_width
             new_corner = self.bounds.corner + Point(dif,0)
-            self.bounds = self.bounds.origin.get_corner(new_corner)
+#PKHG.not logical            self.bounds = self.bounds.origin.get_corner(new_corner)
+            self.bounds = Rectangle(self.bounds.origin, new_corner)
         elif dif < 0:
             x = self.bounds.origin.x
             y = self.bounds.corner.y
             if input_width < 100:
-                self.bounds = self.bounds.origin.get_corner(Point(x + 100, y))
+#                self.bounds = self.bounds.origin.get_corner(Point(x + 100, y))
+                self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
             else:        
-                self.bounds = self.bounds.origin.get_corner(Point(x + input_width, y))
+#                self.bounds = self.bounds.origin.get_corner(Point(x + input_width, y))
+                self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
         children = self.children
 #PKHG.OK        print("\n================stringfield children", children)
         for child in children:

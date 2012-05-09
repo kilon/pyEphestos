@@ -145,7 +145,8 @@ class Menu(RoundedBox):
                 item.color = (1,0,0,1) #PKHG test
                 item.name = pair[0]
                 item.with_name = True
-                item.bounds = Point(0,0).get_corner(Point(0,25))
+#                item.bounds = Point(0,0).get_corner(Point(0,25))
+                item.bounds = Rectangle(Point(0,0), Point(0,25))
 #                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)

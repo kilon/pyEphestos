@@ -24,7 +24,8 @@ class Morph(Node ):
         if bounds:
             self.bounds = bounds
         else:
-            self.bounds = Point(0, 0).get_corner(Point(100,60))
+#            self.bounds = Point(0, 0).get_corner(Point(100,60))
+            self.bounds = Rectangle(Point(0, 0), Point(100,60))
         self.color = (0.3, 0.3, 0.3, 1.0)
         self.is_visible = True
         self.is_draggable = True
@@ -53,10 +54,28 @@ class Morph(Node ):
         """ getter: get the color of the morph"""
         return self.color
     
-    def set_color(self,r,g,b,alpha):
-        """ getter : (red , green , blue , alpha ) Set the color of the morph RGB plus alpha for transparency , all floats starting from 0 (0.0) and ending in 1 (1.0)"""
-        self.color=(r,g,b,alpha)
-        
+##0.1 version    def set_color(self,r,g,b,alpha):
+    def set_color(self,*rgba,**color):
+        """ setter : (red , green , blue , alpha )
+        Set the color of the morph RGB plus alpha for transparency ,
+        all floats starting from 0 (0.0) and ending in 1 (1.0)
+        If no rgba is available and the key-value-pair is
+        'color':"known color", that color is returned
+        Errors in use will give the default (1,0,0,0.5), half visible red!
+        """
+#        self.color=(r,g,b,alpha)
+        color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1)}                      
+        result = (1,0,0,0.5) #PKHG red may indicate an ERROR alpha = 0.5
+        if len(rgba) == 4:
+            if min(rgba) < 0.0 or max(rgba) > 1.0:
+                pass
+            else:
+                result = rgba
+        elif len(color) == 1:
+            tmp = color.get('color',result)
+            result = color_dict.get(tmp,result)
+        self.color = result
+            
     #stepping:
 
     def get_wants_to_step(self):
