@@ -66,11 +66,20 @@ class Morph(Node ):
 #        self.color=(r,g,b,alpha)
         color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1)}                      
         result = (1,0,0,0.5) #PKHG red may indicate an ERROR alpha = 0.5
-        if len(rgba) == 4:
-            if min(rgba) < 0.0 or max(rgba) > 1.0:
-                pass
-            else:
-                result = rgba
+#PKHG. allow (r,g,b) with alpha = 1
+        wrong_par = False
+        if rgba:
+            rgba = rgba[0]
+        if len(rgba) >= 3 and (min(rgba) < 0.0 or max(rgba) > 1.0):
+            wrong_par = True
+        print("---------- set_color", wrong_par,rgba,len(rgba),color )
+        if wrong_par:
+            pass
+        elif len(rgba) == 3:
+            result = (rgba[0],rgba[1],rgba[2],1)
+            print("len = 3 result = ",result)
+        elif len(rgba) == 4:
+            result = rgba
         elif len(color) == 1:
             tmp = color.get('color',result)
             result = color_dict.get(tmp,result)
