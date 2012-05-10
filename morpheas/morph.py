@@ -72,12 +72,10 @@ class Morph(Node ):
             rgba = rgba[0]
         if len(rgba) >= 3 and (min(rgba) < 0.0 or max(rgba) > 1.0):
             wrong_par = True
-        print("---------- set_color", wrong_par,rgba,len(rgba),color )
         if wrong_par:
             pass
         elif len(rgba) == 3:
             result = (rgba[0],rgba[1],rgba[2],1)
-            print("len = 3 result = ",result)
         elif len(rgba) == 4:
             result = rgba
         elif len(color) == 1:
