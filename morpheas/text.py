@@ -233,3 +233,5 @@ class Text(Morph):
             
     def wants_drop_of(self, morph): #PKHG.test?
         return {'FINISHED'} 
+    def width(self):
+        return self.max_line_width

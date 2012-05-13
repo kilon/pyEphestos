@@ -2497,7 +2497,7 @@ class Hand(Morph):
             return False        
 
 class Frame(Morph):
-    " I clip my submorphs at my bounds "
+    """ I clip my submorphs at my bounds """
 
     def full_bounds(self):
         shadow = self.get_shadow()

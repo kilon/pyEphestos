@@ -118,7 +118,7 @@ class Point:
     def get_distance_to(self, other):
         """ getter (point) : return the the distance between the current point and another point"""
         return (other - self).get_r()
-
+    
     def get_rotate(self, direction, center):
         """ getter (direction,center) : return the the rotation point relative to a center and towards a direction"""
         "direction must be 'right', 'left' or 'pi'"
@@ -163,9 +163,10 @@ class Point:
         """ getter : return the current point as a list"""
         return [self.x, self.y]
 #PKHG.ERROR, not a gette but a setter but should be removed.
-    def get_corner(self, cornerPoint):
-        """ getter : return the rectangle of the current point with another point"""
-        return Rectangle(self, cornerPoint)
+#PKHG.decision 09052012_0954 not needed up to other ideas
+#    def get_corner(self, cornerPoint):
+#        """ getter : return the rectangle of the current point with another point"""
+#        return Rectangle(self, cornerPoint)
 
     def get_rectangle(self, aPoint):
         """ getter : return the rectangle of the current point with another point using min and max"""

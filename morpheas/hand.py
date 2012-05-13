@@ -298,7 +298,7 @@ class Hand(Morph):
                 if debug_left_mouse_click_060512_1048:
                     print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
                 self.mouse_down_morph = morph                
-                # trigger also the approriate moRph event
+                # trigger also the approriate morph event
                 if debug_left_mouse_click_060512_1048:
                     print("-L303-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
                 morph.mouse_down_left(pos)

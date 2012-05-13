@@ -70,19 +70,21 @@ bl_info = {
 
 
 PKHG_test = True
+KILON_test = False
+
 if "bpy" in locals():
     import imp
     if "morpheas" in locals():
         imp.reload(morpheas) 
     if "test_1_morpheas" in locals():
         if PKHG_test:
-            imp.reload(test_3_morpheas)
+            imp.reload(test_4_morpheas)
         else:
             imp.reload(test_1_morpheas)
 else:
     import Ephestos
     if PKHG_test:
-        from Ephestos import  test_3_morpheas
+        from Ephestos import  test_4_morpheas
     else:
         from Ephestos import  test_1_morpheas
     

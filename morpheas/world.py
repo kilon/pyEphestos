@@ -1,7 +1,7 @@
 from .rectangle  import Point
 from .morph  import *
 from .hand  import *
-from .menu import *
+from .menu import Menu
 #from . class_Frame import Frame
 
 class World(Frame):
@@ -58,12 +58,12 @@ class World(Frame):
         self.open_menu = morph
 
     #World displaying:
-
+#PKHG.??? surface superfluous???    
     def full_draw_on(self, surface, rectangle=None):
         if rectangle == None:
             rectangle = self.bounds
         if rectangle.get_extent() > Point(0,0):
-            self.image.fill(self.color, rectangle.as_rect())
+#PKHG.??? image???            self.image.fill(self.color, rectangle.as_rect())
             for child in self.children:
                 child.full_draw_on(surface, rectangle)
             self.hand.full_draw_on(surface, rectangle)
@@ -80,9 +80,12 @@ class World(Frame):
             menu.add_item("hide all", 'hide_all')
             menu.add_item("show all", 'show_all_hiddens')
             menu.add_item("move all inside...", 'keep_all_submorphs_within')
+#PKHG not yet
             menu.add_item("color...", 'choose_color')
             menu.add_line()
+#PKHG not yet
             menu.add_item("stop all bouncers", 'stop_all_bouncers')
+#PKHG not yet
             menu.add_item("start all bouncers", 'start_all_bouncers')
             menu.add_line()
             menu.add_item("switch to user mode", 'toggle_dev_mode')
@@ -97,17 +100,17 @@ class World(Frame):
         menu = Menu(self, "create new")
         menu.add_item("rectangle...", 'user_create_rectangle')
         menu.add_item("ellipse...", 'user_create_ellipse')
-        menu.add_item("circle box...", 'user_create_circle_box')
+#PKHG not yet        menu.add_item("circle box...", 'user_create_circle_box')
         menu.add_item("rounded box...", 'user_create_rounded_box')
-        menu.add_item("polygon...", 'user_create_polygon')
+#PKHG not yet        menu.add_item("polygon...", 'user_create_polygon')
         menu.add_line()
         menu.add_item("string...", 'user_create_string')
         menu.add_item("text...", 'user_create_text')
         menu.add_line()
-        menu.add_item("bouncer...", 'user_create_bouncer')
-        menu.add_item("frame...", 'user_create_frame')
-        menu.add_item("palette...", 'user_create_color_palette')
-        menu.add_item("slider...", 'user_create_slider')
+#PKHG not yet        menu.add_item("bouncer...", 'user_create_bouncer')
+#PKHG not yet        menu.add_item("frame...", 'user_create_frame')
+#PKHG not yet        menu.add_item("palette...", 'user_create_color_palette')
+#PKHG not yet        menu.add_item("slider...", 'user_create_slider')
 
         menu.popup_at_hand()
 

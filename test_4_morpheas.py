@@ -6,69 +6,12 @@ import blf
 from .morpheas import *
 
 
-pwBot = Point(30,30)
-pwTop = Point(200,400)
-
-
-world= World()
+world = World()
 hand = Hand()
 world.add(hand)
-
-test_Menu = Menu(title="Menu I am ")
-test_Menu.name = "I am a Menu"
-test_Menu.is_draggable = False #should be fixed?!
-test_Menu.with_name = True
-#PKHG.no effect: test_Menu.bounds = Point(0,200).corner(Point(10,220))
-#test test_Menu.set_position(Point(50,200))
-test_Menu.set_position(Point(0,0))
-#test_Menu.color = (1,0,0,0)
-
-#PKHG test 5-5-2012 8:24
-test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_item(label = '1') #no params ==> label="close", action='nop'
-test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_item(label = '2') #no params ==> label="close", action='nop'
-
-test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_item(label = 'add abracadabra') #no params ==> label="close", action='nop'
-test_Menu.add_line() #debug050512_1659 shows a blue line
-    
-test_Menu.add_item(action='close_my_Menu') #no params ==> label="close", action='nop'
-test_Menu.add_line() #debug050512_1659 shows a blue line
-test_Menu.add_input_StringField(default = 'change me',width = 300)
-
-#PKHG.0505: not at good place:  test_Menu.add_input_StringField(default='I am Text field and may be changed')
-
-test_MenuItem = MenuItem(label = "test_menu_item")
-test_MenuItem.set_position(Point(100,150))
-test_MenuItem.create_label()
-test_MenuItem.name = "I am a MenuItem"
-#test_MenuItem.with_name = True
-#???test_MenuItem.set_position(Point(20,300))
-#PKHG.reason see below in comment: test_Menu.add(test_MenuItem)
-
-print("test L51 items of test_Menu", test_Menu.items[:])
-print("childrens of test_Menu = ",test_Menu.children[:])
-
-#060512 add a Trigger to show the Menu!
-trigger_show_Menu = Trigger(action='show_Menu')
-trigger_show_Menu.set_position(Point(100,100))
-trigger_show_Menu.set_color(color='blue')
-trigger_show_Menu.with_name = True
-world.add(trigger_show_Menu)
-
-
-button1 = Button(label="button" )
-button1.border = 10
-button1.bounds = Rectangle(Point(0,0), Point(40,40))
-button1.set_position(Point(200,200))
-col = (1,0,0,1)
-button1.set_color(color = 'green') 
-print("default button bounds ", button1.bounds, " extent = ", button1.get_extent())
-world.add(button1)
-
-#at this moment a Menu should be added latest to world!
-world.add(test_Menu)
+world_menu = world.context_menu()
+#print("test 4\n",dir(world_menu), "\n------end test_4")
+world.add(world_menu)
 
 
 '''

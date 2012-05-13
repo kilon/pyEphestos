@@ -1,4 +1,6 @@
+#PKHG Set debug values!
 debug050512_0900 = False #060512, seems to be OK now (problem with test_Menu)
+debug_changed_130512_0810 = False #all items seem to have world as root
 
 import bgl, blf
 from .rectangle import *
@@ -242,12 +244,14 @@ class Morph(Node ):
 
     
     def hide(self):
+        """hide me and all my children"""
         self.is_visible = False
         self.changed()
         for morph in self.children:
             morph.hide()
 
     def show(self):
+        """show me and all my children"""
         self.is_visible = True
         self.changed()
         for morph in self.children:
@@ -262,12 +266,19 @@ class Morph(Node ):
     #Morph updating:
 
     def changed(self):
-        w = self.get_root()
-        
-        """if isinstance(w, World):
-            w.broken.append(copy.copy(self.bounds))"""
+        """my bounds saved in world.broken"""
+        w = self.get_root() #PKHG recursive parent of self
+        if debug_changed_130512_0810:
+            print("changed_130512_0810 morph.py, root of", self,"is", w)
+        '''
+        if isinstance(w, World):
+            w.broken.append(copy.copy(self.bounds))
+            if debug_changed_130512_0810:
+                print("debug_changed_130512_0810 changed, self.bounds saved in world", self.bounds)
+        '''
         
     def full_changed(self):
+        """my full_bounds saved in world.broken"""
         w = self.get_root()
 #PKHG.TODO        if isinstance(w, World):
 #            w.broken.append(copy.copy(self.full_bounds()))

@@ -53,8 +53,10 @@ class String(Morph):
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
-            blf.draw(self.font, self.text)
 
+            blf.draw(self.font, self.text)
+    def get_width(self):
+        return self.width
     #String menu:
 
     def developers_menu(self):
