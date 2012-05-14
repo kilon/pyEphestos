@@ -57,7 +57,7 @@ class Morph(Node ):
         return self.color
     
 ##0.1 version    def set_color(self,r,g,b,alpha):
-    def set_color(self,*rgba,**color):
+    def set_color(self,*rgba):
         """ setter : (red , green , blue , alpha )
         Set the color of the morph RGB plus alpha for transparency ,
         all floats starting from 0 (0.0) and ending in 1 (1.0)
@@ -65,25 +65,23 @@ class Morph(Node ):
         'color':"known color", that color is returned
         Errors in use will give the default (1,0,0,0.5), half visible red!
         """
+        print("set_color argumen :",rgba)
 #        self.color=(r,g,b,alpha)
         color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1)}                      
         result = (1,0,0,0.5) #PKHG red may indicate an ERROR alpha = 0.5
 #PKHG. allow (r,g,b) with alpha = 1
         wrong_par = False
-        if rgba:
+        if len(rgba) == 1:
             rgba = rgba[0]
-        if len(rgba) >= 3 and (min(rgba) < 0.0 or max(rgba) > 1.0):
-            wrong_par = True
-        if wrong_par:
-            pass
+            self.color = (color_dict[rgba][0],color_dict[rgba][1],color_dict[rgba][2],color_dict[rgba][3])
+        if len(rgba) == 2  or len(rgba) > 4 and (min(rgba) < 0.0 or max(rgba) > 1.0):
+            print("error set_color argument must be either 1 or 4 see function documentation")
+        
         elif len(rgba) == 3:
             result = (rgba[0],rgba[1],rgba[2],1)
         elif len(rgba) == 4:
-            result = rgba
-        elif len(color) == 1:
-            tmp = color.get('color',result)
-            result = color_dict.get(tmp,result)
-        self.color = result
+            self.color = (rgba[0],rgba[1],rgba[2],rgba[3])
+        
             
     #stepping:
 

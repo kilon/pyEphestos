@@ -68,16 +68,11 @@ class Hand(Morph):
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
-#            return {'RUNNING_MODAL'}            
-#            return self.process_mouse_down(event)
             return self.distinguish_press_event(event)
+        
         elif event.value=='RELEASE':            
-#            return self.process_mouse_up(event)
-            print("\n===============process_all_events RELEASE seen")
             return self.distinguish_release_event(event)
         else:
-            print("hand.py L57) not eaton up  event.value = ", event.value)
-#            return {'RUNNING_MODAL'}
             return {'PASS_THROUGH'}
                 
             
@@ -85,18 +80,17 @@ class Hand(Morph):
         """mouse down, or keys to do"""
         
         result = {'RUNNING_MODAL'}
+        
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             result =  self.process_mouse_down(event)
-#        else:
-#PKHG.info eat the key pressed event            
-#            return {'RUNNING_MODAL'}
         return result  
 
 
 
     def distinguish_release_event(self, event):
         """handle keyboard release"""
+        
         def set_Info_input(tmp, visi):
             info_morph = [child for child in tmp.children if child.name == "Info_input"]
             if info_morph:
