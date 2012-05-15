@@ -1,33 +1,13 @@
-debug_left_mouse_click_060512_1048 = True
+
 import bpy
 
 from .rectangle import *
 from .morph import *
 
-#PKHG.???temp_text_list =[]
-import re
-re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
-used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
-     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
-     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
-     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
-     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
-     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
-     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
-     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
-     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
-     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
-     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
-     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
-     
-
-numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
-     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
-delete_list= ['DEL','BACK_SPACE']
 
 class Hand(Morph):
-    "I represent the mouse cursor"
+    "A hand is a morph that is not visual and represent the mouse cursor. It hadles and process all events as long as the mouse cursor is on top of another moprh and also trigger the approriate event methods of each morph"
 
     def __init__(self):
         super(Hand, self).__init__()
@@ -35,7 +15,6 @@ class Hand(Morph):
         self.mouse_down_morph = None
         self.morph_to_grab = None
         self.moving_morph= False
-#        self.bounds = Point(0, 0).get_corner(Point(0,0))
         self.bounds = Rectangle(Point(0, 0), Point(0,0))
         self.grabed_morph_offset_x = 0 # the relative position of the morph to the mouse cursor x axis
         self.grabed_morph_offset_y = 0 # the relative position of the morph to the mouse cursor y axis
@@ -46,22 +25,20 @@ class Hand(Morph):
         return 'Hand(' + self.get_center().__str__() + ')'
 
     def changed(self):
-        print("--info-- hand.py L47;  changed called from self = ", self)
+        "method called when something is changed"
         if self.parent != None:
             b = self.get_full_bounds()
-            print("--info-- hand.py L50; self.get_full_bounds()", b," extent= ", b.get_extent())
+            
             if b.get_extent() != Point(0, 0):
                 self.parent.broken.append(self.get_full_bounds())
-                print("--info-- hand.py L53; world.broken", self.parent.broken[:])
+                
    
     def draw(self):
         """ hand has nothing more to draw than its children which are the morph that are marked for grab """
         for child in self.children:
             child.draw()
             
-    def draw_on(self, rectangle=None):
-        pass
-
+    
     def process_all_events(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
         
@@ -91,113 +68,24 @@ class Hand(Morph):
     def distinguish_release_event(self, event):
         """handle keyboard release"""
         
-        def set_Info_input(tmp, visi):
-            info_morph = [child for child in tmp.children if child.name == "Info_input"]
-            if info_morph:
-                info_morph[-1].is_visible = visi
-                info_morph[-1].draw_new()
-
-        print("distinguish_release_event called")
+                
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
-#PKHG.activate for tests            return {'RUNNING_MODAL'}
-            tmp = self.get_morph_at_pointer() #PKHG. at least world?!
-            print("\n--------------------------- L101 distinguish_release_event(hand.py) event.type =", event.type, " who =", tmp.name)
-            if tmp.name.startswith("input"):
-                set_Info_input(tmp, True)                
-                if self.active_text_input_morph and tmp.name == \
-                       self.active_text_input_morph.name:
-#                    if event.type == 'RET':
-                    if event.type in {'RET','NUMPAD_ENTER'}:
-                        self.insert_committed_text(tmp)
-                        set_Info_input(tmp, False)
-#PKHG.attention  return used:                        
-                        return {'RUNNING_MODAL'} #keys eaton up
-                    self.add_keys(event, tmp)
-                    return {'RUNNING_MODAL'}
-                else: #new input morph
-                    if self.active_text_input_morph:
-                        self.insert_committed_text(self.active_text_input_morph)
-                        print("text inserted for ",self.active_text_input_morph)
-                    else:
-                        self.active_text_input_morph = tmp
-                        
-                    print("DBG L119 distinguish_release_event(hand.py) new inputmorp")
-                    self.temp_text_list = []
-                    self.active_text_input_morph = tmp
-                    self.add_keys(event, tmp)
-                    
-#??                self.active_text_input_morph = tmp
-                
-                return {'RUNNING_MODAL'}
-            else:                                  
-                return {'PASS_THROUGH'}
-        
-    
-    def add_keys(self, event, morph):
-        """eat a keyboard key"""
-#PKHG.???        global temp_text_list
-        type_val = "" + event.type
-#        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
-        if type_val in {'RET','NUMPAD_ENTER'}:
-            print("\n===DBG add_keys(hand.py L46)=== (numpad)RETURN SEEN", self.temp_text_list, "for morph", morph)
-            self.temp_text_list = []
-            self.active_text_input_morph = None
-#PKHG.TODO ignor_lst ?!            
-        elif re_CAS.search(type_val):
-            pass
-        elif type_val in delete_list: #remove last key if possible
-            if self.temp_text_list:
-                del(self.temp_text_list[-1])
-            pass
-        elif type_val == "SPCACE":
-            self.temp_text_list.append(" ")
-        else:            
-            if event.shift: 
-                type_val += "_SHIFT"
-            self.temp_text_list.append(type_val)
-#        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
-    
 
-    def insert_committed_text(self, morph):
-        def convert_it(element):
-            print("element to convert", element)
-            result = element
-            if result in used_keyboard_dict_for_digits.keys():
-                result = used_keyboard_dict_for_digits[result]
-            elif result.endswith('_SHIFT'):
-                result = result[0]
-            elif result == "SPACE":
-                result = " "
-            elif len(result) == 1:
-                result = result.lower()
-            elif result.startswith('NUMPAD_'):
-                if len(result) == 8:
-                    result = result[-1]
-                elif result in numpad_dict_specials.keys():
-                    result = numpad_dict_specials[result]
-            print("converted to ", result)
-            return result
+            tmp = self.get_morph_at_pointer() #PKHG. at least world?!
+            key_release = tmp.key_release()
             
-        def convert_list_to_text(letter_list):
-            print("TODO convert ", self.temp_text_list, " into a str")
-            converted_list = [convert_it(el) for el in letter_list]
-            print("------ converted list=",converted_list)
-            result = ""
-            for el in converted_list:
-                result = result + el
-            return result               
+            if key_release == True :
+                return {'RUNNING_MODAL'}
+            else:
+                return {'PASS_THROUGH'}
+            
+            
         
-        result =  convert_list_to_text(self.temp_text_list)
-        print("------------ result = ", result)
-        morph.text_string.text = result
-                                                
-        
-        self.temp_text_list = []
-        return "PKHG finished inputting string"
     
+        
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
 
@@ -218,7 +106,7 @@ class Hand(Morph):
         return self.parent
 
     def get_all_morphs_at_pointer(self):
-        """ return all the morphs are under the current position of the mouse cursor """
+        """ return all the morphs that are under the current position of the mouse cursor """
     
         answer = []
         # morphs = self.world.all_children()

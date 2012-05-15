@@ -389,9 +389,17 @@ class Morph(Node ):
     def mouse_leave_dragging(self):
         pass
 
-    def mouse_move(pos):
+    def mouse_move(self,pos):
         pass
 
+    def key_press(self,event):
+        """ event method trigger when a key is pressed while morph has focus, returns True only if the event is processed"""
+        return False
+    
+    def key_release(self,event):
+        """ event methode triggered when a key is released while morph has focus, returns True only if the event is processed"""
+        return False
+    
     #Morph menus:
 
     def context_menu(self):
