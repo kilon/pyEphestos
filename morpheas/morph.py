@@ -241,11 +241,11 @@ class Morph(Node ):
         if dims_x > difx:
             quot = difx/dims_x
             size = int(size * quot)
-#PKHG. bounds should include name of morph
-            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
-                                    self.bounds.corner.y))
         y = self.bounds.corner.y - size
         if self.with_name:
+#PKHG. bounds should include name of morph
+            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
+                                    self.bounds.corner.y))            
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
 
     
