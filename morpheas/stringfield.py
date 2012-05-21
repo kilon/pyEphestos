@@ -2,6 +2,7 @@ from .morph import *
 from .rectangle import *
 
 import addon_utils
+import re
 
 class String(Morph):
     "I am a single line of text"
@@ -26,7 +27,7 @@ class String(Morph):
         self.font = blf.load(tmp)
 #PKHG.TODO DPI = ???        
         blf.size(self.font, self.fontsize, 72) #DPI default 72?        
-#        self.draw_new()
+
         
     def __repr__(self):
         return 'String("' + self.text + '")'
@@ -55,10 +56,12 @@ class String(Morph):
         if self.is_visible:
 
             blf.draw(self.font, self.text)
+    
     def get_width(self):
         return self.width
     #String menu:
 
+    
     def developers_menu(self):
         menu = super(String, self).developers_menu()
         menu.add_line()
@@ -136,8 +139,7 @@ class StringField( Morph):
                  bold=False,
                  italic=False):
         
-#PKHG.??? Frame not ok        super(self, Frame).__init__() #PKHG Frame was Widget in pymorpheas
-#        self.widget = Widget()
+
         super(StringField, self).__init__()
         self.default = default
         self.minwidth = minwidth
@@ -145,10 +147,30 @@ class StringField( Morph):
         self.fontsize = fontsize
         self.bold = bold
         self.italic = italic
-        self.color = (1.0, 0.0, 1.0, 0.5) #pygame.Color(254,254,254)
+        self.color = (1.0, 0.0, 1.0, 0.5) 
         self.text_string = String(self.default, self.fontname, self.fontsize,\
                            self.bold, self.italic)
         self.add(self.text_string)
+        self.re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
+
+        self.used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
+     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
+     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
+     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
+     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
+     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
+     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
+     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
+     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
+     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
+     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
+     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
+     
+
+        self.numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
+     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
+        self.delete_list= ['DEL','BACK_SPACE']
+
 
     def draw(self):
         "initialize my surface"
@@ -157,32 +179,31 @@ class StringField( Morph):
 
         input_width = self.text_string.width
         if input_width < 100:
-#PKHG.ok            print("stringfield L158 (dif set to 0) input_width =",input_width)
+
             dif = 0
             self.minwidth = 100
         else:
             dif = input_width - self.get_width()
-#PKHG.ok        print("stringfield L163: dif =", dif)
+
         if dif > 0:
-            #adjust size of morph
-#            self.minwidth = input_width
+            
             new_corner = self.bounds.corner + Point(dif,0)
-#PKHG.not logical            self.bounds = self.bounds.origin.get_corner(new_corner)
+
             self.bounds = Rectangle(self.bounds.origin, new_corner)
         elif dif < 0:
             x = self.bounds.origin.x
             y = self.bounds.corner.y
             if input_width < 100:
-#                self.bounds = self.bounds.origin.get_corner(Point(x + 100, y))
+
                 self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
             else:        
-#                self.bounds = self.bounds.origin.get_corner(Point(x + input_width, y))
+
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
         children = self.children
-#PKHG.OK        print("\n================stringfield children", children)
+
         for child in children:
             if child.is_visible:
-#PKHG.OK                print("stringfield drawing" , child)
+
                 child.draw()
         
         super(StringField, self).draw()
@@ -213,3 +234,96 @@ class StringField( Morph):
 
     def mouse_click_left(self, pos):
         self.text_string.edit()
+    
+    """ I dont think this function is needed , will need to invistigate further     
+    
+    def set_Info_input(tmp, visi):
+        info_morph = [child for child in tmp.children if child.name == "Info_input"]
+        if info_morph:
+            info_morph[-1].is_visible = visi
+            info_morph[-1].draw_new()   
+    """        
+    
+    def key_release(self,event):
+        if event.type in {'RET','NUMPAD_ENTER'}:
+            self.insert_committed_text(tmp)
+            set_Info_input(tmp, False)
+#PKHG.attention  return used:                        
+        return {'RUNNING_MODAL'} #keys eaton up
+        '''            
+                    self.add_keys(event, tmp)
+                    return {'RUNNING_MODAL'}
+                else: #new input morph
+                    if self.active_text_input_morph:
+                        self.insert_committed_text(self.active_text_input_morph)
+                        print("text inserted for ",self.active_text_input_morph)
+                    else:
+                        self.active_text_input_morph = tmp
+                        
+                    print("DBG L119 distinguish_release_event(hand.py) new inputmorp")
+                    self.temp_text_list = []
+                    self.active_text_input_morph = tmp
+                    self.add_keys(event, tmp)
+           '''           
+
+    def add_keys(self, event, morph):
+        """eat a keyboard key"""
+#PKHG.???        global temp_text_list
+        type_val = "" + event.type
+#        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
+        if type_val in {'RET','NUMPAD_ENTER'}:
+            print("\n===DBG add_keys(hand.py L46)=== (numpad)RETURN SEEN", self.temp_text_list, "for morph", morph)
+            self.temp_text_list = []
+            self.active_text_input_morph = None
+#PKHG.TODO ignor_lst ?!            
+        elif re_CAS.search(type_val):
+            pass
+        elif type_val in delete_list: #remove last key if possible
+            if self.temp_text_list:
+                del(self.temp_text_list[-1])
+            pass
+        elif type_val == "SPCACE":
+            self.temp_text_list.append(" ")
+        else:            
+            if event.shift: 
+                type_val += "_SHIFT"
+            self.temp_text_list.append(type_val)
+#        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
+    
+
+    def insert_committed_text(self, morph):
+        def convert_it(element):
+            print("element to convert", element)
+            result = element
+            if result in used_keyboard_dict_for_digits.keys():
+                result = used_keyboard_dict_for_digits[result]
+            elif result.endswith('_SHIFT'):
+                result = result[0]
+            elif result == "SPACE":
+                result = " "
+            elif len(result) == 1:
+                result = result.lower()
+            elif result.startswith('NUMPAD_'):
+                if len(result) == 8:
+                    result = result[-1]
+                elif result in numpad_dict_specials.keys():
+                    result = numpad_dict_specials[result]
+            print("converted to ", result)
+            return result
+            
+        def convert_list_to_text(letter_list):
+            print("TODO convert ", self.temp_text_list, " into a str")
+            converted_list = [convert_it(el) for el in letter_list]
+            print("------ converted list=",converted_list)
+            result = ""
+            for el in converted_list:
+                result = result + el
+            return result               
+        
+        result =  convert_list_to_text(self.temp_text_list)
+        print("------------ result = ", result)
+        morph.text_string.text = result
+                                                
+        
+        self.temp_text_list = []
+        return "PKHG finished inputting string"

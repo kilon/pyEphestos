@@ -38,6 +38,7 @@ class Morph(Node ):
         self.path_to_local_fonts  = self.get_local_font_path()
         self.default_font = self.path_to_local_fonts + "/verdana.ttf"
         self.font_id = blf.load(self.default_font)
+        self.my_name_size = 0
         
     def __repr__(self):
         return self.__class__.__name__ + "(" + self.name + ")"
@@ -46,6 +47,9 @@ class Morph(Node ):
         import  addon_utils
         result = addon_utils.paths()[0] + "/Ephestos/fonts"
         return result
+
+    def get_my_name_size(self):
+        return self.my_name_size
     
     def delete(self):
         if self.parent != None:
@@ -57,7 +61,7 @@ class Morph(Node ):
         return self.color
     
 ##0.1 version    def set_color(self,r,g,b,alpha):
-    def set_color(self,*rgba,**color):
+    def set_color(self,*rgba):
         """ setter : (red , green , blue , alpha )
         Set the color of the morph RGB plus alpha for transparency ,
         all floats starting from 0 (0.0) and ending in 1 (1.0)
@@ -65,25 +69,23 @@ class Morph(Node ):
         'color':"known color", that color is returned
         Errors in use will give the default (1,0,0,0.5), half visible red!
         """
+        print("set_color argumen :",rgba)
 #        self.color=(r,g,b,alpha)
         color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1)}                      
         result = (1,0,0,0.5) #PKHG red may indicate an ERROR alpha = 0.5
 #PKHG. allow (r,g,b) with alpha = 1
         wrong_par = False
-        if rgba:
+        if len(rgba) == 1:
             rgba = rgba[0]
-        if len(rgba) >= 3 and (min(rgba) < 0.0 or max(rgba) > 1.0):
-            wrong_par = True
-        if wrong_par:
-            pass
+            self.color = (color_dict[rgba][0],color_dict[rgba][1],color_dict[rgba][2],color_dict[rgba][3])
+        if len(rgba) == 2  or len(rgba) > 4 and (min(rgba) < 0.0 or max(rgba) > 1.0):
+            print("error set_color argument must be either 1 or 4 see function documentation")
+        
         elif len(rgba) == 3:
             result = (rgba[0],rgba[1],rgba[2],1)
         elif len(rgba) == 4:
-            result = rgba
-        elif len(color) == 1:
-            tmp = color.get('color',result)
-            result = color_dict.get(tmp,result)
-        self.color = result
+            self.color = (rgba[0],rgba[1],rgba[2],rgba[3])
+        
             
     #stepping:
 
@@ -231,6 +233,7 @@ class Morph(Node ):
         size = 16
         blf.size(font_id, size, 72)
         dims_x,dims_y = blf.dimensions(font_id, self.name)
+        self.my_name_size = dims_x
         x = self.bounds.origin.x 
         xx = self.bounds.corner.x
 
@@ -238,6 +241,8 @@ class Morph(Node ):
         if dims_x > difx:
             quot = difx/dims_x
             size = int(size * quot)
+            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
+                                    self.bounds.corner.y))
         y = self.bounds.corner.y - size
         if self.with_name:
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
@@ -391,9 +396,17 @@ class Morph(Node ):
     def mouse_leave_dragging(self):
         pass
 
-    def mouse_move(pos):
+    def mouse_move(self,pos):
         pass
 
+    def key_press(self,event):
+        """ event method trigger when a key is pressed while morph has focus, returns True only if the event is processed"""
+        return False
+    
+    def key_release(self,event):
+        """ event methode triggered when a key is released while morph has focus, returns True only if the event is processed"""
+        return False
+    
     #Morph menus:
 
     def context_menu(self):

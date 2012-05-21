@@ -1,9 +1,12 @@
-
-debug050512 = False #width checking ...
-debug050512_1659 = False #MenuItem test
+debug140512_delete_children = False 
+debug050512_maxwidth = True #True #width checking ...
+debug050512_1659 = True #MenuItem test
 debug_stringfield_060512_0723 = False #for stringfield test
-debug_mouseclick_060812_0756 = True #self and pos
+debug_mouseclick_060812_0756 = False #self and pos
+debug_roundedbox_160512_1837 = False
+debug_trigger_size_17_05_1618 = True
 
+import blf
 from .roundedbox import *
 from .text import *
 from .stringfield import * #see Menu add_input_StringField
@@ -20,8 +23,30 @@ class Menu(RoundedBox):
         self.label = None
         super(Menu, self).__init__()
         self.is_draggable = False
-        if debug050512_1659:
-            print("menu.py Menu: children: ", self.children[:])
+        self.my_width = 100
+
+#PKHG context_menu to be called by a Menu
+    def context_menu(self):
+        menu = Menu(self, self.__class__.__name__)
+        if self.is_dev_mode:
+            menu.add_item("create a morph...", 'user_create_new_morph')
+            menu.add_line()
+            menu.add_item("hide all", 'hide_all')
+            menu.add_item("show all", 'show_all_hiddens')
+            menu.add_item("move all inside...", 'keep_all_submorphs_within')
+            menu.add_item("color...", 'choose_color')
+            menu.add_line()
+            menu.add_item("stop all bouncers", 'stop_all_bouncers')
+            menu.add_item("start all bouncers", 'start_all_bouncers')
+            menu.add_line()
+            menu.add_item("switch to user mode", 'toggle_dev_mode')
+            menu.add_item("close", 'delete')
+        else:
+            menu.add_item("enter developer's mode", 'toggle_dev_mode')
+        menu.add_line()
+        menu.add_item("about...", 'about')
+        return menu
+
 
     def add_item(self, label="close", action='nop'):
         self.items.append((label, action))
@@ -102,20 +127,20 @@ class Menu(RoundedBox):
     def draw(self):
         global debug_stringfield_060512_0723 
 #PKHG.OK        print("++++L114+++++ draw_new of Menu called")
-
+        if debug_roundedbox_160512_1837:
+            print("\n\n---------------->Menu roundedbox width =", self.bounds.get_width())
         #PKHG 050512 seems to be necessary!
-        
+        if debug140512_delete_children:
+            print("==================before m.delete, children =", len(self.children[:]),self.children[:],"\n")
         for m in self.children:
-            m.delete()
-        
+            m.delete()        
 #PKHG.050512_1657???        self.children = []
-
-        if debug050512_1659:
-            print("debug050512_1659 children = ",self.children[:])
+        if debug140512_delete_children:
+            print("==================m.delete = ",len(self.children[:]),self.children[:],"\n")
         self.edge = 5
         self.border = 2
-        self.color = (1.0, 1.0, .0, 0.3) #outer color of RoundedBox invisible
-        self.bordercolor = (0., 0., 0., 0) #inner color RoundedBox invisble
+        self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox invisible
+        self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
         self.set_extent(Point(0, 0))
         if self.title != None:
             self.create_label()
@@ -150,10 +175,12 @@ class Menu(RoundedBox):
             else:                
                 item = MenuItem(self.target, pair[1], pair[0])
                 item.color = (1,0,0,1) #PKHG test
+       #         item.create_label()
                 item.name = pair[0]
                 item.with_name = True
 #                item.bounds = Point(0,0).get_corner(Point(0,25))
-                item.bounds = Rectangle(Point(0,0), Point(0,25))
+#PKHG.
+                item.bounds = Rectangle(Point(0,0), Point(100,25)) #PKHG test 140512_1820
 #                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
@@ -166,31 +193,33 @@ class Menu(RoundedBox):
 #        print("menu.py draw_new; super(Menu, self) and type ", super(Menu, self), type(super(Menu, self)))  
 #PKHG.errro no bounds        super(Menu, self).bounds = Point(0,0).corner( Point(200,200))
     def max_width(self):
-        w = 0
-        if debug050512:
+        w = self.my_width
+        if debug050512_maxwidth:
             print("Menu max_width children", self.children)
         counter = 0
         for item in self.children:
 #            item.name = str(counter)
             counter +=1
-            if debug050512:
-                print("Menu max_width item in children", item, " its type is" , type(item), " it width =", item.get_width())
+            if debug050512_maxwidth:
+                print("Menu max_width  child", item, " its type is" , type(item), " it width =", item.get_width())
 #PKHG.TODO no widget at this moment 25Apr12            
 #PKHG>???            if isinstance(item, Morph): #PKHG.TODO Widget):
 #                w = max(w, item.width())
             w = max(w, item.get_width())
-            if debug050512:
+            if debug050512_maxwidth:
                 print("Menu max_width w = ", w)
         if self.label != None:
-            if debug050512:
+            if debug050512_maxwidth:
                 print("Menu max_width label.width = ", self.label.get_width())
             w = max(w, self.label.get_width())
-            if debug050512:
+            if debug050512_maxwidth:
                 print("Menu max_width = ", w)
+        self.my_width = w #PKHG.??? 160512_1831
         return w
 
     def adjust_widths(self):
-        w = self.max_width()
+        
+        w = max(self.my_width ,self.max_width()) #PKHG???? why???? 160512
         for item in self.children:
             item.set_width(w)
             if isinstance(item, MenuItem):
@@ -302,7 +331,11 @@ class Trigger(Morph):
         super(Trigger, self).__init__()
 #PKHG.09052012_1010 test        self.name = "trigger"
         self.name = label
-        self.action = action 
+        self.action = action
+        if debug_trigger_size_17_05_1618:
+            print("\n--------- trigger size = ", self.name, self.bounds.get_width(), self.get_my_name_size())
+        
+#PKHG.TODO ??!!
         return
 #        self.hilite_color = pygame.Color(192,192,192)
         grey_192 = 192./255.
@@ -316,25 +349,31 @@ class Trigger(Morph):
         self.bold = bold
         self.italic = italic
         self.label = None
-        
+        self.font_id = blf.load(fontname)
+        dims_x,dims_y = blf.dimensions(self.font_id, label)
+        self.my_label_width = dims_x
+        self.bounds = Rectangle(Point(0,0),Point(int(dims_x) + 4, int(dims_y) + 4))
 #        self.color = pygame.Color(254,254,254)
         self.color = (.5, .5, .0 , 0) #geel weg 
-        self.draw_new()
+#        self.draw_new()
         self.target = target
         self.action = action
         self.is_draggable = False
-
-    def draw_new(self):
+        self.draw() #PKHG TODO
+    '''
+    def draw(self):
         "initialize my surface"
 #PKHG.TODO        
-        self.create_backgrounds()
+#        self.create_backgrounds()
 #PKHG.09052012_1010
+        if debug140512_delete_children :
+            print("+++++++trigger draw",self, len(self.name))
         self.with_name = True
-        return
+        return  #PKHG 140512_1820
     
         if self.label_string != None:
             self.create_label()
-
+    '''
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
         super(Trigger, self).draw()
@@ -513,23 +552,3 @@ class Bouncer(Morph):
     def toggle_motion(self):
         self.is_stopped = not self.is_stopped
 
-    def context_menu(self):
-        menu = Menu(self, self.__class__.__name__)
-        if self.is_dev_mode:
-            menu.add_item("create a morph...", 'user_create_new_morph')
-            menu.add_line()
-            menu.add_item("hide all", 'hide_all')
-            menu.add_item("show all", 'show_all_hiddens')
-            menu.add_item("move all inside...", 'keep_all_submorphs_within')
-            menu.add_item("color...", 'choose_color')
-            menu.add_line()
-            menu.add_item("stop all bouncers", 'stop_all_bouncers')
-            menu.add_item("start all bouncers", 'start_all_bouncers')
-            menu.add_line()
-            menu.add_item("switch to user mode", 'toggle_dev_mode')
-            menu.add_item("close", 'delete')
-        else:
-            menu.add_item("enter developer's mode", 'toggle_dev_mode')
-        menu.add_line()
-        menu.add_item("about...", 'about')
-        return menu

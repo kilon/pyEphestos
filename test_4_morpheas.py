@@ -14,23 +14,6 @@ world_menu = world.context_menu()
 world.add(world_menu)
 
 
-'''
-class World:
-    running = False
-    mouse_region_x = 0
-    mouse_region_y = 0
-
-def draw_World(self,context):
-    global world
-    mW = world #World() #was Morph
-    bgl.glEnable(bgl.GL_BLEND)
-#for world    draw_rounded_morph(mW)
-    mW.draw_new()    
-    return
-
-show_world = True 
-'''
-
 class ephestos:
     running = False
     

@@ -321,9 +321,9 @@ class Rectangle:
     #Rectangle transforming:
 
     def get_scale_by(self, scale):
-        "scale can be either a Point or a scalar"
+        """scale can be either a Point or a scalar"""
         return Rectangle(self.origin * scale, self.corner * scale)
 
     def get_translate_by(self, factor):
-        "factor can be either a Point or a scalar"
+        """factor can be either a Point or a scalar"""
         return Rectangle(self.origin + factor, self.corner + factor)
