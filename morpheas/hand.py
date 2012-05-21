@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 #PKHG debuginfo, please do not remove! Later ok ...
 debug_left_mouse_click_060512_1048 = False
 
+=======
+>>>>>>> cdbcbba5ec2fc02c7ac70427c7da4c79c7241a0c
 
 import bpy
 

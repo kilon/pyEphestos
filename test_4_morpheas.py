@@ -10,9 +10,14 @@ world = World()
 hand = Hand()
 world.add(hand)
 world_menu = world.context_menu()
+mymorph1= Morph()
+#mymorph1.set_color(1.0,0.0,0.0,1)
+mymorph1.set_color("red")
+
 #print("test 4\n",dir(world_menu), "\n------end test_4")
 world.add(world_menu)
-
+world.add(mymorph1)
+mymorph1.set_position(Point(300,300))
 
 class ephestos:
     running = False
