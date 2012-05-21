@@ -69,22 +69,24 @@ class Morph(Node ):
         'color':"known color", that color is returned
         Errors in use will give the default (1,0,0,0.5), half visible red!
         """
-        print("set_color argumen :",rgba)
-#        self.color=(r,g,b,alpha)
-        color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1)}                      
-        result = (1,0,0,0.5) #PKHG red may indicate an ERROR alpha = 0.5
-#PKHG. allow (r,g,b) with alpha = 1
-        wrong_par = False
-        if len(rgba) == 1:
-            rgba = rgba[0]
-            self.color = (color_dict[rgba][0],color_dict[rgba][1],color_dict[rgba][2],color_dict[rgba][3])
-        if len(rgba) == 2  or len(rgba) > 4 and (min(rgba) < 0.0 or max(rgba) > 1.0):
-            print("error set_color argument must be either 1 or 4 see function documentation")
-        
-        elif len(rgba) == 3:
-            result = (rgba[0],rgba[1],rgba[2],1)
-        elif len(rgba) == 4:
-            self.color = (rgba[0],rgba[1],rgba[2],rgba[3])
+        color_dict = {'red':(1, 0, 0, 1),'green':(0, 1, 0, 1), 'blue':(0, 0, 1, 1),'ERROR': (1,0,0,0.5)} #PKHG red may indicate an ERROR alpha = 0.5
+        result = color_dict['ERROR'] #PKHG to be overwritten by good color
+        if rgba:
+            rgba = rgba[0]  #PKHG remove the * so to say
+            print("set_color argument :",rgba)
+            if type(rgba) == type(""):
+                if rgba in color_dict.keys():
+                    result = color_dict[rgba]
+                else:
+                    print("\n***ERROR*** ", rgba ," not in colordictionary")
+            else:
+                if len(rgba) == 2  or len(rgba) > 4 and (min(rgba) < 0.0 or max(rgba) > 1.0):
+                    print("\n***ERROR*** set_color argument must be either 1 or 4 see function documentation")        
+                elif len(rgba) == 3:
+                    result = (rgba[0],rgba[1],rgba[2],1)
+                elif len(rgba) == 4:
+                    result  = rgba
+        self.color = result #set a valid color!
         
             
     #stepping:

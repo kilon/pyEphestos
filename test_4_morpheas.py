@@ -9,10 +9,15 @@ from .morpheas import *
 world = World()
 hand = Hand()
 world.add(hand)
+#menu = Menu()
+#menu.context_menu()
+#world.add(menu)
 world_menu = world.context_menu()
+print(world_menu.items[:])
+
 mymorph1= Morph()
 #mymorph1.set_color(1.0,0.0,0.0,1)
-mymorph1.set_color("red")
+mymorph1.set_color("green")
 
 #print("test 4\n",dir(world_menu), "\n------end test_4")
 world.add(world_menu)

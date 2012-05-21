@@ -249,12 +249,8 @@ class StringField( Morph):
             self.insert_committed_text(tmp)
             set_Info_input(tmp, False)
 #PKHG.attention  return used:                        
-<<<<<<< HEAD
         return {'RUNNING_MODAL'} #keys eaton up
-        '''            
-=======
-                        return {'RUNNING_MODAL'} #keys eaton up
->>>>>>> cdbcbba5ec2fc02c7ac70427c7da4c79c7241a0c
+        '''
                     self.add_keys(event, tmp)
                     return {'RUNNING_MODAL'}
                 else: #new input morph
@@ -268,15 +264,10 @@ class StringField( Morph):
                     self.temp_text_list = []
                     self.active_text_input_morph = tmp
                     self.add_keys(event, tmp)
-<<<<<<< HEAD
            '''           
-
-    def add_keys(self, event, morph):
-=======
                     
 
-  def add_keys(self, event, morph):
->>>>>>> cdbcbba5ec2fc02c7ac70427c7da4c79c7241a0c
+    def add_keys(self, event, morph):
         """eat a keyboard key"""
 #PKHG.???        global temp_text_list
         type_val = "" + event.type
@@ -337,7 +328,3 @@ class StringField( Morph):
         
         self.temp_text_list = []
         return "PKHG finished inputting string"
-<<<<<<< HEAD
-=======
-              
->>>>>>> cdbcbba5ec2fc02c7ac70427c7da4c79c7241a0c
