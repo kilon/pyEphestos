@@ -48,7 +48,7 @@ class Node(object):
 
     def get_all_leafs(self):
         result = []
-        for element in self.all_children():
+        for element in self.get_all_children():
             if element.children == []:
                 result.append(element)
         return(result)

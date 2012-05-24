@@ -7,6 +7,7 @@ from .morpheas import *
 
 
 world = World()
+#shows indeed only About and developers choice world.is_dev_mode = False
 hand = Hand()
 world.add(hand)
 #menu = Menu()

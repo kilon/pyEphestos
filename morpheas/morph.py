@@ -87,6 +87,7 @@ class Morph(Node ):
                 elif len(rgba) == 4:
                     result  = rgba
         self.color = result #set a valid color!
+        return result
         
             
     #stepping:

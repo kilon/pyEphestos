@@ -77,7 +77,7 @@ class Hand(Morph):
         else:
 
             tmp = self.get_morph_at_pointer() #PKHG. at least world?!
-            key_release = tmp.key_release()
+            key_release = tmp.key_release(event) #PKHG error was TypeError: key_release() takes exactly 2 arguments (1 given)
             
             if key_release == True :
                 return {'RUNNING_MODAL'}

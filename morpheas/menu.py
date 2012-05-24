@@ -1,12 +1,13 @@
 debug140512_delete_children = False 
-debug050512_maxwidth = True #True #width checking ...
-debug050512_1659 = True #MenuItem test
+debug050512_maxwidth = False #True #width checking ...
+debug050512_1659 = False #MenuItem test
 debug_stringfield_060512_0723 = False #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
-debug_trigger_size_17_05_1618 = True
+debug_trigger_size_17_05_1618 = False
 
 import blf
+from random import random
 from .roundedbox import *
 from .text import *
 from .stringfield import * #see Menu add_input_StringField
@@ -25,7 +26,8 @@ class Menu(RoundedBox):
         self.is_draggable = False
         self.my_width = 100
 
-#PKHG context_menu to be called by a Menu
+#PKHG context_menu to be called by a Menu no a morph must implement is itself
+    '''
     def context_menu(self):
         menu = Menu(self, self.__class__.__name__)
         if self.is_dev_mode:
@@ -46,7 +48,7 @@ class Menu(RoundedBox):
         menu.add_line()
         menu.add_item("about...", 'about')
         return menu
-
+    '''
 
     def add_item(self, label="close", action='nop'):
         self.items.append((label, action))
@@ -174,8 +176,9 @@ class Menu(RoundedBox):
                 item.set_height(pair[1]+2)
             else:                
                 item = MenuItem(self.target, pair[1], pair[0])
-                item.color = (1,0,0,1) #PKHG test
+#PKHG.???                item.color = (1,0,0,1) #PKHG test
        #         item.create_label()
+#PKHG.works ;-)                item.color = (1,random(),0,1) #PKHG Test
                 item.name = pair[0]
                 item.with_name = True
 #                item.bounds = Point(0,0).get_corner(Point(0,25))
@@ -332,6 +335,7 @@ class Trigger(Morph):
 #PKHG.09052012_1010 test        self.name = "trigger"
         self.name = label
         self.action = action
+        #PKHG.???? self.color = (0, 1, 0, 1) #PKHG.???
         if debug_trigger_size_17_05_1618:
             print("\n--------- trigger size = ", self.name, self.bounds.get_width(), self.get_my_name_size())
         
@@ -425,9 +429,27 @@ class Trigger(Morph):
         print("=L385= root is ", world )
         print("self.action =", self.action )
         if self.action == "delete":
-            self.parent.delete()
+            world = self.parent.get_root() #PKHG gives back World!
+            print("my world is ", world)
+            self.parent.delete()            
+            world.is_dev_mode = False
+            world_menu = world.context_menu()
+            world.add(world_menu)
         elif self.action == "toggle_dev_mode":
+            world = self.parent.get_root() #PKHG gives back World ?!
+            print("my world is ", world)
+            self.parent.delete()            
             world.toggle_dev_mode()
+            world_menu = world.context_menu()
+            world.add(world_menu)
+        elif self.action == "choose_color":
+            print("I am ", self)
+            col = self.set_color("red")
+            print("color became" ,col)
+            self.color = col
+            pass
+            
+            
 #            print("my parent and root is", self.parent, self.get_root())
 #            self.parent.is_visible = False
             

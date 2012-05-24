@@ -190,7 +190,7 @@ class Rectangle:
     #Rectangle accessing - getting:
 
     def get_area(self):
-        w = self.width()
+        w = self.get_width()
         if w < 0:
             return 0
         else:

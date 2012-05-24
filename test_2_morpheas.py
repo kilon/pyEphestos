@@ -21,12 +21,13 @@ good_rounded_box.color = (1, 0, 0, 1)
 #good_rounded_box.alpha = 0.8
 
 #PKHG.check size of brackets!
-#multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200)
-multiline_text = Text("PKHG  was here", max_width = 200) 
+multiline_text = Text("[] {}()\n[] {}()\nPKHG = Peter\nline >=4\n[] {}()\nand this too and more and more [] {}()", max_width = 200)
+#multiline_text = Text("PKHG  was here", max_width = 200) 
 multiline_text.set_position(Point(70,70))
+
 p1 = Point(240,50)
 p2 = Point(280,120)
-bounds_red = p1.corner(p2)
+bounds_red = Rectangle(p1,p2)
 
 red_morph= Morph( bounds = bounds_red, rounded = True, with_name = True)
 green_morph= Morph()
@@ -34,7 +35,7 @@ blue_morph= Morph()
 world= World()
 
 rounded_box = RoundedBox(border = 30, outer_per =.1, inner_per = 0.5)#does not work yet why???b bottom_left= p1, top_right = p2)
-rounded_box.bounds = Point(0,200).corner(Point(400,400))
+rounded_box.bounds = Rectangle(Point(0,200),Point(400,400))
 rounded_box.color = (1, 1, 1, .5)
 rounded_box.bordercolor = (0, 0, 0, 1)
 rounded_box.set_position(Point(200,200))
@@ -42,12 +43,12 @@ rounded_box.set_position(Point(200,200))
 test_Menu = Menu(title="I am a Menu kjshjfhskjfhkashfkashf ")
 test_Menu.name = "I am a Menu"
 test_Menu.with_name = True
-test_Menu.bounds = Point(0,200).corner(Point(300,400))
+test_Menu.bounds = Rectangle(Point(0,200),Point(300,400))
 test_Menu.set_position(Point(50,220))
 #PKHG test 5-5-2012 8:24
 test_Menu.add_line()
 test_Menu.add_item()
-test_Menu.add_entry(default='may be changed')
+#???? test_Menu.add_entry(default='may be changed')
 print("test L51 items of test_Menu", test_Menu.items[:])
 print("childrens of test_Menu = ",test_Menu.children[:])
 world.add(test_Menu)
@@ -80,7 +81,7 @@ world.add(good_rounded_box)
 world.add(one_String)
 #????world.add(info_String)
 #PKHG.stringfieldTest.???
-world.start_all_bouncers()
+#????world.start_all_bouncers()
 info_String = String("Mouse over FieldString ")
 info_String.is_visible = False
 info_String.name = "Info_input"
@@ -118,7 +119,7 @@ def draw_World(self,context):
     mW = world #World() #was Morph
     bgl.glEnable(bgl.GL_BLEND)
 #for world    draw_rounded_morph(mW)
-    mW.draw_new()    
+    mW.draw()    
     return
 
 show_world = True 
@@ -145,7 +146,7 @@ def draw_ephestos(self,context):
     bgl.glRecti(5,5,x_region, y_region)
     """
 #    if show_world:
-    world.draw_new()
+    world.draw()
     '''
     good_rounded_box.draw_new(ephestos)
     world.draw_new(ephestos)
