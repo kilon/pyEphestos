@@ -143,10 +143,11 @@ class Hand(Morph):
         if self.children != []:
             morph = self.children[0]
             target = self.drop_target_for(morph)
+            print("droped to target : ", target)
             self.changed()
             target.add(morph)
             morph.changed()
-            self.get_morph_to_grab = None
+            self.morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
 
@@ -167,32 +168,36 @@ class Hand(Morph):
             morph = self.get_morph_at_pointer()
             pos = self.bounds.origin
             
-            if event.type == 'LEFTMOUSE':                
+            if morph != self.parent:
                 
-                # mark morph for drag only if mouse cursor is top of it
-                self.morph_to_grab = morph.get_root_for_grab()
-            
-                if morph.is_draggable:
-                    self.moving_morph = True
-                #searh for a morph(parent) to handle a click!
-                while not morph.get_handles_mouse_click():
+                if event.type == 'LEFTMOUSE':                
+                    
+                    # mark morph for drag only if mouse cursor is top of it
+                    self.morph_to_grab = morph.get_root_for_grab()
+                
+                    if morph.is_draggable:
+                        self.moving_morph = True
+                    #searh for a morph(parent) to handle a click!
+                    while not morph.get_handles_mouse_click():
+                        if debug_left_mouse_click_060512_1048:
+                            print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
+                        morph = morph.parent
                     if debug_left_mouse_click_060512_1048:
-                        print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
-                    morph = morph.parent
-                if debug_left_mouse_click_060512_1048:
-                    print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
-                self.mouse_down_morph = morph                
-                # trigger also the approriate morph event
-                if debug_left_mouse_click_060512_1048:
-                    print("-L303-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
-                morph.mouse_down_left(pos)
-
-
-            elif event.type == 'MIDDLEMOUSE':
-                morph.mouse_down_middle(pos)
-            elif event.type == 'RIGHTMOUSE':
-                morph.mouse_down_right(pos)
-            
+                        print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
+                    self.mouse_down_morph = morph                
+                    # trigger also the approriate morph event
+                    if debug_left_mouse_click_060512_1048:
+                        print("-L303-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
+                    morph.mouse_down_left(pos)
+    
+    
+                elif event.type == 'MIDDLEMOUSE':
+                    morph.mouse_down_middle(pos)
+                elif event.type == 'RIGHTMOUSE':
+                    morph.mouse_down_right(pos)
+                
+                return {'RUNNING_MODAL'}
+        
         return returned_value
 
     def process_mouse_up(self, event):

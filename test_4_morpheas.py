@@ -169,7 +169,22 @@ class for_stringfield_text(bpy.types.Operator):
         sce = context.scene
         if  stringfield_input!= sce.text_for_input:
             stringfield_input = sce.text_for_input
-        return {'FINISHED'}        
+        return {'FINISHED'}  
+
+# button for toggling visibility of green morph, to test morp.hide() and morph.show() together with world.draw()
+class morph_visibility(bpy.types.Operator):
+    bl_idname = "morph.visibility"
+    bl_label = "toggle visibility of green morph"
+
+    def execute(self,context):
+        
+        global mymorph1
+        
+        if  mymorph1.is_visible:
+            mymorph1.hide()
+        else:
+            mymorph1.show()
+        return {'FINISHED'}              
 
 class ephestos_panel(bpy.types.Panel):
     bl_label = "Ephestos"
@@ -188,6 +203,7 @@ class ephestos_panel(bpy.types.Panel):
         col.operator('textmorph.text')
         col.prop(sce,'text_for_input')
 #        col.operator('forinput.text')
+        col.operator('morph.visibility')
     
         
 def register():
