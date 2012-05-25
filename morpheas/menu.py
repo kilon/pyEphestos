@@ -91,8 +91,9 @@ class Menu(RoundedBox):
         return list.index(item)
        
     def perform(self, item):
-        self.delete()
-        item.target.__getattribute__(item.action)()
+        print("-------------Menu L94 item = ", item)
+#PKHG.TODO Menu delete?        self.delete()
+#???        item.target.__getattribute__(item.action)()
 
     def nop(self):
         pass
@@ -448,6 +449,30 @@ class Trigger(Morph):
             print("color became" ,col)
             self.color = col
             pass
+        elif self.action == "about":
+            world = self.parent.get_root()
+            print("\nabout worlds children = ", world.children[:])
+            about = [ el for el in world.children if el.name.startswith("About")]
+            if about:
+                about_text = about[0]
+                visibility = about_text.is_visible
+                if visibility:
+                    about_text.hide()
+                else:
+                    about_text.show()
+                    
+#                max_width = about_text.max_width
+#                position = about_text.get_position()
+#                info = about_text.text
+#                about_text.delete()
+#                about_text = Text(info, max_width = max_width)
+##                about_text.name = "About"
+#                about_text.set_position(position)
+#                about_text.is_visible = not visibility
+#                world.add(about_text)
+#                print("\n=========== visible?",about_text.is_visible)
+#"                print(type(about[0]))                      
+#                about_text.is_visible = not about_text.is_visible
             
             
 #            print("my parent and root is", self.parent, self.get_root())
@@ -486,7 +511,8 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         if debug_mouseclick_060812_0756:
             print("\n\n=====================MenuItem L390: mouse_click_left self = ",self," pos = ", pos)
         if isinstance(self.parent, Menu):
-            self.get_world().open_menu = None
+#PKHG.TODO???            self.get_world().open_menu = None
+            print("meny L499 TODO???")
         self.parent.perform(self)
 
 class Bouncer(Morph):

@@ -16,6 +16,13 @@ world.add(hand)
 world_menu = world.context_menu()
 print(world_menu.items[:])
 
+about = Text("About\nbased on pymorpheas\nmorph adjusted for Blender\nby Dimitris and Peter", max_width = 350)
+about.name = "About"
+#multiline_text = Text("PKHG  was here", max_width = 200) 
+about.set_position(Point(200,200))
+about.is_visible = False
+world.add(about)
+
 mymorph1= Morph()
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")

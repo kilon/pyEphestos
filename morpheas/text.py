@@ -54,7 +54,8 @@ class Text(Morph):
         self.adjust_text(text)
         
     def __repr__(self):
-        return 'Text("' + self.text + '")'
+#PKHG.not usable        return 'Text("' + self.text + '")'
+        return 'Text("' + self.name + '")'
 
     def parse(self):    
         self.words = []
