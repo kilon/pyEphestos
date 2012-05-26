@@ -1,3 +1,5 @@
+debug_show_acttions_of_handle = False
+
 from bpy.props import  StringProperty, BoolProperty
 
 import bpy
@@ -89,12 +91,14 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-            print("=======> start hand actions: test_3 L127 event type :", \
+            if debug_show_acttions_of_handle:
+                print("=======> start hand actions: test_3 L127 event type :", \
                   event.type," event value : ",event.value,\
                   " next hand is called!")
             hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
             res = hand.process_all_events(event) #{'RUNNING_MODAL'}
-            print("=======> end hand actions result of process_all_events =",res, "\n")
+            if debug_show_acttions_of_handle:
+                print("=======> end hand actions result of process_all_events =",res, "\n")
             return(res)
         else:
 #            print("event type :" ,event.type)

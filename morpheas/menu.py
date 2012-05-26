@@ -49,7 +49,7 @@ class Menu(RoundedBox):
         menu.add_item("about...", 'about')
         return menu
     '''
-
+#"
     def add_item(self, label="close", action='nop'):
         self.items.append((label, action))
 
@@ -366,6 +366,7 @@ class Trigger(Morph):
         self.is_draggable = False
         self.draw() #PKHG TODO
     '''
+#"    
     def draw(self):
         "initialize my surface"
 #PKHG.TODO        
@@ -391,7 +392,7 @@ class Trigger(Morph):
 #        self.press_image = pygame.Surface(self.extent().as_list())
 #        self.press_image.fill(self.press_color)
 #        self.press_image.set_alpha(self.alpha)
-#        self.image = self.normal_image
+#        self.image = self.normal_image 
         pass
     
     def create_label(self):
@@ -456,10 +457,13 @@ class Trigger(Morph):
             if about:
                 about_text = about[0]
                 visibility = about_text.is_visible
+                print("dbg menu before L460 visibility of morph", visibility)
                 if visibility:
                     about_text.hide()
                 else:
                     about_text.show()
+                visibility = about_text.is_visible                    
+                print("dbg menu after L465 visibility of morph", visibility)                    
                     
 #                max_width = about_text.max_width
 #                position = about_text.get_position()
