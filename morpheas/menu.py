@@ -453,7 +453,7 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
             print("\n\n=====================MenuItem L390: mouse_click_left self = ",self," pos = ", pos)
         if isinstance(self.parent, Menu):
 #PKHG.TODO???            self.get_world().open_menu = None
-            print("meny L499 TODO???")
+            print("menu L456 TODO???")
         self.parent.perform(self)
 
 class Bouncer(Morph):

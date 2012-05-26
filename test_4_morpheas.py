@@ -25,6 +25,13 @@ about.set_position(Point(200,200))
 about.is_visible = False
 world.add(about)
 
+yesno = yesnoMenu(300,300, parent = world)
+#world.add(yesno)
+
+yesno.is_visible = True
+yesno.width_name = True
+
+
 mymorph1= Morph()
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")
