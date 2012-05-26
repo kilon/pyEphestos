@@ -26,29 +26,7 @@ class Menu(RoundedBox):
         self.is_draggable = False
         self.my_width = 100
 
-#PKHG context_menu to be called by a Menu no a morph must implement is itself
-    '''
-    def context_menu(self):
-        menu = Menu(self, self.__class__.__name__)
-        if self.is_dev_mode:
-            menu.add_item("create a morph...", 'user_create_new_morph')
-            menu.add_line()
-            menu.add_item("hide all", 'hide_all')
-            menu.add_item("show all", 'show_all_hiddens')
-            menu.add_item("move all inside...", 'keep_all_submorphs_within')
-            menu.add_item("color...", 'choose_color')
-            menu.add_line()
-            menu.add_item("stop all bouncers", 'stop_all_bouncers')
-            menu.add_item("start all bouncers", 'start_all_bouncers')
-            menu.add_line()
-            menu.add_item("switch to user mode", 'toggle_dev_mode')
-            menu.add_item("close", 'delete')
-        else:
-            menu.add_item("enter developer's mode", 'toggle_dev_mode')
-        menu.add_line()
-        menu.add_item("about...", 'about')
-        return menu
-    '''
+
 #"
     def add_item(self, label="close", action='nop'):
         self.items.append((label, action))
@@ -365,21 +343,7 @@ class Trigger(Morph):
         self.action = action
         self.is_draggable = False
         self.draw() #PKHG TODO
-    '''
-#"    
-    def draw(self):
-        "initialize my surface"
-#PKHG.TODO        
-#        self.create_backgrounds()
-#PKHG.09052012_1010
-        if debug140512_delete_children :
-            print("+++++++trigger draw",self, len(self.name))
-        self.with_name = True
-        return  #PKHG 140512_1820
-    
-        if self.label_string != None:
-            self.create_label()
-    '''
+
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
         super(Trigger, self).draw()
@@ -452,41 +416,14 @@ class Trigger(Morph):
             pass
         elif self.action == "about":
             world = self.parent.get_root()
-            print("\nabout worlds children = ", world.children[:])
             about = [ el for el in world.children if el.name.startswith("About")]
             if about:
                 about_text = about[0]
                 visibility = about_text.is_visible
-                print("dbg menu before L460 visibility of morph", visibility)
                 if visibility:
                     about_text.hide()
                 else:
                     about_text.show()
-                visibility = about_text.is_visible                    
-                print("dbg menu after L465 visibility of morph", visibility)                    
-                    
-#                max_width = about_text.max_width
-#                position = about_text.get_position()
-#                info = about_text.text
-#                about_text.delete()
-#                about_text = Text(info, max_width = max_width)
-##                about_text.name = "About"
-#                about_text.set_position(position)
-#                about_text.is_visible = not visibility
-#                world.add(about_text)
-#                print("\n=========== visible?",about_text.is_visible)
-#"                print(type(about[0]))                      
-#                about_text.is_visible = not about_text.is_visible
-            
-            
-#            print("my parent and root is", self.parent, self.get_root())
-#            self.parent.is_visible = False
-            
-#            close_my_Menu(self.root())
-#def close_my_Menu(menu):
-#    menu.is_visible = False
-#    print("Menu made invisible")
-
         self.changed()
 
     def mouse_click_left(self, pos):
