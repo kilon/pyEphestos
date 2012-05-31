@@ -57,13 +57,13 @@ class yesnoMenu(Morph):
     '''        
         
     def mouse_down_left(self, pos):
-        result = "quit"
+        print("\nyesno mouse_down_left callde\n=====")
+        result = True
         '''
         if self.action == "yes_option":
             result = "Yes"
         elif self.action == "no_option":
-            result = "No"
-        else:
+            result = "No"        else:
             self.delete()
         '''
         return result

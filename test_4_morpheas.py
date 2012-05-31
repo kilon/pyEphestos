@@ -25,13 +25,11 @@ about.set_position(Point(200,200))
 about.is_visible = False
 world.add(about)
 
-yesno = yesnoMenu(300,300, parent = world)
+yesno = yesnoMenu(300,300, world)
 #world.add(yesno)
 
 yesno.is_visible = True
 yesno.width_name = True
-
-
 mymorph1= Morph()
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")
@@ -39,6 +37,10 @@ mymorph1.set_color("green")
 #print("test 4\n",dir(world_menu), "\n------end test_4")
 world.add(world_menu)
 world.add(mymorph1)
+
+print("is yesno in it???",world.children[:])
+
+#world.add(yesno)
 mymorph1.set_position(Point(300,300))
 
 class ephestos:
