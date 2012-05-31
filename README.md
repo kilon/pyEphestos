@@ -1,4 +1,4 @@
------ SUMMARY ----
+# SUMMARY
 Ephestus is visual programming language that can import and export python code and is fully compliant with python. It is meant to make 
 programming more visual and easier for the user , especially the creation of Blender addons. 
 
