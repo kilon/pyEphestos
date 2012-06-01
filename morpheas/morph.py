@@ -250,7 +250,8 @@ class Morph(Node ):
         if self.with_name:
 #PKHG. bounds should include name of morph
 #            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
-#                                    self.bounds.corner.y))            
+#                                    self.bounds.corner.y))
+#PKHG.1jun12 the foregoing line causes strange behavior!
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
         
 

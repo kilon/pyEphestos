@@ -61,7 +61,7 @@ class yesnoMenu(Morph):
         world = self
         print("world = ???",world, self.parent)
         print(self.children[:])
-#        ch0 = self.children[0]
+#???        ch0 = self.children[0]
 #        self.children[0].draw()
 #        print("L39 yesnomenu bounds of ", ch0,ch0.bounds)
 #        ch0.position = self.position
