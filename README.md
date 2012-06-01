@@ -1,6 +1,6 @@
 # SUMMARY
 
-Ephestus is going to be a visual programming language that will import and export python code and be fully compliant with python. It will be an environment  to make 
+Ephestus is going to be a visual programming language and environment that will import and export python code and be fully compliant with python. It will be an environment  to make 
 programming more visual and easier for the user , especially the creation of Blender addons. 
 
 
