@@ -73,7 +73,7 @@ class Morph(Node ):
         result = color_dict['ERROR'] #PKHG to be overwritten by good color
         if rgba:
             rgba = rgba[0]  #PKHG remove the * so to say
-            print("set_color argument :",rgba)
+#PKHG.works            print("set_color argument :",rgba)
             if type(rgba) == type(""):
                 if rgba in color_dict.keys():
                     result = color_dict[rgba]
@@ -245,11 +245,14 @@ class Morph(Node ):
             quot = difx/dims_x
             size = int(size * quot)
         y = self.bounds.corner.y - size
+##############debugPKHG
+        
         if self.with_name:
 #PKHG. bounds should include name of morph
-            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
-                                    self.bounds.corner.y))            
+#            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
+#                                    self.bounds.corner.y))            
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
+        
 
     
     def hide(self):

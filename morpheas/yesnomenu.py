@@ -12,8 +12,9 @@ class yesnoMenu(Morph):
         self.y = y
 #OK  300 300         print(x,y)
         self.position = Point(x,y)
-        self.bounds = Rectangle(self.position, Point(x + 60, y + 80))
-        print("L16 bounds = ", self.bounds)
+        self.bounds = Rectangle(self.position, Point(x + 60, y + 120))
+        print("----yesno L16 x,y,position and bounds = ", x,y,self.position,self.bounds)
+        print("==== yesnomenu L16 yesnobounds  = ", self.bounds)
         print("yesno built")
         self.name = "YesNo"
         self.with_name = True
@@ -24,16 +25,35 @@ class yesnoMenu(Morph):
         
     def my_context_menu(self):
         position = self.position
-        tmp =  Rectangle(position, position + 20)
-        print("L26 tmp", tmp)
+        tmp =  Rectangle(position, position + 30)
         quit = Morph(bounds = tmp)
         quit.name = 'quit'
         quit.with_name = True
         quit.is_visible = True
         quit.color = (0,0,.5,.6)
+        quit.set_position(position)
         self.parent.children.append(quit)
         self.add(quit)
-        quit.position = self.position
+        
+        tmp =  Rectangle(position, position + 30)
+        no = Morph(bounds = tmp)
+        no.name = 'no'
+        no.with_name = True
+        no.is_visible = True
+        no.color = (0,0,.5,.6)
+        no.set_position(Point(position.x, position.y + 30))
+        self.parent.children.append(no)
+        self.add(no)
+        
+        tmp =  Rectangle(position, position + 30)
+        yes = Morph(bounds = tmp)
+        yes.name = 'yes'
+        yes.with_name = True
+        yes.is_visible = True
+        yes.color = (0,0,.5,.6)
+        yes.set_position(Point(position.x,position.y + 60))
+        self.parent.children.append(yes)
+        self.add(yes)        
 #        menu.add_item("Yes","yes_option")
 #        menu.add_item("No","no_option")
 
@@ -41,10 +61,10 @@ class yesnoMenu(Morph):
         world = self
         print("world = ???",world, self.parent)
         print(self.children[:])
-        ch0 = self.children[0]
+#        ch0 = self.children[0]
 #        self.children[0].draw()
-        print("L39 yesnomenu bounds of ", ch0,ch0.bounds)
-        ch0.position = self.position
+#        print("L39 yesnomenu bounds of ", ch0,ch0.bounds)
+#        ch0.position = self.position
         self.draw()
     '''
     def draw(self):

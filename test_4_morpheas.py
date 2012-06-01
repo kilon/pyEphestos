@@ -16,7 +16,6 @@ world.add(hand)
 #menu.context_menu()
 #world.add(menu)
 world_menu = world.context_menu()
-print(world_menu.items[:])
 
 about = Text("About\nbased on pymorpheas\nmorph adjusted for Blender\nby Dimitris and Peter", max_width = 350)
 about.name = "About"
@@ -33,7 +32,7 @@ yesno.width_name = True
 mymorph1= Morph()
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")
-
+mymorph1.set_position(Point(300,200))
 #print("test 4\n",dir(world_menu), "\n------end test_4")
 world.add(world_menu)
 world.add(mymorph1)

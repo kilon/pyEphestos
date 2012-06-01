@@ -292,6 +292,8 @@ class Rectangle:
                          self.corner.min(aRectangle.corner))
 
     def get_merge(self, aRectangle):
+        if self  == Rectangle(Point(300,300),Point(360,380)):
+            print("----L296  rectangle.py self, aRectangle,getmerged aRectangle",self, aRectangle, self.origin.min(aRectangle.origin),self.corner.max(aRectangle.corner))
         return Rectangle(self.origin.min(aRectangle.origin),
                          self.corner.max(aRectangle.corner))
 

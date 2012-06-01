@@ -1,4 +1,4 @@
-debug140512_delete_children = False 
+debug140512_delete_children = False
 debug050512_maxwidth = False #True #width checking ...
 debug050512_1659 = False #MenuItem test
 debug_stringfield_060512_0723 = False #for stringfield test
@@ -81,9 +81,9 @@ class Menu(RoundedBox):
         if self.label != None:
             self.label.delete()
         '''
-
-        if self.label != None:
-            self.label.delete()
+#PKHG.TODO
+#        if self.label != None:
+#            self.label.delete()
         
         text = Text(self.title,
                     fontname="verdana.ttf",
@@ -109,15 +109,18 @@ class Menu(RoundedBox):
         global debug_stringfield_060512_0723 
 #PKHG.OK        print("++++L114+++++ draw_new of Menu called")
         if debug_roundedbox_160512_1837:
-            print("\n\n---------------->Menu roundedbox width =", self.bounds.get_width())
+            print("-------L112 menu.draw--------->Menu roundedbox width =", self.bounds.get_width())
         #PKHG 050512 seems to be necessary!
         if debug140512_delete_children:
-            print("==================before m.delete, children =", len(self.children[:]),self.children[:],"\n")
-        for m in self.children:
-            m.delete()        
+            print("=====L115 menu.draw=============before m.delete, children =", len(self.children[:]),self.children[:],"\n")
+
+############################todo            
+#??        for m in self.children:
+#??            m.delete()
+        self.children = []
 #PKHG.050512_1657???        self.children = []
         if debug140512_delete_children:
-            print("==================m.delete = ",len(self.children[:]),self.children[:],"\n")
+            print("======L120 menu.draw============m.delete = ",len(self.children[:]),self.children[:],"\n")
         self.edge = 5
         self.border = 2
         self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox invisible
@@ -143,7 +146,7 @@ class Menu(RoundedBox):
                 item = pair
                 item.with_name = True
                 if not debug_stringfield_060512_0723: #show properties of a StringField
-                    print("\n--------stringfield.bounnds = ", item.bounds)
+                    print("\n--------stringfield.bounds = ", item.bounds)
                     debug_stringfield_060512_0723 += 1
             elif pair[0] == 0:
                 pair_item_0_counter += 1
@@ -171,7 +174,8 @@ class Menu(RoundedBox):
         self.set_extent(fb.get_extent() + 4)
         self.adjust_widths()
         super(Menu, self).draw()
-        
+        if debug140512_delete_children:
+            print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
 #        print("menu.py draw_new; super(Menu, self) and type ", super(Menu, self), type(super(Menu, self)))  
 #PKHG.errro no bounds        super(Menu, self).bounds = Point(0,0).corner( Point(200,200))
     def max_width(self):
