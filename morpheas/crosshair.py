@@ -21,8 +21,10 @@ class CrossHair(Morph):
             right_x = mp_y + 10
             if debug_print_cross:
                 print("  a cross must be painted at", (mp_x, mp_y))
-            self.draw_line(mp_x, top_y, mp_x, bot_y)
-            self.draw_line(left_x, mp_x, right_x, mp_x)
+            #self.draw_line(mp_x, top_y, mp_x, bot_y)
+            #self.draw_line(left_x, mp_x, right_x, mp_x)
+            self.draw_line(self.hand.mouse_x -10 , self.hand.mouse_y , self.hand.mouse_x +10 , self.hand.mouse_y)
+            self.draw_line(self.hand.mouse_x , self.hand.mouse_y -10 , self.hand.mouse_x , self.hand.mouse_y +10)
         else:
             if debug_print_cross:
                 print(" visibility of CrossHair is False")
