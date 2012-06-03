@@ -12,6 +12,8 @@ world = World()
 #shows indeed only About and developers choice world.is_dev_mode = False
 hand = Hand()
 world.add(hand)
+crosshair = CrossHair(hand)
+world.add(crosshair)
 #menu = Menu()
 #menu.context_menu()
 #world.add(menu)
@@ -30,6 +32,7 @@ yesno = yesnoMenu(300,300, world)
 yesno.is_visible = True
 yesno.width_name = True
 mymorph1= Morph()
+mymorph1.name="MMM 1111"
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")
 mymorph1.set_position(Point(300,200))
@@ -38,7 +41,7 @@ world.add(world_menu)
 world.add(mymorph1)
 
 print("is yesno in it???",world.children[:])
-
+for el in world.children: print(id(el))
 #world.add(yesno)
 mymorph1.set_position(Point(300,300))
 

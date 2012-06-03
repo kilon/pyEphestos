@@ -220,7 +220,6 @@ class Morph(Node ):
 #        print("morph", self, "visibility = ", self.is_visible) 
 #        if not self.is_visible:
 #            return
-
         "initialize my surface"
         # print("I use color : ", self.color)
         bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
@@ -588,6 +587,16 @@ class Morph(Node ):
         bgl.glEnd()
         return
 
+    def draw_line(self,f_x,f_y,t_x,t_y, line_width = 2, color = (0,0,0,1)):
+        """Draw a line from (f_x,f_y) to (t_x,t_y), width and color"""
+        bgl.glEnable(bgl.GL_BLEND)
+        bgl.glColor4f(*color)
+        bgl.glLineWidth(line_width)
+        bgl.glBegin(bgl.GL_LINES)
+        bgl.glVertex2f(f_x, f_y)
+        bgl.glVertex2f(t_x, t_y)
+        bgl.glEnd()
+        
     def draw_string_to_viewport(text, morph, size, color, font_id, x, y):
         ''' my_string : the text we want to print
             x, y : coordinates in integer values

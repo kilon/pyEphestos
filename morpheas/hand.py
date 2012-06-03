@@ -22,6 +22,8 @@ class Hand(Morph):
         self.grabed_morph_offset_y = 0 # the relative position of the morph to the mouse cursor y axis
         self.active_text_input_morph = None
         self.temp_text_list = []
+        self.mouse_x = 0
+        self.mouse_y = 0
 
     def __repr__(self):
         return 'Hand(' + self.get_center().__str__() + ')'
@@ -43,7 +45,9 @@ class Hand(Morph):
 
     def process_all_events(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
-
+        self.mouse_x = event.mouse_region_x
+        self.mouse_y = event.mouse_region_y
+         
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value=='PRESS':
@@ -87,7 +91,7 @@ class Hand(Morph):
 
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
-
+        
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value in 'PRESS':

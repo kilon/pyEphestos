@@ -66,7 +66,7 @@ from .stringfield import *
 from .text import *
 from .world import *
 from .yesnomenu import *
-
+from .crosshair import *
 
 
 
