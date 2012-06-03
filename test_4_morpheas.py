@@ -40,8 +40,7 @@ mymorph1.set_position(Point(300,200))
 world.add(world_menu)
 world.add(mymorph1)
 
-print("is yesno in it???",world.children[:])
-for el in world.children: print(id(el))
+#for el in world.children: print(id(el))
 #world.add(yesno)
 mymorph1.set_position(Point(300,300))
 
