@@ -88,7 +88,8 @@ class Hand(Morph):
             else:
                 return {'PASS_THROUGH'}
 
-
+#PKHG.??? not used, differenly discovered
+    '''
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
         
@@ -98,7 +99,8 @@ class Hand(Morph):
             return self.process_mouse_down(event)
         elif event.value=='RELEASE':
             return self.process_mouse_up(event)
-
+    '''
+    
     def get_morph_at_pointer(self):
         """ return the top morph that is under the current position of the mouse cursor """
 
