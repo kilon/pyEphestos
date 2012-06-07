@@ -32,7 +32,9 @@ yesno = yesnoMenu(300,300, world)
 yesno.is_visible = True
 yesno.width_name = True
 mymorph1= Morph()
-mymorph1.name="MMM 1111"
+mymorph1.name="MMM 1111  ttttttttttttttttttt"
+mymorph1.with_name = True
+print(mymorph1.bounds)
 #mymorph1.set_color(1.0,0.0,0.0,1)
 mymorph1.set_color("green")
 mymorph1.set_position(Point(300,200))

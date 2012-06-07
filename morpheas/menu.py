@@ -4,7 +4,7 @@ debug050512_1659 = False #MenuItem test
 debug_stringfield_060512_0723 = False #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
-debug_trigger_size_17_05_1618 = False
+debug_trigger_size_17_05_1618 = True
 
 import blf
 from random import random
@@ -69,7 +69,7 @@ class Menu(RoundedBox):
         return list.index(item)
        
     def perform(self, item):
-        print("-------------Menu L94 item = ", item)
+        print("--->>>----------Menu L94 item = ", item)
 #PKHG.TODO Menu delete?        self.delete()
 #???        item.target.__getattribute__(item.action)()
 
@@ -106,7 +106,7 @@ class Menu(RoundedBox):
         self.label.text = text
         
     def draw(self):
-        global debug_stringfield_060512_0723 
+#PKHG.TODO will vanish soon        global debug_stringfield_060512_0723 
 #PKHG.OK        print("++++L114+++++ draw_new of Menu called")
         if debug_roundedbox_160512_1837:
             print("-------L112 menu.draw--------->Menu roundedbox width =", self.bounds.get_width())
@@ -156,16 +156,19 @@ class Menu(RoundedBox):
                 item.color = (0,0,1,1)#debug050512_1659 self.bordercolor
 #debug050512_1659                item.set_height(pair[1])
                 item.set_height(pair[1]+2)
-            else:                
+            else:
+                #self.target is world! PKHG
+#                print(">>>>>>>>>Menu L160 target,actuib,label" ,self.target, pair[1], pair[0])
                 item = MenuItem(self.target, pair[1], pair[0])
-#PKHG.???                item.color = (1,0,0,1) #PKHG test
+#PKHG.???
+                item.color = (1,0,0,1) #PKHG test
        #         item.create_label()
 #PKHG.works ;-)                item.color = (1,random(),0,1) #PKHG Test
                 item.name = pair[0]
                 item.with_name = True
 #                item.bounds = Point(0,0).get_corner(Point(0,25))
 #PKHG.
-                item.bounds = Rectangle(Point(0,0), Point(100,25)) #PKHG test 140512_1820
+#PKHG.060612?????                item.bounds = Rectangle(Point(0,0), Point(self.my_name_size,60)) #PKHG test 140512_1820
 #                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
@@ -187,7 +190,7 @@ class Menu(RoundedBox):
 #            item.name = str(counter)
             counter +=1
             if debug050512_maxwidth:
-                print("Menu max_width  child", item, " its type is" , type(item), " it width =", item.get_width())
+                print("Menu max_width  child", item, " it width =", item.get_width())
 #PKHG.TODO no widget at this moment 25Apr12            
 #PKHG>???            if isinstance(item, Morph): #PKHG.TODO Widget):
 #                w = max(w, item.width())
@@ -204,8 +207,8 @@ class Menu(RoundedBox):
         return w
 
     def adjust_widths(self):
-        
-        w = max(self.my_width ,self.max_width()) #PKHG???? why???? 160512
+#PKHG.TODO why is 70 needed: problem => dims_x is not enough?!        
+        w =  max(self.my_width ,self.max_width()) #PKHG???? why???? 160512
         for item in self.children:
             item.set_width(w)
             if isinstance(item, MenuItem):
@@ -314,16 +317,29 @@ class Trigger(Morph):
                  fontsize=10,
                  bold=False,
                  italic=False):
+        import  addon_utils
+        path_to_local_fonts  = addon_utils.paths()[0] + "/Ephestos/fonts"
+        font = path_to_local_fonts + "/" + fontname
+        font_id = blf.load(font)
+        blf.size(font_id, 16, 72) #pKHG needed to adjust text with!
+        dims_x,dims_y = blf.dimensions(font_id, label)
+#        self.my_name_size = dims_x 
+#        mylabel_width = int(dims_x) + 75
+#        bounds = Rectangle(Point(0,0),Point(mylabel_width, int(dims_y) + 20))
+#        super(Trigger, self).__init__(bounds = bounds)
         super(Trigger, self).__init__()
+        self.set_width(int(dims_x) + 2)
+        self.set_height(int(dims_y) + 20)
 #PKHG.09052012_1010 test        self.name = "trigger"
         self.name = label
         self.action = action
         #PKHG.???? self.color = (0, 1, 0, 1) #PKHG.???
-        if debug_trigger_size_17_05_1618:
-            print("\n--------- trigger size = ", self.name, self.bounds.get_width(), self.get_my_name_size())
         
 #PKHG.TODO ??!!
         return
+
+###############################################################3
+        '''
 #        self.hilite_color = pygame.Color(192,192,192)
         grey_192 = 192./255.
         grey_128 = 0.5
@@ -337,6 +353,7 @@ class Trigger(Morph):
         self.italic = italic
         self.label = None
         self.font_id = blf.load(fontname)
+        blf.size(font_id, 16, 72) #PKHG 070512, this was needed size 16!
         dims_x,dims_y = blf.dimensions(self.font_id, label)
         self.my_label_width = dims_x
         self.bounds = Rectangle(Point(0,0),Point(int(dims_x) + 4, int(dims_y) + 4))
@@ -347,7 +364,8 @@ class Trigger(Morph):
         self.action = action
         self.is_draggable = False
         self.draw() #PKHG TODO
-
+        '''
+        
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
         super(Trigger, self).draw()
@@ -511,7 +529,6 @@ class Bouncer(Morph):
                     self.direction = "left"
 
     #Bouncer menu:
-
     def developers_menu(self):
         menu = super(Bouncer, self).developers_menu()
         menu.add_line()

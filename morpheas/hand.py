@@ -5,7 +5,7 @@ import bpy
 
 from .rectangle import *
 from .morph import *
-
+from .menu import *
 
 
 class Hand(Morph):
@@ -169,6 +169,7 @@ class Hand(Morph):
         else:
 
             morph = self.get_morph_at_pointer()
+            print(">>>hand L172 get_morph_at_pointer morph =", morph, self.parent)
             pos = self.bounds.origin
 
             if morph != self.parent:
@@ -177,8 +178,8 @@ class Hand(Morph):
 
                     # mark morph for drag only if mouse cursor is top of it
                     self.morph_to_grab = morph.get_root_for_grab()
-
-                    if morph.is_draggable:
+#PKHG.todo??? 0606012
+                    if morph.is_draggable and not isinstance(morph, MenuItem):
                         self.moving_morph = True
                     #searh for a morph(parent) to handle a click!
                     while not morph.get_handles_mouse_click():
@@ -305,7 +306,7 @@ class Hand(Morph):
 
     # move morph by mouse drag
     def detect_mouse_drag(self,event):
-        if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True:
+        if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True and self.is_draggable:
             morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y)
             self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)

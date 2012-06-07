@@ -26,7 +26,6 @@ class Morph(Node ):
         if bounds:
             self.bounds = bounds
         else:
-#            self.bounds = Point(0, 0).get_corner(Point(100,60))
             self.bounds = Rectangle(Point(0, 0), Point(100,60))
         self.color = (0.3, 0.3, 0.3, 1.0)
         self.is_visible = True
@@ -235,20 +234,19 @@ class Morph(Node ):
         size = 16
         blf.size(font_id, size, 72)
         dims_x,dims_y = blf.dimensions(font_id, self.name)
-        self.my_name_size = dims_x
+#PKHG should be done elsewhere!        self.my_name_size = int(dims_x) + 2
         x = self.bounds.origin.x 
-        xx = self.bounds.corner.x
-
+        xx = self.bounds.corner.x       
         difx = xx - x
         if dims_x > difx:
             quot = difx/dims_x
             size = int(size * quot)
         y = self.bounds.corner.y - size
-##############debugPKHG
         
         if self.with_name:
+       
 #PKHG. bounds should include name of morph
-#            self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
+#PKHG 040612 does not work???!           self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
 #                                    self.bounds.corner.y))
 #PKHG.1jun12 the foregoing line causes strange behavior!
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
