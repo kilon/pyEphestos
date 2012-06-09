@@ -351,7 +351,6 @@ def numpad_char(str):
 delete_dict= ['DEL','BACK_SPACE']
 
 
-
 class KeyboardListener:
     def __init__(self):
         self.text_input = ''
@@ -400,11 +399,14 @@ class KeyboardListener:
     def displayInfo(self, event):
         print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
         print([self.shift_seen, self.text_input], event.type)
-        if event.type in ["RET", "NUMPAD_ENTER"]:
-            
+        
+        if event.type in ["RET", "NUMPAD_ENTER"]:            
             #DEL not done! yet
             tmp = self.text_input[:-1]
             result = self.text_input
             self.text_input = ''
             print(result)
+        else:
+            result = self.text_input
+        return result
         
