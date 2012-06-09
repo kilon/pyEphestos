@@ -24,7 +24,8 @@ class Hand(Morph):
         self.temp_text_list = []
         self.mouse_x = 0
         self.mouse_y = 0
-
+        self.keyboardListener = KeyboardListener()
+        
     def __repr__(self):
         return 'Hand(' + self.get_center().__str__() + ')'
 
@@ -44,7 +45,7 @@ class Hand(Morph):
 
 
     def process_all_events(self, event):
-        """ Central method for processing all kind of events and calling approriate methods for different kind of events """
+        """ Central method for processing all kind of events and calling approriate methods for different kind of events """        
         self.mouse_x = event.mouse_region_x
         self.mouse_y = event.mouse_region_y
          
@@ -62,6 +63,7 @@ class Hand(Morph):
     def detect_press_event(self, event):
         """mouse down, or keys to do"""
 
+        self.keyboardListener.keyPressed(event)
         result = {'RUNNING_MODAL'}
 
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
@@ -74,12 +76,12 @@ class Hand(Morph):
     def detect_release_event(self, event):
         """handle keyboard release"""
 
-
+        
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
-
+            self.keyboardListener.keyReleased(event)
             tmp = self.get_morph_at_pointer() #PKHG. at least world?!
             key_release = tmp.key_release(event) #PKHG error was TypeError: key_release() takes exactly 2 arguments (1 given)
 
@@ -311,3 +313,97 @@ class Hand(Morph):
             self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
             value_returned = {'RUNNING_MODAL'}
+
+
+#############test for keyboard letteres and digits
+lookup_kbd = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
+     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
+     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
+     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
+     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':'0', 'ZERO_SHIFT':')', \
+     'SPACE': ' ', 'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',\
+     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
+     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
+     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
+     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
+     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}',\
+     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~'
+               }
+
+keybd =[ 'SPACE', 'ONE', 'TWO', 'THREE', 'FOUR' , 'FIVE', 'SIX', 'SEVEN',\
+         'EIGHT', 'NINE' , 'ZERO', 'MINUS', 'EQUAL', 'COMMA', 'PERIOD', 'SLASH',\
+         'SEMI_COLON', 'QUOTE', 'BACK_SLASH', 'LEFT_BRACKET', 'RIGHT_BRACKET', 'ACCENT_GRAVE']     
+
+
+numpad_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
+     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
+
+def numpad_char(str):
+    result = ""
+    if len(str)==8:
+        result = str[-1:]
+    else:
+        result = numpad_specials[str]
+    return result
+
+    
+delete_dict= ['DEL','BACK_SPACE']
+
+
+
+class KeyboardListener:
+    def __init__(self):
+        self.text_input = ''
+        self.shift_seen = False
+        
+
+    def keyPressed(self, event):
+        print("\nkeyPressed value and type",event.value, event.type)
+        if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
+            self.shift_seen = not self.shift_seen
+                                
+    def keyReleased(self, event):
+        print("keyReleased called")
+        evt_type = event.type
+        if event.value in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
+            self.shift_seen = not self.shift_seen
+        if evt_type in  ["RET", "NUMPAD_ENTER"]:
+            pass
+        elif len(evt_type) == 1:
+            if self.shift_seen:
+                self.text_input += evt_type
+            else:                
+                self.text_input += evt_type.lower()
+        else:
+            if evt_type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
+                self.shift_seen = not self.shift_seen
+            elif  evt_type in ["DEL", "BACK_SPACE"]:
+                if len(self.text_input) > 0:
+                    self.text_input = self.text_input[:-1]
+            elif evt_type in keybd:
+                if self.shift_seen:
+                    evt_type += "_SHIFT"
+                self.text_input += lookup_kbd[evt_type]   
+            elif evt_type == "TAB":
+                self.text_input += "    "
+            elif evt_type.startswith("NUMPAD"):
+                if evt_type in numpad_specials.keys():
+                    self.text_input += numpad_specials[evt_type]
+                else:
+                    self.text_input += evt_type[7:]
+            else:
+                self.text_input = " *" + evt_type + "* "
+                
+        self.displayInfo(event)
+
+    def displayInfo(self, event):
+        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
+        print([self.shift_seen, self.text_input], event.type)
+        if event.type in ["RET", "NUMPAD_ENTER"]:
+            
+            #DEL not done! yet
+            tmp = self.text_input[:-1]
+            result = self.text_input
+            self.text_input = ''
+            print(result)
+        

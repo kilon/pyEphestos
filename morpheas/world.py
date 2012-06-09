@@ -3,6 +3,7 @@ from .rectangle  import Point
 from .morph  import *
 from .hand  import *
 from .menu import Menu
+from .stringfield import *
 #from . class_Frame import Frame
 
 class World(Frame):
@@ -25,6 +26,7 @@ class World(Frame):
         #self.draw_new()
         self.broken = []
         self.running = True
+        self.my_stringfield = StringField(default= "main_input")
 
     def __repr__(self):
         return 'World(' + self.get_extent().__str__() + ')'
@@ -97,6 +99,8 @@ class World(Frame):
         else:
             menu.add_item("enter developer's mode", 'toggle_dev_mode')
         menu.add_line()
+        menu.add_item("input",self.my_stringfield)
+        menu.add_line()        
         menu.add_item("about...", 'about')
         return menu
 

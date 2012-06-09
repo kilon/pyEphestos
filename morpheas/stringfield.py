@@ -4,25 +4,67 @@ from .rectangle import *
 import addon_utils
 import re
 
-class String(Morph):
+re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
+
+used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
+     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
+     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
+     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
+     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
+     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
+     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
+     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
+     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
+     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
+     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
+     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
+     
+numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
+     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
+
+delete_list= ['DEL','BACK_SPACE']
+         
+'''
+def add_alpha_num_del_key(event,input_text, extra):
+    """eat a keyboard key"""
+    type_val = "" + event.type
+    if type_val in {'RET','NUMPAD_ENTER'}:
+        print("\n===DBG add_keys stringfield.py L32)=== (numpad)RETURN SEEN")
+        
+#???    elif re_CAS.search(type_val): #Ctrl Alt Shift
+        
+    elif type_val in delete_list: #remove last key if possible
+        if len(input_text)> 1:
+            input_text = input_text[:-1
+                                    ]
+            
+    elif type_val == "SPCACE":
+        input_text = input_text + " "
+    else:            
+        if event.shift: 
+            extra = "SHIFT"
+   ''' 
+
+
+class InputStringMorph(Morph):
     "I am a single line of text"
                       
     def __init__(self,
-                 text,
+                 text = "",
                  fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
-        super(String, self).__init__()
-#PKHG.OK         print("String created = ", text)
+        super(InputStringMorph, self).__init__()
+#PKHG.OK         print("InputStringMorph created = ", text)
         self.text = text
         self.fontname = fontname
         self.fontsize=fontsize
         self.bold = bold
         self.italic = italic
         self.is_editable = False
-        super(String, self).__init__()
-        self.color = (1,1,1,1)
+        super(InputStringMorph, self).__init__()
+        self.color = (1,0,1,1)
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
 #PKHG.TODO DPI = ???        
@@ -30,7 +72,7 @@ class String(Morph):
 
         
     def __repr__(self):
-        return 'String("' + self.text + '")'
+        return 'InputStringMorph("' + self.text + '")'
 
     def draw(self):
         '''
@@ -54,16 +96,18 @@ class String(Morph):
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
-
             blf.draw(self.font, self.text)
     
     def get_width(self):
         return self.width
-    #String menu:
+    #InputStringMorph menu:
 
+    def add_keystroke(self):
+        pass
+        
     
     def developers_menu(self):
-        menu = super(String, self).developers_menu()
+        menu = super(InputStringMorph, self).developers_menu()
         menu.add_line()
         if not self.is_editable:
             menu.add_item("edit...", 'edit')
@@ -79,6 +123,9 @@ class String(Morph):
         return menu
 
     def edit(self):
+        print("///////////////InputStringMorph L 83: I am about to be edited")
+        return
+#PKHG todo? 080612 input of strings    
         world.edit(self)
 
     def choose_font(self):
@@ -118,7 +165,7 @@ class String(Morph):
         self.draw()
         self.changed()
 
-    #String events:
+    #InputStringMorph events:
 
     def handles_mouse_click(self):
         return self.is_editable
@@ -127,6 +174,8 @@ class String(Morph):
         self.edit()
         world.text_cursor.goto_pos(pos)
 
+#     def key_release(self,event):
+         
 
 
 class StringField( Morph):
@@ -148,7 +197,7 @@ class StringField( Morph):
         self.bold = bold
         self.italic = italic
         self.color = (1.0, 0.0, 1.0, 0.5) 
-        self.text_string = String(self.default, self.fontname, self.fontsize,\
+        self.text_string = InputStringMorph(self.default, self.fontname, self.fontsize,\
                            self.bold, self.italic)
         self.add(self.text_string)
         self.re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")

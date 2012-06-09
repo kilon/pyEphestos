@@ -1,7 +1,7 @@
 debug140512_delete_children = False
 debug050512_maxwidth = False #True #width checking ...
 debug050512_1659 = False #MenuItem test
-debug_stringfield_060512_0723 = False #for stringfield test
+debug_stringfield_060512_0723 = True #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = True

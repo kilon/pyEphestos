@@ -26,6 +26,12 @@ about.set_position(Point(200,200))
 about.is_visible = False
 world.add(about)
 
+### test InputStringMorph
+stringMorph = InputStringMorph(text="hallo by PKHG")
+stringMorph.set_position(Point(250,200))
+world.add(stringMorph)
+
+
 yesno = yesnoMenu(300,300, world)
 #world.add(yesno)
 
@@ -111,6 +117,7 @@ class open_ephestos(bpy.types.Operator):
             res = hand.process_all_events(event) #{'RUNNING_MODAL'}
             if debug_show_acttions_of_handle:
                 print("=======> end hand actions result of process_all_events =",res, "\n")
+#fort test of events only            print("\n=======>>>> event info: type=", event.type,"\n value=", event.value)
             return(res)
         else:
 #            print("event type :" ,event.type)
