@@ -27,7 +27,6 @@ class Menu(RoundedBox):
         self.my_width = 100
         self.stringField_ID = None
 
-
 #"
     def add_item(self, label="close", action='nop'):
         self.items.append((label, action))
@@ -415,8 +414,7 @@ class Trigger(Morph):
 #        self.image = self.press_image
         print("=L384= menu.py mouse_down_left of Trigger; self = ", self, " pos = ", pos ,"my action =", self.action )
         world = self.get_root()
-        print("=L385= root is ", world )
-        print("self.action =", self.action )
+        print("=L385= root is ", world, "self.action =", self.action )
         if self.action == "delete":
             world = self.parent.get_root() #PKHG gives back World!
             print("my world is ", world)
@@ -450,12 +448,21 @@ class Trigger(Morph):
         elif self.action == "StringField":
             world = self.parent.get_root()
             inputmorph_id = self.parent.stringField_ID
-            input_morph_tmp = [el for el in world.children if id(el) == inputmorph_id]
-            input_morph = input_morph_tmp[0]
-            print("\n\n--------->",input_morph)
-            
-            input_morph.is_visible = not input_morph.is_visible 
-            
+            ips  = [id(el)== inputmorph_id for el in world.children]
+            check_contains(self.parent, "MENU", print_value = True)
+#            print("\n\n self and parent", self, self.parent,  " ips = ", ips[:], inputmorph_id, world,"\n\n")
+            ips_m  = [el for el in world.children if id(el) == inputmorph_id]
+            if ips_m == []:
+                print("\n\nwhy not found????\n\n")
+                input_morph_tmp = [el for el in world.children if isinstance(el,InputStringMorph)]
+            else:  
+                input_morph_tmp = ips_m
+            if True: #len(input_morph_tmp) == 1:
+                input_morph = input_morph_tmp[0]
+                input_morph.is_visible = not input_morph.is_visible 
+                print("\n\n--------->",input_morph)
+            else:
+                print("***WARNING*** click again on input!")
         self.changed()
 
     def mouse_click_left(self, pos):
@@ -572,3 +579,15 @@ class Bouncer(Morph):
     def toggle_motion(self):
         self.is_stopped = not self.is_stopped
 
+def check_contains(cl,name , print_value = False, no_underscore = True):
+    dir_class = dir(cl)
+    for el in dir_class:
+        if el.startswith("_") and no_underscore:
+            pass
+        else:
+            if print_value:
+                tmp = getattr(cl,el)
+                print(name , " contains ==>",el," value = ", tmp)
+            else:
+                print(name , " contains ==>",el)
+    print("\ncheck_contains finished\n\n")
