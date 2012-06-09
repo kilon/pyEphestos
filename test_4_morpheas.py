@@ -18,7 +18,6 @@ world.add(crosshair)
 #menu.context_menu()
 #world.add(menu)
 world_menu = world.context_menu()
-
 about = Text("About\nbased on pymorpheas\nmorph adjusted for Blender\nby Dimitris and Peter", max_width = 350)
 about.name = "About"
 #multiline_text = Text("PKHG  was here", max_width = 200) 
@@ -28,6 +27,11 @@ world.add(about)
 
 ### test InputStringMorph
 stringMorph = InputStringMorph(text="hallo by PKHG")
+stringMorph.is_visiable = False
+stringMorph_id = id(stringMorph)
+print("\n\n stringMorph_id", stringMorph_id)
+world_menu.stringField_ID = stringMorph_id
+
 stringMorph.set_position(Point(250,200))
 world.add(stringMorph)
 

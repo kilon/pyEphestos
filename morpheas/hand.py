@@ -181,6 +181,7 @@ class Hand(Morph):
                     # mark morph for drag only if mouse cursor is top of it
                     self.morph_to_grab = morph.get_root_for_grab()
 #PKHG.todo??? 0606012
+                    print("----->>>>>>> hand.py in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
                     if morph.is_draggable and not isinstance(morph, MenuItem):
                         self.moving_morph = True
                     #searh for a morph(parent) to handle a click!

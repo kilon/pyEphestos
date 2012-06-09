@@ -25,6 +25,7 @@ class Menu(RoundedBox):
         super(Menu, self).__init__()
         self.is_draggable = False
         self.my_width = 100
+        self.stringField_ID = None
 
 
 #"
@@ -446,6 +447,15 @@ class Trigger(Morph):
                     about_text.hide()
                 else:
                     about_text.show()
+        elif self.action == "StringField":
+            world = self.parent.get_root()
+            inputmorph_id = self.parent.stringField_ID
+            input_morph_tmp = [el for el in world.children if id(el) == inputmorph_id]
+            input_morph = input_morph_tmp[0]
+            print("\n\n--------->",input_morph)
+            
+            input_morph.is_visible = not input_morph.is_visible 
+            
         self.changed()
 
     def mouse_click_left(self, pos):

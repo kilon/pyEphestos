@@ -6,48 +6,9 @@ import re
 
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
-used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
-     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
-     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
-     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
-     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
-     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
-     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
-     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
-     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
-     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
-     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
-     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
-     
-numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
-     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
-
-delete_list= ['DEL','BACK_SPACE']
-         
-'''
-def add_alpha_num_del_key(event,input_text, extra):
-    """eat a keyboard key"""
-    type_val = "" + event.type
-    if type_val in {'RET','NUMPAD_ENTER'}:
-        print("\n===DBG add_keys stringfield.py L32)=== (numpad)RETURN SEEN")
-        
-#???    elif re_CAS.search(type_val): #Ctrl Alt Shift
-        
-    elif type_val in delete_list: #remove last key if possible
-        if len(input_text)> 1:
-            input_text = input_text[:-1
-                                    ]
-            
-    elif type_val == "SPCACE":
-        input_text = input_text + " "
-    else:            
-        if event.shift: 
-            extra = "SHIFT"
-   ''' 
-
 
 class InputStringMorph(Morph):
-    "I am a single line of text"
+    """I am a single line to input text"""
                       
     def __init__(self,
                  text = "",
@@ -75,24 +36,13 @@ class InputStringMorph(Morph):
         return 'InputStringMorph("' + self.text + '")'
 
     def draw(self):
-        '''
-        self.font = pygame.font.SysFont(
-            self.fontname,
-            self.fontsize,
-            self.bold,
-            self.italic)
-        '''
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
-#        self.image = self.font.render(self.text, 1, self.color)
-#        self.image.set_alpha(self.alpha)
-#        corner = Point(self.image.get_width(),
-#                                   self.image.get_height())
         corner = Point(self.width, 2 + int(t_height))
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
-#        bgl.glEnable(bgl.GL_BLEND)
+#PKHG.??? needed?        bgl.glEnable(bgl.GL_BLEND)
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
@@ -171,6 +121,9 @@ class InputStringMorph(Morph):
         return self.is_editable
 
     def mouse_click_left(self, pos):
+        pass
+        return
+########????????
         self.edit()
         world.text_cursor.goto_pos(pos)
 
@@ -200,25 +153,6 @@ class StringField( Morph):
         self.text_string = InputStringMorph(self.default, self.fontname, self.fontsize,\
                            self.bold, self.italic)
         self.add(self.text_string)
-        self.re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
-
-        self.used_keyboard_dict_for_digits = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
-     'TWO_SHIFT':'@', 'THREE':'3', 'THREE_SHIFT':'#', 'FOUR':'4',\
-     'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
-     'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
-     'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':')', \
-     'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',
-     'ACCENT_GRAVE':'`', 'ACCENT_GRAVE_SHIFT':'~',\
-     'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
-     'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
-     'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
-     'BACK_SLASH_SHIFT':'|', 'LEFT_BRACKET':'[', 'LEFT_BRACKET_SHIFT':'{',\
-     'RIGHT_BRACKET':']', 'RIGHT_BRACKET_SHIFT':'}'}
-     
-
-        self.numpad_dict_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
-     'NUMPAD_ASTERIX':'*',  'NUMPAD_MINUS':'-',  'NUMPAD_PLUS':'+'}
-        self.delete_list= ['DEL','BACK_SPACE']
 
 
     def draw(self):
