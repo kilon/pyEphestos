@@ -95,13 +95,14 @@ class World(Frame):
             menu.add_item("start all bouncers", 'start_all_bouncers')
             menu.add_line()
             menu.add_item("switch to user mode", 'toggle_dev_mode')
+            menu.add_line()
+            menu.add_item("input",'StringField')
+    
 #not needed            menu.add_item("close", 'delete')
         else:
             menu.add_item("enter developer's mode", 'toggle_dev_mode')
-        menu.add_line()
-        menu.add_item("input",'StringField')
         menu.add_line()        
-        menu.add_item("about...", 'about')
+        menu.add_item("about...", 'about') 
         return menu
 
     def user_create_new_morph(self):
