@@ -232,9 +232,10 @@ class StringField( Morph):
     """        
     
     def key_release(self,event):
-        if event.type in {'RET','NUMPAD_ENTER'}:
+        if True: #event.type in {'RET','NUMPAD_ENTER'}:
             tmp = self.kbd_listener.text_input
             self.insert_committed_text(tmp)
+            self.onelinetext.text = tmp
         #    set_Info_input(tmp, False)
 #PKHG.attention  return used:                        
         return {'RUNNING_MODAL'} #keys eaton up

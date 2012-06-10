@@ -366,12 +366,12 @@ class KeyboardListener:
         
 
     def keyPressed(self, event):
-        print("\nkeyPressed value and type",event.value, event.type)
+        print("\nhand.py L369 keyPressed value and type",event.value, event.type)
         if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
             self.shift_seen = not self.shift_seen
                                 
     def keyReleased(self, event):
-        print("keyReleased called")
+        print("hand.py L374 keyReleased called")
         evt_type = event.type
         if event.value in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
             self.shift_seen = not self.shift_seen
@@ -405,16 +405,16 @@ class KeyboardListener:
         self.displayInfo(event)
 
     def displayInfo(self, event):
-        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
-        print([self.shift_seen, self.text_input], event.type)
+#        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
+#        print([self.shift_seen, self.text_input], event.type)
         
         if event.type in ["RET", "NUMPAD_ENTER"]:            
             #DEL not done! yet
             tmp = self.text_input[:-1]
             result = self.text_input
             self.text_input = ''
-            print(result)
         else:
             result = self.text_input
+        print("\ntyped text now: ", result)
         return result
         
