@@ -587,7 +587,8 @@ def check_contains(cl,name , print_value = False, no_underscore = True):
         else:
             if print_value:
                 tmp = getattr(cl,el)
-                print(name , " contains ==>",el," value = ", tmp)
+                if el == 'stringField_ID':
+                    print(name , " contains ==>",el," value = ", tmp)
             else:
                 print(name , " contains ==>",el)
     print("\ncheck_contains finished\n\n")
