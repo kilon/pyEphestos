@@ -79,13 +79,13 @@ if "bpy" in locals():
         imp.reload(morpheas) 
     if "test_1_morpheas" in locals():
         if PKHG_test:
-            imp.reload(test_PKHG_stringinput_100612.py)
+            imp.reload(test_PKHG_stringinput_100612)
         else:
             imp.reload(test_1_morpheas)
 else:
     import Ephestos
     if PKHG_test:
-        from Ephestos import  test_PKHG_stringinput_100612.py
+        from Ephestos import  test_PKHG_stringinput_100612
     else:
         from Ephestos import  test_1_morpheas
     
