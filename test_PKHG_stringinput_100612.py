@@ -16,6 +16,8 @@ from .morpheas import *
 #can be made visible by a CrossHair-morph
 world = World()
 hand = Hand()
+tmp = hand.kbd_listener
+world.kbd_listener = tmp #PKHG: this worlds keyboardListener
 world.add(hand)
 crosshair = CrossHair(hand)
 world.add(crosshair)
@@ -42,17 +44,27 @@ about.is_visible = False
 #######to be compatible with 0905 state of git START ???!!!
 
 ### test InputStringMorph
-stringMorph = InputStringMorph(text="for testeing ID values")
-stringMorph.is_visiable = False
-stringMorph_id = id(stringMorph)
-print("\n\n stringMorph_id", stringMorph_id)
-world_menu.stringField_ID = stringMorph_id
-stringMorph.set_position(Point(250,200))
-stringMorph.set_color('blue')
-world.add(stringMorph)
+#stringMorph = InputStringMorph(text="for testeing ID values")
+#stringMorph.is_visiable = False
+#stringMorph_id = id(stringMorph)
+#print("\n\n stringMorph_id", stringMorph_id)
+#world_menu.stringField_ID = stringMorph_id
+#stringMorph.set_position(Point(250,200))
+#stringMorph.set_color('blue')
+#world.add(stringMorph)
 
 ##### end of compatibilteit
 
+##Stringfield test 
+
+stringfield = StringField(kbd_listener = hand.kbd_listener, default="test StringField  pkhg")
+world_menu.stringfield_ID = id(stringfield)
+stringfield.set_position(Point(400,200))
+stringfield.name = "I am a StringField"
+stringfield.is_visible = False
+stringfield.with_name = True
+#stringfield.keyboard_listener = world.keyboard_listener
+world.add(stringfield)
 
 ### test StringField
 #If active it will show a InputStringMorph (100612)

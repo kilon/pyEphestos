@@ -1,6 +1,6 @@
 #PKHG debuginfo, please do not remove! Later ok ...
 debug_left_mouse_click_060512_1048 = False
-
+debug_get_morph_at_pointer = False
 import bpy
 
 from .rectangle import *
@@ -24,7 +24,7 @@ class Hand(Morph):
         self.temp_text_list = []
         self.mouse_x = 0
         self.mouse_y = 0
-        self.keyboardListener = KeyboardListener()
+        self.kbd_listener = KeyboardListener()
         
     def __repr__(self):
         return 'Hand(' + self.get_center().__str__() + ')'
@@ -45,7 +45,9 @@ class Hand(Morph):
 
 
     def process_all_events(self, event):
-        """ Central method for processing all kind of events and calling approriate methods for different kind of events """        
+        """ Central method for processing all kind of events and calling approriate methods for different kind of events """
+
+        #PKHG mouse_x and mouse_y needed for CrossHair
         self.mouse_x = event.mouse_region_x
         self.mouse_y = event.mouse_region_y
          
@@ -63,7 +65,7 @@ class Hand(Morph):
     def detect_press_event(self, event):
         """mouse down, or keys to do"""
 
-        self.keyboardListener.keyPressed(event)
+        self.kbd_listener.keyPressed(event)
         result = {'RUNNING_MODAL'}
 
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
@@ -81,7 +83,7 @@ class Hand(Morph):
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
         else:
-            self.keyboardListener.keyReleased(event)
+            self.kbd_listener.keyReleased(event)
             tmp = self.get_morph_at_pointer() #PKHG. at least world?!
             key_release = tmp.key_release(event) #PKHG error was TypeError: key_release() takes exactly 2 arguments (1 given)
 
@@ -171,7 +173,8 @@ class Hand(Morph):
         else:
 
             morph = self.get_morph_at_pointer()
-            print(">>>hand L172 get_morph_at_pointer morph =", morph, self.parent)
+            if debug_get_morph_at_pointer:
+                print("\n>>>hand.py L177 get_morph_at_pointer morph =", morph, self.parent)
             pos = self.bounds.origin
 
             if morph != self.parent:
@@ -181,14 +184,19 @@ class Hand(Morph):
                     # mark morph for drag only if mouse cursor is top of it
                     self.morph_to_grab = morph.get_root_for_grab()
 #PKHG.todo??? 0606012
-                    print("----->>>>>>> hand.py in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
+                    if debug_get_morph_at_pointer:
+                        print("\n>>>hand.py L188 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
                     if morph.is_draggable and not isinstance(morph, MenuItem):
                         self.moving_morph = True
                     #searh for a morph(parent) to handle a click!
+                    tmp = morph.get_handles_mouse_click()
+                    print("\n\n\n tmp morph.get_handles_mouse_click() =", tmp)
                     while not morph.get_handles_mouse_click():
                         if debug_left_mouse_click_060512_1048:
                             print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
                         morph = morph.parent
+                    if debug_get_morph_at_pointer:
+                        print(">>>hand.py L1197 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)                        
                     if debug_left_mouse_click_060512_1048:
                         print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
                     self.mouse_down_morph = morph

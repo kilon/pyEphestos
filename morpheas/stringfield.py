@@ -7,33 +7,34 @@ import re
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
 
-class InputStringMorph(Morph):
-    """I am a single line to input text"""
+class OneLineText(Morph):
+    """I am a single line to input text, NEEDS a owner with kbd_listener"""
                       
-    def __init__(self,
+    def __init__(self, owner = None,
                  text = "",
                  fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
-        super(InputStringMorph, self).__init__()
-#PKHG.OK         print("InputStringMorph created = ", text)
+        super(OneLineText, self).__init__()
+#PKHG.OK         print("OneLineText created = ", text)
+        self.owner = owner
         self.text = text
         self.fontname = fontname
         self.fontsize=fontsize
         self.bold = bold
         self.italic = italic
         self.is_editable = False
-        super(InputStringMorph, self).__init__()
-        self.color = (1,0,1,1)
+        super(OneLineText, self).__init__()
+        self.color = (1, 1, 1, 1) 
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
 #PKHG.TODO DPI = ???        
-        blf.size(self.font, self.fontsize, 72) #DPI default 72?        
-
+        blf.size(self.font, self.fontsize, 72) #DPI default 72?
+        self.kbd_listener = self.owner.kbd_listener
         
     def __repr__(self):
-        return 'InputStringMorph("' + self.text + '")'
+        return 'OneLineText("' + self.text + '")'
 
     def draw(self):
         t_width, t_height  = blf.dimensions(self.font, self.text)
@@ -50,14 +51,14 @@ class InputStringMorph(Morph):
     
     def get_width(self):
         return self.width
-    #InputStringMorph menu:
+    #OneLineText menu:
 
     def add_keystroke(self):
         pass
         
     
     def developers_menu(self):
-        menu = super(InputStringMorph, self).developers_menu()
+        menu = super(OneLineText, self).developers_menu()
         menu.add_line()
         if not self.is_editable:
             menu.add_item("edit...", 'edit')
@@ -73,7 +74,8 @@ class InputStringMorph(Morph):
         return menu
 
     def edit(self):
-        print("///////////////InputStringMorph L 83: I am about to be edited")
+        self.text = self.kbd_listener.text_input
+        print("///////////////OneLineText L76: I am about to be edited")
         return
 #PKHG todo? 080612 input of strings    
         world.edit(self)
@@ -115,7 +117,7 @@ class InputStringMorph(Morph):
         self.draw()
         self.changed()
 
-    #InputStringMorph events:
+    #OneLineText events:
 
     def handles_mouse_click(self):
         return self.is_editable
@@ -134,14 +136,14 @@ class InputStringMorph(Morph):
 class StringField( Morph):
     """StringField is used to get a one-line input text-string"""
     
-    def __init__(self, default='I am the default',
+    def __init__(self, kbd_listener = None, default='I am the default',
                  minwidth=100,
                  fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
         
-
+        self.kbd_listener = kbd_listener
         super(StringField, self).__init__()
         self.default = default
         self.minwidth = minwidth
@@ -149,18 +151,19 @@ class StringField( Morph):
         self.fontsize = fontsize
         self.bold = bold
         self.italic = italic
-        self.color = (1.0, 0.0, 1.0, 0.5) 
-        self.text_string = InputStringMorph(self.default, self.fontname, self.fontsize,\
+        self.color = (0.1, 0.1, 0.1, 0.1)
+        #onlinetext needs a keyboardlistener! thus
+        #OneLineText must be called AFTER the foregoing command
+        self.onelinetext = OneLineText(self, self.default, self.fontname, self.fontsize,\
                            self.bold, self.italic)
-        self.add(self.text_string)
-
+        self.add(self.onelinetext)
 
     def draw(self):
         "initialize my surface"
         super(StringField, self).draw()
-        self.text_string.draw()
+        self.onelinetext.draw()
 
-        input_width = self.text_string.width
+        input_width = self.onelinetext.width
         if input_width < 100:
 
             dif = 0
@@ -190,7 +193,7 @@ class StringField( Morph):
                 child.draw()
         
         super(StringField, self).draw()
-        self.text_string.draw()
+        self.onelinetext.draw()
                 
         return 
         ''' 
@@ -213,10 +216,11 @@ class StringField( Morph):
         return self.text.text
 
     def get_handles_mouse_click(self):
-        return False
+        print("\n\n get_handles_mouse_click called in stringfield.py")
+        return True
 
     def mouse_click_left(self, pos):
-        self.text_string.edit()
+        self.onelinetext.edit()
     
     """ I dont think this function is needed , will need to invistigate further     
     
@@ -229,85 +233,15 @@ class StringField( Morph):
     
     def key_release(self,event):
         if event.type in {'RET','NUMPAD_ENTER'}:
+            tmp = self.kbd_listener.text_input
             self.insert_committed_text(tmp)
-            set_Info_input(tmp, False)
+        #    set_Info_input(tmp, False)
 #PKHG.attention  return used:                        
         return {'RUNNING_MODAL'} #keys eaton up
-        '''
-                    self.add_keys(event, tmp)
-                    return {'RUNNING_MODAL'}
-                else: #new input morph
-                    if self.active_text_input_morph:
-                        self.insert_committed_text(self.active_text_input_morph)
-                        print("text inserted for ",self.active_text_input_morph)
-                    else:
-                        self.active_text_input_morph = tmp
-                        
-                    print("DBG L119 distinguish_release_event(hand.py) new inputmorp")
-                    self.temp_text_list = []
-                    self.active_text_input_morph = tmp
-                    self.add_keys(event, tmp)
-           '''           
                     
 
-    def add_keys(self, event, morph):
-        """eat a keyboard key"""
-#PKHG.???        global temp_text_list
-        type_val = "" + event.type
-#        if type_val == 'RET' or type_val == "NUMPAD_ENTER":
-        if type_val in {'RET','NUMPAD_ENTER'}:
-            print("\n===DBG add_keys(hand.py L46)=== (numpad)RETURN SEEN", self.temp_text_list, "for morph", morph)
-            self.temp_text_list = []
-            self.active_text_input_morph = None
-#PKHG.TODO ignor_lst ?!            
-        elif re_CAS.search(type_val):
-            pass
-        elif type_val in delete_list: #remove last key if possible
-            if self.temp_text_list:
-                del(self.temp_text_list[-1])
-            pass
-        elif type_val == "SPCACE":
-            self.temp_text_list.append(" ")
-        else:            
-            if event.shift: 
-                type_val += "_SHIFT"
-            self.temp_text_list.append(type_val)
-#        return {'RUNNING_MODAL'} #PKHG.??? DO WE WANT THIS
-    
 
-    def insert_committed_text(self, morph):
-        def convert_it(element):
-            print("element to convert", element)
-            result = element
-            if result in used_keyboard_dict_for_digits.keys():
-                result = used_keyboard_dict_for_digits[result]
-            elif result.endswith('_SHIFT'):
-                result = result[0]
-            elif result == "SPACE":
-                result = " "
-            elif len(result) == 1:
-                result = result.lower()
-            elif result.startswith('NUMPAD_'):
-                if len(result) == 8:
-                    result = result[-1]
-                elif result in numpad_dict_specials.keys():
-                    result = numpad_dict_specials[result]
-            print("converted to ", result)
-            return result
-            
-        def convert_list_to_text(letter_list):
-            print("TODO convert ", self.temp_text_list, " into a str")
-            converted_list = [convert_it(el) for el in letter_list]
-            print("------ converted list=",converted_list)
-            result = ""
-            for el in converted_list:
-                result = result + el
-            return result               
-        
-        result =  convert_list_to_text(self.temp_text_list)
-        print("------------ result = ", result)
-        morph.text_string.text = result
-                                                
-        
-        self.temp_text_list = []
-        return "PKHG finished inputting string"
+    def insert_committed_text(self, text):
+           print("-------L241 insert_committed_text stringfield.py")
+           print("self root",self.get_root())
+           print("\n stringfield.py L 247 text = ", text)

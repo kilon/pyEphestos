@@ -5,7 +5,7 @@ debug_stringfield_060512_0723 = True #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = True
-
+debug_ips = True #searching for strange error 
 import blf
 from random import random
 from .roundedbox import *
@@ -25,7 +25,7 @@ class Menu(RoundedBox):
         super(Menu, self).__init__()
         self.is_draggable = False
         self.my_width = 100
-        self.stringField_ID = None
+        self.stringfield_ID = None
 
 #"
     def add_item(self, label="close", action='nop'):
@@ -447,14 +447,16 @@ class Trigger(Morph):
                     about_text.show()
         elif self.action == "StringField":
             world = self.parent.get_root()
-            inputmorph_id = self.parent.stringField_ID
+            inputmorph_id = self.parent.stringfield_ID
             ips  = [id(el)== inputmorph_id for el in world.children]
+            if debug_ips:
+                print("\n\nmenu.py L453 ips = ", ips)
             check_contains(self.parent, "MENU", print_value = True)
 #            print("\n\n self and parent", self, self.parent,  " ips = ", ips[:], inputmorph_id, world,"\n\n")
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
             if ips_m == []:
                 print("\n\nwhy not found????\n\n")
-                input_morph_tmp = [el for el in world.children if isinstance(el,InputStringMorph)]
+                input_morph_tmp = [el for el in world.children if isinstance(el,StringField)]
             else:  
                 input_morph_tmp = ips_m
             if True: #len(input_morph_tmp) == 1:
@@ -587,7 +589,7 @@ def check_contains(cl,name , print_value = False, no_underscore = True):
         else:
             if print_value:
                 tmp = getattr(cl,el)
-                if el == 'stringField_ID':
+                if el == 'stringfield_ID':
                     print(name , " contains ==>",el," value = ", tmp)
             else:
                 print(name , " contains ==>",el)
