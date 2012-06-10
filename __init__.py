@@ -68,9 +68,10 @@ bl_info = {
     "tracker_url": "https://github.com/kilon/Ephestos",
     "category": "Development"}
 
-
+#select you default startup file!
 PKHG_test = True
 KILON_test = False
+ZEFFIE_test = False #add your analog lines ;-)
 
 if "bpy" in locals():
     import imp
@@ -78,13 +79,13 @@ if "bpy" in locals():
         imp.reload(morpheas) 
     if "test_1_morpheas" in locals():
         if PKHG_test:
-            imp.reload(test_4_morpheas)
+            imp.reload(test_PKHG_stringinput_100612.py)
         else:
             imp.reload(test_1_morpheas)
 else:
     import Ephestos
     if PKHG_test:
-        from Ephestos import  test_4_morpheas
+        from Ephestos import  test_PKHG_stringinput_100612.py
     else:
         from Ephestos import  test_1_morpheas
     
