@@ -37,7 +37,7 @@ class OneLineText(Morph):
         return 'OneLineText("' + self.text + '")'
 
     def draw(self):
-        """draw, if visible, my text"
+        """draw, if visible, my text"""
         
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
