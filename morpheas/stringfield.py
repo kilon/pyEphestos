@@ -8,7 +8,7 @@ re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$
 
 
 class OneLineText(Morph):
-    """I am a single line to input text, NEEDS a owner with kbd_listener"""
+    """I am a single line to input text, NEEDS an owner with kbd_listener"""
                       
     def __init__(self, owner = None,
                  text = "",
@@ -37,20 +37,23 @@ class OneLineText(Morph):
         return 'OneLineText("' + self.text + '")'
 
     def draw(self):
+        """draw, if visible, my text"
+        
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
         corner = Point(self.width, 2 + int(t_height))
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
-#PKHG.??? needed?        bgl.glEnable(bgl.GL_BLEND)
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
             blf.draw(self.font, self.text)
     
     def get_width(self):
+        """ the width of the text at actual font-size"""
         return self.width
+    
     #OneLineText menu:
 
     def add_keystroke(self):
@@ -74,14 +77,14 @@ class OneLineText(Morph):
         return menu
 
     def edit(self):
+        """change text for each kbd-realeas"""
         self.text = self.kbd_listener.text_input
-        print("///////////////OneLineText L76: I am about to be edited")
+#        print("///////////////OneLineText L76: I am about to be edited")
         return
-#PKHG todo? 080612 input of strings    
-        world.edit(self)
 
+###### PKHG TODO font-stuff ##############33
     def choose_font(self):
-        fontname = world.fontname_by_user()
+        fontname = world.fontname_by_user() 
         if fontname != None:
             self.fontname = fontname
             self.changed()
@@ -125,16 +128,14 @@ class OneLineText(Morph):
     def mouse_click_left(self, pos):
         pass
         return
-########????????
+########???????? does someone else?
         self.edit()
+        #PKHG not implemented ...
         world.text_cursor.goto_pos(pos)
-
-#     def key_release(self,event):
-         
 
 
 class StringField( Morph):
-    """StringField is used to get a one-line input text-string"""
+    """StringField is used to get/show a one-line input text-string"""
     
     def __init__(self, kbd_listener = None, default='I am the default',
                  minwidth=100,
@@ -153,13 +154,12 @@ class StringField( Morph):
         self.italic = italic
         self.color = (0.1, 0.1, 0.1, 0.1)
         #onlinetext needs a keyboardlistener! thus
-        #OneLineText must be called AFTER the foregoing command
-        self.onelinetext = OneLineText(self, self.default, self.fontname, self.fontsize,\
-                           self.bold, self.italic)
+        self.onelinetext = OneLineText(self, self.default,\
+                 self.fontname, self.fontsize, self.bold, self.italic)
         self.add(self.onelinetext)
 
     def draw(self):
-        "initialize my surface"
+        "draw and adjust size of morph, input_text dependant"
         super(StringField, self).draw()
         self.onelinetext.draw()
 
@@ -186,52 +186,28 @@ class StringField( Morph):
 
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
         children = self.children
-
+#PKHG.??? next lines really needed?
         for child in children:
             if child.is_visible:
-
-                child.draw()
-        
+                child.draw()        
         super(StringField, self).draw()
-        self.onelinetext.draw()
-                
+        self.onelinetext.draw()                 
         return 
-        ''' 
-        self.text = None
-        for m in self.children:
-#PKHG.todo            m.delete()
-            print("DBG === draw_new(stringfield) === ? should be deleted?  m ", m) 
-        self.children = []
-        self.text = String(self.default, self.fontname, self.fontsize,\
-                           self.bold, self.italic)
-        self.text.is_editable = True
-        self.text.is_draggable = False
-        self.set_extent(Point(self.minwidth, self.text.height()))
-        self.text.set_position(self.position())
-        self.add(self.text)
-        self.text.draw_new()
-        '''
 
     def get_string(self):
+        """ getter of input-text at THIS moment"""
         return self.text.text
 
     def get_handles_mouse_click(self):
-        print("\n\n get_handles_mouse_click called in stringfield.py")
+#dbg    print("\n\n get_handles_mouse_click called in stringfield.py")
         return True
 
     def mouse_click_left(self, pos):
+        """start editing of text via a mouse-click"""
         self.onelinetext.edit()
-    
-    """ I dont think this function is needed , will need to invistigate further     
-    
-    def set_Info_input(tmp, visi):
-        info_morph = [child for child in tmp.children if child.name == "Info_input"]
-        if info_morph:
-            info_morph[-1].is_visible = visi
-            info_morph[-1].draw_new()   
-    """        
-    
+         
     def key_release(self,event):
+#PKHG.TODO what to do with RET ... and arrow and Page-down etc???
         if True: #event.type in {'RET','NUMPAD_ENTER'}:
             tmp = self.kbd_listener.text_input
             self.insert_committed_text(tmp)
@@ -241,8 +217,6 @@ class StringField( Morph):
         return {'RUNNING_MODAL'} #keys eaton up
                     
 
-
     def insert_committed_text(self, text):
            print("-------L241 insert_committed_text stringfield.py")
-           print("self root",self.get_root())
-           print("\n stringfield.py L 247 text = ", text)
+           print("\n stringfield.py L 222 text = ", text)
