@@ -172,6 +172,7 @@ class Menu(RoundedBox):
 #                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
+            item.is_movable = False #PKHG do not move items in a Menu
             y += item.get_height()
         fb = self.get_full_bounds()
         self.set_extent(fb.get_extent() + 4)
@@ -474,6 +475,7 @@ class Trigger(Morph):
         
 class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>TODOWidget):
 
+    
     def create_label(self):
 #PKHG.09052012_1010
         return

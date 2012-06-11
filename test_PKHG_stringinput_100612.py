@@ -60,7 +60,7 @@ about.is_visible = False
 stringfield = StringField(kbd_listener = hand.kbd_listener, default="test StringField  pkhg")
 world_menu.stringfield_ID = id(stringfield)
 stringfield.set_position(Point(400,200))
-stringfield.name = "I am a StringField"
+stringfield.name = "start editing by LM-click!"
 stringfield.is_visible = False
 stringfield.with_name = True
 #stringfield.keyboard_listener = world.keyboard_listener
