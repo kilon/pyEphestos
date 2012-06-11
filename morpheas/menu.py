@@ -4,7 +4,7 @@ debug050512_1659 = False #MenuItem test
 debug_stringfield_060512_0723 = True #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
-debug_trigger_size_17_05_1618 = True
+debug_trigger_size_17_05_1618 = False
 debug_ips = True #searching for strange error 
 import blf
 from random import random
@@ -14,7 +14,8 @@ from .stringfield import * #see Menu add_input_StringField
 #PKHG.error from .world import * #PKHG test 0505012
 
 class Menu(RoundedBox):
-
+    """a menu is needed"""
+    
     def __init__(self, target=None, title=None):
         self.target = target
         self.title = title
@@ -27,20 +28,15 @@ class Menu(RoundedBox):
         self.my_width = 100
         self.stringfield_ID = None
 
-#"
+
     def add_item(self, label="close", action='nop'):
+        """add an item to the list of actions of a menu"""
         self.items.append((label, action))
 
     def add_line(self, width=1):
+        """add a line as seperator"""
         self.items.append((0,width))
 
-    def add_input_StringField(self, default='', width=100):
-        field = StringField(default, width)
-        field.name = "input"
-        field.with_name = True
-        field.is_editable = True
-        self.items.append(field)
-#        field.draw_new() #PKHG.??? needed? Answer no!
         
 #    def add_color_picker(self, default=(0,0,0,0)):
 #        field = ColorPicker(default)
@@ -95,9 +91,8 @@ class Menu(RoundedBox):
         text.background_color = self.bordercolor
 
         text.draw()
-        #self.label = text
-        #return
-#PKHG. test!!!!
+
+#PKHG. test!!!! works
         self.label = RoundedBox(3,0)
         self.label.color = self.bordercolor
         self.label.set_extent(text.get_extent() + 4)
@@ -106,15 +101,14 @@ class Menu(RoundedBox):
         self.label.text = text
         
     def draw(self):
-#PKHG.TODO will vanish soon        global debug_stringfield_060512_0723 
-#PKHG.OK        print("++++L114+++++ draw_new of Menu called")
+        """draw the menu"""
         if debug_roundedbox_160512_1837:
             print("-------L112 menu.draw--------->Menu roundedbox width =", self.bounds.get_width())
         #PKHG 050512 seems to be necessary!
         if debug140512_delete_children:
             print("=====L115 menu.draw=============before m.delete, children =", len(self.children[:]),self.children[:],"\n")
 
-############################todo            
+############################ why was it m.delete() in pymorpheas?
 #??        for m in self.children:
 #??            m.delete()
         self.children = []
@@ -123,7 +117,7 @@ class Menu(RoundedBox):
             print("======L120 menu.draw============m.delete = ",len(self.children[:]),self.children[:],"\n")
         self.edge = 5
         self.border = 2
-        self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox invisible
+        self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
         self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
         self.set_extent(Point(0, 0))
         if self.title != None:
@@ -151,28 +145,22 @@ class Menu(RoundedBox):
             elif pair[0] == 0:
                 pair_item_0_counter += 1
                 item = Morph()
-                #item.bounds = Point(0,0).corner(Point(x,y))
                 item.name = str(pair_item_0_counter) + "_type_item"
-                item.color = (0,0,1,1)#debug050512_1659 self.bordercolor
-#debug050512_1659                item.set_height(pair[1])
+                item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
                 item.set_height(pair[1]+2)
             else:
-                #self.target is world! PKHG
-#                print(">>>>>>>>>Menu L160 target,actuib,label" ,self.target, pair[1], pair[0])
+#self.target is world! PKHG
+#dbg                print(">>>>>>>>>Menu L160 target,actuib,label" ,self.target, pair[1], pair[0])
                 item = MenuItem(self.target, pair[1], pair[0])
-#PKHG.???
                 item.color = (1,0,0,1) #PKHG test
        #         item.create_label()
 #PKHG.works ;-)                item.color = (1,random(),0,1) #PKHG Test
                 item.name = pair[0]
                 item.with_name = True
-#                item.bounds = Point(0,0).get_corner(Point(0,25))
-#PKHG.
 #PKHG.060612?????                item.bounds = Rectangle(Point(0,0), Point(self.my_name_size,60)) #PKHG test 140512_1820
-#                item.name = "item" + str((x,y))
             item.set_position(Point(x, y))
             self.add(item)
-            item.is_movable = False #PKHG do not move items in a Menu
+            item.is_movable = False #PKHG 110612 do not move items in a Menu
             y += item.get_height()
         fb = self.get_full_bounds()
         self.set_extent(fb.get_extent() + 4)
@@ -180,9 +168,9 @@ class Menu(RoundedBox):
         super(Menu, self).draw()
         if debug140512_delete_children:
             print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
-#        print("menu.py draw_new; super(Menu, self) and type ", super(Menu, self), type(super(Menu, self)))  
-#PKHG.errro no bounds        super(Menu, self).bounds = Point(0,0).corner( Point(200,200))
+
     def max_width(self):
+        """compute the maximal width including all childredn"""
         w = self.my_width
         if debug050512_maxwidth:
             print("Menu max_width children", self.children)
@@ -208,8 +196,9 @@ class Menu(RoundedBox):
         return w
 
     def adjust_widths(self):
-#PKHG.TODO why is 70 needed: problem => dims_x is not enough?!        
-        w =  max(self.my_width ,self.max_width()) #PKHG???? why???? 160512
+        """adjust morph, such that all children of menu are inside its bounds"""
+        
+        w =  max(self.my_width ,self.max_width()) 
         for item in self.children:
             item.set_width(w)
             if isinstance(item, MenuItem):
@@ -220,6 +209,7 @@ class Menu(RoundedBox):
 #                    item.text.set_position(
 #                        item.get_center() - (item.text.get_extent() // 2))
 
+#PKHG not done, todo???
     def popup(self, world, pos):
         self.draw()
         self.set_position(pos)
@@ -244,6 +234,7 @@ class Menu(RoundedBox):
         self.draw()
         self.popup(world, (world.get_center() - (self.get_extent() // 2)))
 
+##########not tested othere types of Menu
 class SelectionMenu(Menu):
 
     def __init__(self, target=None, title=None):
@@ -264,7 +255,7 @@ class SelectionMenu(Menu):
         self.delete()
         return self.choice
 
-#PKHG.???class ListMenu(object):
+
 class ListMenu(Morph):
 
     def __init__(self,
@@ -335,8 +326,6 @@ class Trigger(Morph):
         self.name = label
         self.action = action
         #PKHG.???? self.color = (0, 1, 0, 1) #PKHG.???
-        
-#PKHG.TODO ??!!
         return
 
 ###############################################################3
