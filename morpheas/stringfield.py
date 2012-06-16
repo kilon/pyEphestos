@@ -139,8 +139,8 @@ class OneLineText(Morph):
         world.text_cursor.goto_pos(pos)
 
 
-class StringField( Morph):
-    """StringField is used to get/show a one-line input text-string"""
+class StringInput( Morph):
+    """StringInput is used to get/show a one-line input text-string"""
     
     def __init__(self, kbd_listener = None, default='I am the default',
                  minwidth=100,
@@ -150,7 +150,7 @@ class StringField( Morph):
                  italic=False):
         
         self.kbd_listener = kbd_listener
-        super(StringField, self).__init__()
+        super(StringInput, self).__init__()
         self.default = default
         self.minwidth = minwidth
         self.fontname = fontname
@@ -172,7 +172,7 @@ class StringField( Morph):
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
-        super(StringField, self).draw()
+        super(StringInput, self).draw()
         self.onelinetext.draw()
 
         input_width = self.onelinetext.width
@@ -202,7 +202,7 @@ class StringField( Morph):
         for child in children:
             if child.is_visible:
                 child.draw()        
-        super(StringField, self).draw()
+        super(StringInput, self).draw()
         self.onelinetext.draw()                 
         return 
 
@@ -211,22 +211,13 @@ class StringField( Morph):
         return self.text.text
 
     def get_handles_mouse_click(self):
-#dbg    print("\n\n get_handles_mouse_click called in stringfield.py")
+#dbg    print("\n\n get_handles_mouse_click called in StringInput.py")
         return True
 
     def mouse_click_left(self, pos):
         """start editing of text via a mouse-click"""
         self.is_activated = not self.is_activated
-        print("\n>>>>>> stringfield.py L210 mouse_click_left is_editable", self.is_activated)
-        '''
-        if self.is_activated:
-            self.onelinetext.edit()
-            self.onelinetext.is_editable = True
-            self.activation_info.is_visible = False #PKHG???True
-        else:
-            self.onelinetext.is_editable = False
-            self.activation_info.is_visible = True #PKHG???False
-          '''
+        print("\n>>>>>> StringInput.py L210 mouse_click_left is_editable", self.is_activated)
         
     def mouse_enter(self):
         self.is_activated = True
@@ -251,4 +242,19 @@ class StringField( Morph):
                     
 
     def insert_committed_text(self, text):
-           print("StringField.insert_committed_text (stringfield.py L241) text = ", text)
+           print("StringInput.insert_committed_text (stringfield.py L241) text = ", text)
+
+class Blinker(Morph):
+    "can be used for text cursors"
+
+    def __init__(self, rate=2):
+        super(Blinker, self).__init__()
+        self.color = (0, 0, 0, 1)
+        self.fps = rate
+        self.draw_new()
+
+    def wants_to_step(self):
+        return True
+
+    def step(self):
+        self.toggle_visibility()

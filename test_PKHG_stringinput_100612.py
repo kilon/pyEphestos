@@ -8,7 +8,7 @@ import bgl
 import blf
 from .morpheas import *
 
-##########start of default settings (today example for test_stringfield.py) ##
+##########start of default settings (today example for test_StringInput.py) ##
 
 
 #This file uses a World-morph on the 3DView screen of Blender
@@ -43,42 +43,21 @@ about.is_visible = False
 
 #######to be compatible with 0905 state of git START ???!!!
 
-### test InputStringMorph
-#stringMorph = InputStringMorph(text="for testeing ID values")
-#stringMorph.is_visiable = False
-#stringMorph_id = id(stringMorph)
-#print("\n\n stringMorph_id", stringMorph_id)
-#world_menu.stringField_ID = stringMorph_id
-#stringMorph.set_position(Point(250,200))
-#stringMorph.set_color('blue')
-#world.add(stringMorph)
+##StringInput test 
 
-##### end of compatibilteit
-
-##Stringfield test 
-
-stringfield = StringField(kbd_listener = hand.kbd_listener, default="test StringField  pkhg")
-world_menu.stringfield_ID = id(stringfield)
-stringfield.set_position(Point(400,200))
-stringfield.name = "start editing by LM-click!"
-stringfield.is_visible = False
-stringfield.with_name = True
-#stringfield.keyboard_listener = world.keyboard_listener
-world.add(stringfield)
+stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
+world_menu.stringinput_ID = id(stringinput)
+stringinput.set_position(Point(400,200))
+stringinput.name = "start editing by LM-click!"
+stringinput.is_visible = False
+stringinput.with_name = True
+#stringinput.keyboard_listener = world.keyboard_listener
+world.add(stringinput)
 
 ### test StringField
 #If active it will show a InputStringMorph (100612)
 #PKHG.??? shold be a String only?(as it was already?)
 
-'''
-stringMorph = InputStringMorph(text="input active")
-stringMorph.is_visiable = False
-stringMorph_id = id(stringMorph)
-print("\n\n stringMorph_id", stringMorph_id)
-world_menu.stringField_ID = stringMorph_id
-stringMorph.set_position(Point(250,200))
-world.add(stringMorph)
-'''
 
 #add als default morphs to the world!
 #we know by the following world.add lines which child in

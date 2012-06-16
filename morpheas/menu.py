@@ -136,7 +136,7 @@ class Menu(RoundedBox):
         for pair in self.items:
             if debug050512_1659:
                 print("pair is",pair)
-            if isinstance(pair,StringField): #PKHG.TODO or isinstance(pair,ColorPicker):
+            if isinstance(pair,StringInput): #PKHG.TODO or isinstance(pair,ColorPicker):
                 item = pair
                 item.with_name = True
                 if not debug_stringfield_060512_0723: #show properties of a StringField
@@ -219,7 +219,7 @@ class Menu(RoundedBox):
         world.open_menu = self
         self.full_changed()
         for item in self.items:
-            if isinstance(item, StringField):
+            if isinstance(item, StringInput):
                 item.text.edit()
                 return
 
@@ -446,7 +446,7 @@ class Trigger(Morph):
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
             if ips_m == []:
                 print("\n\nwhy not found????\n\n")
-                input_morph_tmp = [el for el in world.children if isinstance(el,StringField)]
+                input_morph_tmp = [el for el in world.children if isinstance(el,StringInput)]
             else:  
                 input_morph_tmp = ips_m
             if True: #len(input_morph_tmp) == 1:
