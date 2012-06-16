@@ -1,5 +1,5 @@
 #PKHG debuginfo, please do not remove! Later ok ...
-debug_left_mouse_click_060512_1048 = False
+debug_left_mouse_click_060512_1048 = True
 debug_get_morph_at_pointer = False
 import bpy
 
@@ -47,19 +47,19 @@ class Hand(Morph):
     def process_all_events(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
 
+        result = {'PASS_THROUGH'} #PKHG default value
+
         #PKHG mouse_x and mouse_y needed for CrossHair
         self.mouse_x = event.mouse_region_x
         self.mouse_y = event.mouse_region_y
-         
-        if event.type == 'MOUSEMOVE':
-            return self.process_mouse_move(event)
-        elif event.value=='PRESS':
-            return self.detect_press_event(event)
 
+        if event.type == 'MOUSEMOVE':
+            result = self.process_mouse_move(event)
+        elif event.value=='PRESS':
+            result = self.detect_press_event(event)
         elif event.value=='RELEASE':
-            return self.detect_release_event(event)
-        else:
-            return {'PASS_THROUGH'}
+            result =  self.detect_release_event(event)
+        return result
 
 
     def detect_press_event(self, event):
@@ -166,12 +166,11 @@ class Hand(Morph):
     def process_mouse_down(self, event):
         """ This method handles any kind of mouse button presses """
 
-        returned_value = {'PASS_THROUGH'}
+        result = {'PASS_THROUGH'}
 
         if self.children != []:
             self.drop()
         else:
-
             morph = self.get_morph_at_pointer()
             if debug_get_morph_at_pointer:
                 print("\n>>>hand.py L177 get_morph_at_pointer morph =", morph, self.parent)
@@ -211,9 +210,9 @@ class Hand(Morph):
                 elif event.type == 'RIGHTMOUSE':
                     morph.mouse_down_right(pos)
 
-                return {'RUNNING_MODAL'}
+                result = {'RUNNING_MODAL'}
 
-        return returned_value
+        return result
 
     def process_mouse_up(self, event):
         """ here we process all the mouse_up events and trigger approriate events of the morph depending on the specific action performed """
@@ -366,12 +365,12 @@ class KeyboardListener:
         
 
     def keyPressed(self, event):
-        print("\nhand.py L369 keyPressed value and type",event.value, event.type)
+        print("\nKeyboardlistener.keyPressed (hand.pyL369) keyPressed value and type",event.value, event.type)
         if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
             self.shift_seen = not self.shift_seen
                                 
     def keyReleased(self, event):
-        print("hand.py L374 keyReleased called")
+        print("KeyboardListener.keyReleased (hand.pyL374) keyReleased called")
         evt_type = event.type
         if event.value in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
             self.shift_seen = not self.shift_seen

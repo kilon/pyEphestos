@@ -25,7 +25,8 @@ class OneLineText(Morph):
         self.bold = bold
         self.italic = italic
         self.is_editable = False
-        super(OneLineText, self).__init__()
+        self.width = 10
+#        super(OneLineText, self).__init__()
         self.color = (1, 1, 1, 1) 
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
@@ -38,9 +39,10 @@ class OneLineText(Morph):
 
     def draw(self):
         """draw, if visible, my text"""
-        
+    
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
+#        if self.is_editable:
         corner = Point(self.width, 2 + int(t_height))
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
@@ -77,9 +79,10 @@ class OneLineText(Morph):
         return menu
 
     def edit(self):
-        """change text for each kbd-realeas"""
+        """change text for each kbd-releas"""
+        
         self.text = self.kbd_listener.text_input
-#        print("///////////////OneLineText L76: I am about to be edited")
+        print("///////////////OneLineText L85: I am about to be edited")
         return
 
 ###### PKHG TODO font-stuff ##############33
@@ -123,9 +126,11 @@ class OneLineText(Morph):
     #OneLineText events:
 
     def handles_mouse_click(self):
-        return self.is_editable
+        return True
+#        return self.is_editable
 
     def mouse_click_left(self, pos):
+        print("onelinetext.mouse_click_left (stringfield.py L132) called")
         pass
         return
 ########???????? does someone else?
@@ -157,6 +162,13 @@ class StringField( Morph):
         self.onelinetext = OneLineText(self, self.default,\
                  self.fontname, self.fontsize, self.bold, self.italic)
         self.add(self.onelinetext)
+        self.is_activated = False
+        self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = True)
+        self.activation_info.name = "active"
+        self.activation_info.set_position(self.bounds.corner)
+        self.activation_info.is_visible = False
+        self.activation_info.set_color("green")
+        self.add(self.activation_info)        
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
@@ -204,7 +216,28 @@ class StringField( Morph):
 
     def mouse_click_left(self, pos):
         """start editing of text via a mouse-click"""
-        self.onelinetext.edit()
+        self.is_activated = not self.is_activated
+        print("\n>>>>>> stringfield.py L210 mouse_click_left is_editable", self.is_activated)
+        '''
+        if self.is_activated:
+            self.onelinetext.edit()
+            self.onelinetext.is_editable = True
+            self.activation_info.is_visible = False #PKHG???True
+        else:
+            self.onelinetext.is_editable = False
+            self.activation_info.is_visible = True #PKHG???False
+          '''
+        
+    def mouse_enter(self):
+        self.is_activated = True
+        self.onelinetext.is_editable = True
+        self.activation_info.is_visible = True #PKHG???False
+        
+    def mouse_leave(self):
+        self.is_activated = False
+        self.onelinetext.is_editable = False
+        self.activation_info.is_visible = False #PKHG???False
+                
          
     def key_release(self,event):
 #PKHG.TODO what to do with RET ... and arrow and Page-down etc???
@@ -218,5 +251,4 @@ class StringField( Morph):
                     
 
     def insert_committed_text(self, text):
-           print("-------L241 insert_committed_text stringfield.py")
-           print("\n stringfield.py L 222 text = ", text)
+           print("StringField.insert_committed_text (stringfield.py L241) text = ", text)
