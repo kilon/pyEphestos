@@ -208,11 +208,11 @@ class Morph(Node ):
             self.move_by(delta)
 
     def set_center(self, aPoint):
-         """ setter: Set the position of morph setting moving its center """
+        """ setter: Set the position of morph setting moving its center """
         self.set_position(aPoint - (self.extent() // 2))
 
     def set_full_center(self, aPoint):
-         """ setter: Set the position of morph setting the center of its full bounds which includes children bounds as well."""
+        """ setter: Set the position of morph setting the center of its full bounds which includes children bounds as well."""
         self.set_position(aPoint - (self.full_bounds().extent() // 2))
 
     def set_width(self, width):
@@ -264,7 +264,7 @@ class Morph(Node ):
 #            return
         "initialize my surface"
         # print("I use color : ", self.color)
-        bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
+
         bgl.glColor4f(*self.color)
         dimensions = self.get_extent().as_list()
         if self.rounded:
@@ -311,6 +311,7 @@ class Morph(Node ):
             morph.show()
 
     def toggle_visibility(self):
+        """ toggle between visible and invisible"""
         self.is_visible = not self.is_visible
         self.changed()
         for morph in self.children:
@@ -319,7 +320,7 @@ class Morph(Node ):
     #Morph updating:
 
     def changed(self):
-        """my bounds saved in world.broken"""
+        """event called when morph is changed"""
         w = self.get_root() #PKHG recursive parent of self
         if debug_changed_130512_0810:
             print("changed_130512_0810 morph.py, root of", self,"is", w)
@@ -330,19 +331,14 @@ class Morph(Node ):
                 print("debug_changed_130512_0810 changed, self.bounds saved in world", self.bounds)
         '''
 
-    def full_changed(self):
-        """my full_bounds saved in world.broken"""
-        w = self.get_root()
-#PKHG.TODO        if isinstance(w, World):
-#            w.broken.append(copy.copy(self.full_bounds()))
 
-    #Morph accessing - structure:
-
-    def world(self):
+    def get_world(self):
+        """ getter : gets the world """
         if isinstance(self.root(), World):
             return self.root()
 
     def add(self, morph):
+        """ add a morph as a child"""
         parent = morph.parent
         if parent is not None:
             if debug050512_0900:
@@ -355,6 +351,7 @@ class Morph(Node ):
         self.add_child(morph)
 
     def get_morph_at(self, point):
+        """ getter (Point) : return the moprh that is located in a specific Point"""
         morphs = self.get_all_children()
         for m in morphs[::-1]:
             if m.get_full_bounds().get_contains_point(point):
@@ -363,6 +360,7 @@ class Morph(Node ):
     #Morph duplicating:
 
     def full_copy(self):
+        """ make a full copy of the morphs with all its children"""
         new = copy.copy(self)
         lst = []
         for m in self.children:
