@@ -370,79 +370,89 @@ class Morph(Node ):
         new.children = lst
         return new
 
-    def duplicate(self):
-        clone = self.full_copy()
-        clone.parent = None
-        clone.pick_up()
 
     #Morph dragging and dropping:
 
     def get_root_for_grab(self):
+        """ getter: get the world of the morph"""
         if self.parent == None or isinstance(self.parent, Frame):
             return self
         else:
             return self.parent.get_root_for_grab()
 
     def get_wants_drop_of(self, morph):
-        "default is False - change for subclasses"
+        """ getter : Returns whethere the morph wants to drop or not. Default is False - change for subclasses" """
+
         return False
 
-    def pick_up(self):
-        self.set_position(world.hand.position() - (self.extent() // 2))
-        world.hand.grab(self)
 
     #Morph events:
 
     def get_handles_mouse_over(self):
+        """ getter : Returns True or False for whether the morphs handles mouse_over events"""
         return False
 
     def get_handles_mouse_click(self):
+        """ getter : Returns True or False for whether the morphs handles mouse_clicks events"""
         return False
 
     def get_handles_mouse_move(self):
+        """ getter : Returns True or False for whether the morphs handles mouse_move events """
         return False
 
     def mouse_down_left(self, pos):
+        """ Event method to be called when the left mouse button is pressed"""
         pass
 
     def mouse_up_left(self, pos):
+        """ Event method to be called when the left mouse button is released"""
         pass
 
     def mouse_click_left(self, pos):
+        """ Event method to be called when the left mouse button is pressed and released"""
         pass
 
 
     def mouse_down_middle(self, pos):
+        """ Event method to be called when the middle  mouse button is pressed """
         pass
 
     def mouse_up_middle(self, pos):
+        """ Event method to be called when the middle mouse button is released"""
         pass
 
     def mouse_click_middle(self, pos):
+        """ Event method to be called when the middlle mouse button is pressed and released"""
         pass
 
     def mouse_down_right(self, pos):
+        """ Event method to be called when the right mouse button is pressed"""
         pass
 
     def mouse_up_right(self, pos):
+        """ Event method to be called when the right mouse button is released"""
         pass
 
     def mouse_click_right(self, pos):
+        """ Event method to be called when the right mouse button is pressed and released"""
         pass
 
     def mouse_enter(self):
+        """ Event method to be called when the mouse cursor enters the bounts of the morph"""
         pass
 
     def mouse_enter_dragging(self):
         pass
 
     def mouse_leave(self):
+        """ Event method to be called when the mouse cursor exits the bounts of the morph"""
         pass
 
     def mouse_leave_dragging(self):
         pass
 
     def mouse_move(self,pos):
+        """ Event method to be called when the mouse cursor tried to move the moprh"""
         pass
 
     def key_press(self,event):
