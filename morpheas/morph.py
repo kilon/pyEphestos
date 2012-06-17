@@ -20,8 +20,21 @@ debug_world = False
 #for the moment
 #from .  morpheas import Frame, Menu
 
-class Morph(Node ): 
+class Morph(Node ):
+
+    """ Morph class is the most important class of all. This is the central class used for any graphical element inside Morpheas. So any graphical element is a morph class that inherits from this class. The class inherits from the node class which is responsible for all parenting functionality. Via node any morph can be either a parent or the child of another morph. The central method of morph class is the draw method that feeds with opengl instruction for creating the visual representation of the morph. Other methods are handling a huge array of features like making a morph dragable, hidden, change position , trigger its own mouse and keyboard events and many many more. See docs for each method"""
+
     def __init__(self, bounds = None, rounded = False, with_name = False):
+
+        """ constructor of morph class it can be called with no parameters or using the following keywords ->
+
+        bounds : bounds set the bounds of the morph. It can be created using the Rect and Point  classes
+        eg. morph = Morph( bounds = Rect(Point(0,0),Point(100,100)) will create a morph with weight and width of 100 pixels
+
+        rounded : rounded is a boolean , if true will create a rounded morph
+
+        with_name : This one set a name for the morph for easy access """
+
         super(Morph, self).__init__()
         if bounds:
             self.bounds = bounds
@@ -38,27 +51,31 @@ class Morph(Node ):
         self.default_font = self.path_to_local_fonts + "/verdana.ttf"
         self.font_id = blf.load(self.default_font)
         self.my_name_size = 0
-        
+
     def __repr__(self):
+        """set how a morph is printed to the console and represented"""
         return self.__class__.__name__ + "(" + self.name + ")"
 
     def get_local_font_path(self):
+        """getter: Returns the path where fonts used by Ephestos can be found"""
         import  addon_utils
         result = addon_utils.paths()[0] + "/Ephestos/fonts"
         return result
 
     def get_my_name_size(self):
+        """getter: Returns then size of them morph's name"""
         return self.my_name_size
-    
+
     def delete(self):
+        """Removes the morph as child from any parent morph"""
         if self.parent != None:
             self.full_changed()
             self.parent.remove_child(self)
-    
+
     def get_color(self):
         """ getter: get the color of the morph"""
         return self.color
-    
+
 ##0.1 version    def set_color(self,r,g,b,alpha):
     def set_color(self,*rgba):
         """ setter : (red , green , blue , alpha )
@@ -80,15 +97,15 @@ class Morph(Node ):
                     print("\n***ERROR*** ", rgba ," not in colordictionary")
             else:
                 if len(rgba) == 2  or len(rgba) > 4 and (min(rgba) < 0.0 or max(rgba) > 1.0):
-                    print("\n***ERROR*** set_color argument must be either 1 or 4 see function documentation")        
+                    print("\n***ERROR*** set_color argument must be either 1 or 4 see function documentation")
                 elif len(rgba) == 3:
                     result = (rgba[0],rgba[1],rgba[2],1)
                 elif len(rgba) == 4:
                     result  = rgba
         self.color = result #set a valid color!
         return result
-        
-            
+
+
     #stepping:
 
     def get_wants_to_step(self):
@@ -100,63 +117,83 @@ class Morph(Node ):
     #Morph accessing - geometry getting:
 
     def get_left(self):
+        """ getter : Return the left side coordinates"""
         return self.bounds.get_left()
 
     def get_right(self):
+        """ getter: Return the right side coordinates"""
         return self.bounds.get_right()
 
     def get_top(self):
+        """ getter : Return the top side coordinates"""
         return self.bounds.get_top()
 
     def get_bottom(self):
+        """ getter : Return the bottom side coordinates"""
         return self.bounds.get_bottom()
 
     def get_center(self):
+        """ getter : Return the center  coordinates"""
         return self.bounds.get_center()
 
     def get_bottom_center(self):
+        """ getter : Return the bottom center coordinates"""
         return self.bounds.get_bottom_center()
 
     def get_bottom_left(self):
+        """ getter : Return the bottom left coordinates"""
         return self.bounds.get_bottom_left()
 
     def get_bottom_right(self):
+        """ getter : Return the bottom right coordinates"""
         return self.bounds.get_bottom_right()
 
     def get_bounding_box(self):
+        """ getter : Return the bounding box rect of the morph"""
         return self.bounds
 
     def get_corners(self):
+        """ getter: Return corners coordinates"""
         return self.bounds.get_corners()
 
     def get_left_center(self):
+        """ getter: Return left center coordinates"""
         return self.bounds.get_left_center()
 
     def get_right_center(self):
+        """ getter: Return right center coordinates"""
         return self.bounds.get_right_center()
 
     def get_top_center(self):
+        """ getter: Return top center coordinates"""
         return self.bounds.get_top_center()
 
     def get_top_left(self):
+        """ getter: Return top left coordinates"""
         return self.bounds.get_top_left()
 
     def get_top_right(self):
+        """ getter: Return top right coordinates"""
         return self.bounds.get_top_right()
 
     def get_position(self):
+        """ getter: Return position coordinates"""
         return self.bounds.origin
 
     def get_extent(self):
+        """ getter: Return extent coordinates"""
         return self.bounds.get_extent()
 
     def get_width(self):
+        """ getter: Return width in pixels"""
         return self.bounds.get_width()
 
     def get_height(self):
+        """ getter: Return height in pixels"""
         return self.bounds.get_height()
 
     def get_full_bounds(self):
+        """ getter: Return full bounds which include morph bounds and all its childrend bounds"""
         result = self.bounds
         for child in self.children:
             result = result.get_merge(child.get_full_bounds())
@@ -165,29 +202,35 @@ class Morph(Node ):
     #Morph accessing - changing:
 
     def set_position(self, aPoint):
+        """ setter: Set the position of morph. Can be used for moving morph on screen."""
         delta = aPoint - self.get_bottom_left()
         if delta.x != 0 or delta.y != 0:
             self.move_by(delta)
 
     def set_center(self, aPoint):
+         """ setter: Set the position of morph setting moving its center """
         self.set_position(aPoint - (self.extent() // 2))
 
     def set_full_center(self, aPoint):
+         """ setter: Set the position of morph setting the center of its full bounds which includes children bounds as well."""
         self.set_position(aPoint - (self.full_bounds().extent() // 2))
 
     def set_width(self, width):
+        """ setter: Set width in pixels"""
         self.changed()
         self.bounds.corner = Point(self.bounds.origin.x + width,
                                    self.bounds.corner.y)
         self.changed()
 
     def set_height(self, height):
+        """ setter: Set height in pixels"""
         self.changed()
         self.bounds.corner = Point(self.bounds.corner.x,
                                    self.bounds.origin.y + height)
         self.changed()
 
     def set_extent(self, aPoint):
+        """ setter: Set extent ( set width and height ) using the Point class as the only argument"""
         self.set_width(max(aPoint.x,0))
         self.set_height(max(aPoint.y,0))
 
@@ -216,7 +259,7 @@ class Morph(Node ):
 
     #Morph displaying:
     def draw(self):
-#        print("morph", self, "visibility = ", self.is_visible) 
+#        print("morph", self, "visibility = ", self.is_visible)
 #        if not self.is_visible:
 #            return
         "initialize my surface"
@@ -230,29 +273,29 @@ class Morph(Node ):
             bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x+dimensions[0], self.get_position().y+dimensions[1])
 #PKHG.TODO font stuff
 #        font_id = blf.load("c:/Windows/Fonts/arialbd.ttf")
-        font_id = self.font_id 
+        font_id = self.font_id
         size = 16
         blf.size(font_id, size, 72)
         dims_x,dims_y = blf.dimensions(font_id, self.name)
 #PKHG should be done elsewhere!        self.my_name_size = int(dims_x) + 2
-        x = self.bounds.origin.x 
-        xx = self.bounds.corner.x       
+        x = self.bounds.origin.x
+        xx = self.bounds.corner.x
         difx = xx - x
         if dims_x > difx:
             quot = difx/dims_x
             size = int(size * quot)
         y = self.bounds.corner.y - size
-        
+
         if self.with_name:
-       
+
 #PKHG. bounds should include name of morph
 #PKHG 040612 does not work???!           self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
 #                                    self.bounds.corner.y))
 #PKHG.1jun12 the foregoing line causes strange behavior!
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
-        
 
-    
+
+
     def hide(self):
         """hide me and all my children"""
         self.is_visible = False
@@ -286,7 +329,7 @@ class Morph(Node ):
             if debug_changed_130512_0810:
                 print("debug_changed_130512_0810 changed, self.bounds saved in world", self.bounds)
         '''
-        
+
     def full_changed(self):
         """my full_bounds saved in world.broken"""
         w = self.get_root()
@@ -294,11 +337,11 @@ class Morph(Node ):
 #            w.broken.append(copy.copy(self.full_bounds()))
 
     #Morph accessing - structure:
-    
+
     def world(self):
         if isinstance(self.root(), World):
             return self.root()
-    
+
     def add(self, morph):
         parent = morph.parent
         if parent is not None:
@@ -407,11 +450,11 @@ class Morph(Node ):
     def key_press(self,event):
         """ event method trigger when a key is pressed while morph has focus, returns True only if the event is processed"""
         return False
-    
+
     def key_release(self,event):
         """ event methode triggered when a key is released while morph has focus, returns True only if the event is processed"""
         return False
-    
+
     #Morph menus:
 
     def context_menu(self):
@@ -541,7 +584,7 @@ class Morph(Node ):
         def rounded_corners(cornerPT, offset,  NSEW, a):
     #        print("\n === dbg ronded corn", cornerPT, offset, NSEW, a)
             point_list = []
-            numb = 10 
+            numb = 10
             fac = 90./numb
             tvals = [NSEW +  el * fac  for el in range(numb +1)]
             midPt = cornerPT + offset
@@ -563,7 +606,7 @@ class Morph(Node ):
         disUp = PNW.get_distance_to(PZW)
         disSide = PZW.get_distance_to(PZE)
         a = min(disUp, disSide) * small
-    
+
         offset = Point(a, a)
         draw_all_points = []
         draw_all_points.extend(rounded_corners(PZW, offset,  180, a))
@@ -594,7 +637,7 @@ class Morph(Node ):
         bgl.glVertex2f(f_x, f_y)
         bgl.glVertex2f(t_x, t_y)
         bgl.glEnd()
-        
+
     def draw_string_to_viewport(text, morph, size, color, font_id, x, y):
         ''' my_string : the text we want to print
             x, y : coordinates in integer values
@@ -603,7 +646,7 @@ class Morph(Node ):
     #    my_dpi, font_id = 72, 0 # dirty fast assignment
     #
         bgl.glColor4f(*color)
-    #    x = morph.bounds.origin.x 
+    #    x = morph.bounds.origin.x
     #    xx = morph.bounds.corner.x
     #    difx = xx - x
     #PKHG. make it a parameter    y = morph.bounds.corner.y - size
@@ -617,7 +660,7 @@ class Morph(Node ):
     #    dims = blf.dimensions(font_id,text)
     #    print("\ndbg after dims = ", dims)
         blf.draw(font_id, text)
-    
+
 class Frame(Morph):
     " I clip my submorphs at my bounds "
 
@@ -645,7 +688,3 @@ class Frame(Morph):
     def keep_all_submorphs_within(self):
         for m in self.children:
             m.keep_within(self)
-
-
-    
-
