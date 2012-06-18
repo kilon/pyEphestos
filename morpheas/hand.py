@@ -1,6 +1,7 @@
 #PKHG debuginfo, please do not remove! Later ok ...
-debug_left_mouse_click_060512_1048 = True
+debug_left_mouse_click_060512_1048 = False
 debug_get_morph_at_pointer = False
+debug_kbd_listener = False #18-06
 import bpy
 
 from .rectangle import *
@@ -367,7 +368,8 @@ class KeyboardListener:
     def keyPressed(self, event):
         result = {'RUNNING_MODAL'}
         if self.users > 0:
-            print("\n>>>>>>>>>>>>>Keyboardlistener.keyPressed (L369) keyPressed value and type",event.value, event.type, self.users,"\n<<<<<<<<<<<<<")
+            if debug_kbd_listener:
+                print("\n>>>>>>>>>>>>>Keyboardlistener.keyPressed (L372) keyPressed value and type",event.value, event.type, self.users,"\n<<<<<<<<<<<<<")
             if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
                 self.shift_seen = not self.shift_seen
         return result
@@ -376,7 +378,8 @@ class KeyboardListener:
         result = {'RUNNING_MODAL'}
         if self.users == 0:
             return result
-        print("KeyboardListener.keyReleased (hand.pyL374) keyReleased called")
+        if debug_kbd_listener:
+            print("KeyboardListener.keyReleased (hand.pyL374) keyReleased called")
         evt_type = event.type
         if event.value in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
             self.shift_seen = not self.shift_seen
