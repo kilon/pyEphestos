@@ -404,8 +404,8 @@ class KeyboardListener:
                     self.text_input += numpad_specials[evt_type]
                 else:
                     self.text_input += evt_type[7:]
-            else:
-                self.text_input = " *" + evt_type + "* "
+            else: 
+                self.text_input += " *" + evt_type + "* "
                 
         self.displayInfo(event)
         return result
