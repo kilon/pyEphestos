@@ -99,6 +99,10 @@ class Menu(RoundedBox):
         self.label.draw()
         self.label.add(text)
         self.label.text = text
+
+#PKHG on 18-06-2012 Menu needs to have this def??
+    def full_changed(self):
+        pass
         
     def draw(self):
         """draw the menu"""
@@ -435,6 +439,7 @@ class Trigger(Morph):
                     about_text.hide()
                 else:
                     about_text.show()
+#PKHG.TODO clean the rest!                    
         elif self.action == "StringField":
             world = self.parent.get_root()
             inputmorph_id = self.parent.stringfield_ID

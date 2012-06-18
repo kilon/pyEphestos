@@ -45,19 +45,22 @@ about.is_visible = False
 
 ##StringInput test 
 
-stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
+#stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
+stringinput = StringInput(hand, default="test StringInput  pkhg")
+
 world_menu.stringinput_ID = id(stringinput)
 stringinput.set_position(Point(400,200))
-stringinput.name = "start editing by LM-click!"
+stringinput.name = "toggle editing: LM-click!"
 stringinput.is_visible = False
 stringinput.with_name = True
 #stringinput.keyboard_listener = world.keyboard_listener
 world.add(stringinput)
 
-### test StringField
-#If active it will show a InputStringMorph (100612)
-#PKHG.??? shold be a String only?(as it was already?)
-
+#test Blinker 16092012
+blink = Blinker()
+blink.set_position(Point(450,300))
+blink.is_visible = True
+world.add(blink)
 
 #add als default morphs to the world!
 #we know by the following world.add lines which child in

@@ -4,6 +4,10 @@ from .rectangle import *
 import addon_utils
 import re
 
+#PKHG for Blinker we need time-measurments
+import time
+from time import time
+
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
 
@@ -12,23 +16,25 @@ class OneLineText(Morph):
                       
     def __init__(self, owner = None,
                  text = "",
-                 fontname="verdana.ttf",
-                 fontsize=12,
-                 bold=False,
-                 italic=False):
+#                 fontname="verdana.ttf",
+#                 fontsize=12,
+#                 bold=False,
+#                 italic=False
+                 ):
         super(OneLineText, self).__init__()
 #PKHG.OK         print("OneLineText created = ", text)
         self.owner = owner
+        print(">>>>>>>>>>> OneLineText root of owner ",owner.get_root())
         self.text = text
-        self.fontname = fontname
-        self.fontsize=fontsize
-        self.bold = bold
-        self.italic = italic
+#        self.fontname = "verdana.ttf" #fontname
+        self.fontsize =  12 #fontsize
+        self.bold = False #bold
+        self.italic = False #italic
         self.is_editable = False
         self.width = 10
 #        super(OneLineText, self).__init__()
         self.color = (1, 1, 1, 1) 
-        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
+        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"# + fontname
         self.font = blf.load(tmp)
 #PKHG.TODO DPI = ???        
         blf.size(self.font, self.fontsize, 72) #DPI default 72?
@@ -61,7 +67,7 @@ class OneLineText(Morph):
     def add_keystroke(self):
         pass
         
-    
+    '''
     def developers_menu(self):
         menu = super(OneLineText, self).developers_menu()
         menu.add_line()
@@ -77,7 +83,8 @@ class OneLineText(Morph):
         if not self.italic:
             menu.add_item("italic", 'set_to_italic')
         return menu
-
+    '''
+    
     def edit(self):
         """change text for each kbd-releas"""
         
@@ -86,6 +93,7 @@ class OneLineText(Morph):
         return
 
 ###### PKHG TODO font-stuff ##############33
+    '''
     def choose_font(self):
         fontname = world.fontname_by_user() 
         if fontname != None:
@@ -122,7 +130,8 @@ class OneLineText(Morph):
         self.changed()
         self.draw()
         self.changed()
-
+    '''
+    
     #OneLineText events:
 
     def handles_mouse_click(self):
@@ -142,14 +151,15 @@ class OneLineText(Morph):
 class StringInput( Morph):
     """StringInput is used to get/show a one-line input text-string"""
     
-    def __init__(self, kbd_listener = None, default='I am the default',
+    def __init__(self, hand, default='I am the default',
                  minwidth=100,
                  fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
-        
-        self.kbd_listener = kbd_listener
+
+        self.hand = hand
+        self.kbd_listener = hand.kbd_listener
         super(StringInput, self).__init__()
         self.default = default
         self.minwidth = minwidth
@@ -159,9 +169,10 @@ class StringInput( Morph):
         self.italic = italic
         self.color = (0.1, 0.1, 0.1, 0.1)
         #onlinetext needs a keyboardlistener! thus
-        self.onelinetext = OneLineText(self, self.default,\
-                 self.fontname, self.fontsize, self.bold, self.italic)
+        self.onelinetext = OneLineText(self, self.default)#,\
+#                 self.fontname, self.fontsize, self.bold, self.italic)
         self.add(self.onelinetext)
+        self.onelinetext.set_position(self.get_bottom_left() + 5)
         self.is_activated = False
         self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = True)
         self.activation_info.name = "active"
@@ -175,7 +186,7 @@ class StringInput( Morph):
         super(StringInput, self).draw()
         self.onelinetext.draw()
 
-        input_width = self.onelinetext.width
+        input_width = self.onelinetext.width + 5 #PKHG because of offset onelinetext
         if input_width < 100:
 
             dif = 0
@@ -222,10 +233,12 @@ class StringInput( Morph):
     def mouse_enter(self):
         self.is_activated = True
         self.onelinetext.is_editable = True
+        self.kbd_listener.users += 1
         self.activation_info.is_visible = True #PKHG???False
         
     def mouse_leave(self):
         self.is_activated = False
+        self.kbd_listener.users -= 1        
         self.onelinetext.is_editable = False
         self.activation_info.is_visible = False #PKHG???False
                 
@@ -247,14 +260,37 @@ class StringInput( Morph):
 class Blinker(Morph):
     "can be used for text cursors"
 
-    def __init__(self, rate=2):
+    def __init__(self, rate=0.2):
         super(Blinker, self).__init__()
-        self.color = (0, 0, 0, 1)
+        self.color = (1.0, 0, 0, .8)
         self.fps = rate
-        self.draw_new()
-
+        self.name = "Blinker"
+        self.bounds = Rectangle(Point(0,0),Point(3,20))
+        self.start_time = time()
+        self.time_now = time()
+        self.draw() #PKHG must be later then start_time and time_now
+        
     def wants_to_step(self):
         return True
 
     def step(self):
-        self.toggle_visibility()
+        self.time_now = time()
+        if (self.time_now - self.start_time) > self.fps :          
+#            self.toggle_visibility()
+            self.start_time = self.time_now
+            if self.color[0] == 1.0:
+                self.set_color((0, 1.0, 0, 0.7))
+            else:
+                self.set_color((1.0, 0, 0, 0.7))
+        
+    def draw(self):
+        self.step()
+        bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
+        bgl.glColor4f(*self.color)
+        [x,y] = [self.get_position().x, self.get_position().y] 
+#        dimensions = self.get_extent().as_list()
+        #if self.rounded:
+        #    Morph.draw_rounded_morph(self, 0.3, self.color, rectangle = False)
+        #else:
+        bgl.glRecti(x, y, x + 3, y + 20)
+

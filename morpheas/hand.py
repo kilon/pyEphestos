@@ -329,7 +329,7 @@ lookup_kbd = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
      'FOUR_SHIFT':'$', 'FIVE':'5', 'FIVE_SHIFT':'%', 'SIX':'6',\
      'SIX_SHIFT':'^', 'SEVEN':'7', 'SEVEN_SHIFT':'&', 'EIGHT':'8',\
      'EIGHT_SHIFT':'*', 'NINE':'9', 'NINE_SHIFT':'(', 'ZERO':'0', 'ZERO_SHIFT':')', \
-     'SPACE': ' ', 'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',\
+     'SPACE': ' ', 'SPACE_SHIFT':' ', 'MINUS':'-', 'MINUS_SHIFT':'_', 'EQUAL':'=', 'EQUAL_SHIFT':'+',\
      'COMMA':',', 'COMMA_SHIFT':'<', 'PERIOD':'.', 'PERIOD_SHIFT':'>',\
      'SLASH':'/', 'SLASH_SHIFT':'?', 'SEMI_COLON':';', 'SEMI_COLON_SHIFT':':',\
      'QUOTE':"'", 'QUOTE_SHIFT':'"', 'TAB':'\t', 'BACK_SLASH':'\\',
@@ -362,14 +362,20 @@ class KeyboardListener:
     def __init__(self):
         self.text_input = ''
         self.shift_seen = False
-        
+        self.users = 0
 
     def keyPressed(self, event):
-        print("\nKeyboardlistener.keyPressed (hand.pyL369) keyPressed value and type",event.value, event.type)
-        if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
-            self.shift_seen = not self.shift_seen
+        result = {'RUNNING_MODAL'}
+        if self.users > 0:
+            print("\n>>>>>>>>>>>>>Keyboardlistener.keyPressed (L369) keyPressed value and type",event.value, event.type, self.users,"\n<<<<<<<<<<<<<")
+            if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
+                self.shift_seen = not self.shift_seen
+        return result
                                 
     def keyReleased(self, event):
+        result = {'RUNNING_MODAL'}
+        if self.users == 0:
+            return result
         print("KeyboardListener.keyReleased (hand.pyL374) keyReleased called")
         evt_type = event.type
         if event.value in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
@@ -402,7 +408,8 @@ class KeyboardListener:
                 self.text_input = " *" + evt_type + "* "
                 
         self.displayInfo(event)
-
+        return result
+    
     def displayInfo(self, event):
 #        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
 #        print([self.shift_seen, self.text_input], event.type)
