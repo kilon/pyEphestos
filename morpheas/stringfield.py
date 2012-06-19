@@ -10,7 +10,9 @@ from time import time
 
 re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 
-
+#re_LEFT_ARROW = re.compile(" \*LEFT_ARR0W\* *$")
+#re_RIGHT_ARROW = re.compile(" \*RIGHT_ARR0W\* *$")
+re_RL_ARROW = re.compile(" \*(LEFT|RIGHT)_ARROW\*  *$")
 class OneLineText(Morph):
     """I am a single line to input text, NEEDS an owner with kbd_listener"""
                       
@@ -22,9 +24,10 @@ class OneLineText(Morph):
 #                 italic=False
                  ):
         super(OneLineText, self).__init__()
-#PKHG.OK         print("OneLineText created = ", text)
         self.owner = owner
-        print(">>>>>>>>>>> OneLineText root of owner ",owner.get_root())
+        self.blinker = self.owner.blinker
+#        print("\n>>>>>> owners blinker",self.owner.blinker)
+#PKHGOK        print(">>>>>>>>>>> OneLineText root of owner ",owner.get_root(),owner.hand)
         self.text = text
 #        self.fontname = "verdana.ttf" #fontname
         self.fontsize =  12 #fontsize
@@ -39,13 +42,23 @@ class OneLineText(Morph):
 #PKHG.TODO DPI = ???        
         blf.size(self.font, self.fontsize, 72) #DPI default 72?
         self.kbd_listener = self.owner.kbd_listener
-        
+        self.list_of_char_x_values =[]
+        self.nr_of_chars = 0
+    
     def __repr__(self):
         return 'OneLineText("' + self.text + '")'
 
     def draw(self):
         """draw, if visible, my text"""
-    
+        
+        tmp = self.kbd_listener.text_input
+        #tmp2 = re_LEFT_ARROW.search(tmp)
+        res = re_RL_ARROW.search(tmp)
+        if res:
+            tmp2 = " *" + res.group(1) + "_ARROW* "
+            tmp = tmp.replace(res.group(),"<=>")
+        self.text = tmp 
+        self.kbd_listener.text_input = tmp
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
 #        if self.is_editable:
@@ -56,12 +69,19 @@ class OneLineText(Morph):
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
+#            origin = self.blinker.bounds.origin
+#            new_origin = origin + Point(int(t_width),0)
+            self.blinker.set_position(Point(x + int(t_width + 1), y))
             blf.draw(self.font, self.text)
     
     def get_width(self):
         """ the width of the text at actual font-size"""
         return self.width
-    
+
+#    def place_blinker(self, x, y,  dx):
+#        return Point(x + dx, y)
+        
+        
     #OneLineText menu:
 
     def add_keystroke(self):
@@ -86,9 +106,11 @@ class OneLineText(Morph):
     '''
     
     def edit(self):
-        """change text for each kbd-releas"""
-        
-        self.text = self.kbd_listener.text_input
+        """change text for each kbd-release"""
+        tmp = self.kbd_listener.text_input
+        if re_LEFT_ARROW(tmp):
+            tmp.replace(" *LEFT_ARR0W* ","<=")
+        self.text = tmp #self.kbd_listener.text_input
         print("///////////////OneLineText L85: I am about to be edited")
         return
 
@@ -151,16 +173,17 @@ class OneLineText(Morph):
 class StringInput( Morph):
     """StringInput is used to get/show a one-line input text-string"""
     
-    def __init__(self, hand, default='I am the default',
+    def __init__(self, hand, blinker,  default='I am the default',
                  minwidth=100,
                  fontname="verdana.ttf",
                  fontsize=12,
                  bold=False,
                  italic=False):
-
         self.hand = hand
+        self.blinker = blinker 
         self.kbd_listener = hand.kbd_listener
         super(StringInput, self).__init__()
+        print("]]]]]]]]]]]]]]]] ",self.get_root())
         self.default = default
         self.minwidth = minwidth
         self.fontname = fontname
@@ -185,6 +208,8 @@ class StringInput( Morph):
         "draw and adjust size of morph, input_text dependant"
         super(StringInput, self).draw()
         self.onelinetext.draw()
+        
+
 
         input_width = self.onelinetext.width + 5 #PKHG because of offset onelinetext
         if input_width < 100:
@@ -214,7 +239,11 @@ class StringInput( Morph):
             if child.is_visible:
                 child.draw()        
         super(StringInput, self).draw()
-        self.onelinetext.draw()                 
+        self.onelinetext.draw()
+        x = self.bounds.origin.x + 1
+        y = self.bounds.origin.y + 1        
+        self.blinker.set_position(Point(x + input_width, y))
+
         return 
 
     def get_string(self):
@@ -228,7 +257,7 @@ class StringInput( Morph):
     def mouse_click_left(self, pos):
         """start editing of text via a mouse-click"""
         self.is_activated = not self.is_activated
-        print("\n>>>>>> StringInput.py L210 mouse_click_left is_editable", self.is_activated)
+#        print("\n>>>>>> StringInput.py L210 mouse_click_left is_editable", self.is_activated)
         
     def mouse_enter(self):
         self.is_activated = True
@@ -255,7 +284,7 @@ class StringInput( Morph):
                     
 
     def insert_committed_text(self, text):
-           print("StringInput.insert_committed_text (stringfield.py L241) text = ", text)
+           print("StringInput.insert_committed_text (L241) text = ", text)
 
 class Blinker(Morph):
     "can be used for text cursors"
