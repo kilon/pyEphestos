@@ -31,7 +31,7 @@ world_menu = world.context_menu()
 #Text is a multline morph
 about = Text("About\nbased on pymorpheas\nmorph adjusted for Blender\nby Dimitris and Peter", max_width = 350)
 
-#normal procedure 
+#normal procedure
 #give it a name
 #give it a startposition
 #set its visbility
@@ -45,11 +45,11 @@ about.is_visible = False
 #test Blinker 16092012
 blinker = Blinker()
 blinker.set_position(Point(450,300))
-blinker.is_visible = False 
+blinker.is_visible = False
 world.add(blinker)
 
 
-##StringInput test 
+##StringInput test
 
 #stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
 stringinput = StringInput(hand, blinker, default="test StringInput  pkhg")
@@ -76,7 +76,7 @@ world.add(about)
 ########## do not change the following code ##############
 class ephestos:
     running = False
-    
+
 
 def draw_ephestos(self,context):
     global show_world
@@ -113,14 +113,18 @@ def draw_ephestos(self,context):
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-    
+
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
     bl_label = "enable Ephestos"
 
     def modal(self, context, event):
         result =  {'PASS_THROUGH'}
-        context.area.tag_redraw()                
+        context.area.tag_redraw()
+
+        if context.area:
+            context.area.tag_redraw()
+
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in {'ESC',}:
             context.region.callback_remove(self._handle)
             ephestos.running = False
@@ -150,14 +154,14 @@ class open_ephestos(bpy.types.Operator):
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
-            
+
             self.cursor_on_handle = 'None'
             context.window_manager.modal_handler_add(self)
 
             # Add the region OpenGL drawing callback
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
             self._handle = context.region.callback_add(draw_ephestos, (self, context), 'POST_PIXEL')
-#PKHG.notneeded            self._handle_world = context.region.callback_add(draw_World, (self, context), 'POST_PIXEL')            
+#PKHG.notneeded            self._handle_world = context.region.callback_add(draw_World, (self, context), 'POST_PIXEL')
             ephestos.running = True
             return {'RUNNING_MODAL'}
         else:
@@ -192,7 +196,7 @@ class the_world(bpy.types.Operator):
             sce.world_is_running = True
         return result
 
-stringfield_input = "for input"    
+stringfield_input = "for input"
 class change_text(bpy.types.Operator):
     bl_idname = "textmorph.text"
     bl_label = "TestchangeText"
@@ -202,8 +206,8 @@ class change_text(bpy.types.Operator):
         sce = context.scene
         if old_text != sce.text_for_text:
             old_text = sce.text_for_text
-            multiline_text.adjust_text(old_text)            
-        return {'FINISHED'}        
+            multiline_text.adjust_text(old_text)
+        return {'FINISHED'}
 
 class for_stringfield_text(bpy.types.Operator):
     bl_idname = "forinput.text"
@@ -214,7 +218,7 @@ class for_stringfield_text(bpy.types.Operator):
         sce = context.scene
         if  stringfield_input!= sce.text_for_input:
             stringfield_input = sce.text_for_input
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 # button for toggling visibility of green morph, to test morp.hide() and morph.show() together with world.draw()
 class morph_visibility(bpy.types.Operator):
@@ -222,14 +226,14 @@ class morph_visibility(bpy.types.Operator):
     bl_label = "toggle visibility of green morph"
 
     def execute(self,context):
-        
+
         global mymorph1
-        
+
         if  mymorph1.is_visible:
             mymorph1.hide()
         else:
             mymorph1.show()
-        return {'FINISHED'}              
+        return {'FINISHED'}
 
 class ephestos_panel(bpy.types.Panel):
     bl_label = "Ephestos"
@@ -249,15 +253,14 @@ class ephestos_panel(bpy.types.Panel):
         col.prop(sce,'text_for_input')
 #        col.operator('forinput.text')
         col.operator('morph.visibility')
-    
-        
+
+
 def register():
     bpy.utils.register_module(__name__)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
- 
+
 if __name__ == "__main__":
     register()
-    
