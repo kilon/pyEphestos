@@ -117,13 +117,16 @@ def draw_ephestos(self,context):
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
     bl_label = "enable Ephestos"
-
+    _timer = None
     def modal(self, context, event):
         result =  {'PASS_THROUGH'}
         context.area.tag_redraw()
 
         if context.area:
             context.area.tag_redraw()
+
+        if event.type == 'TIMER':
+            return {'PASS_THROUGH'}
 
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in {'ESC',}:
             context.region.callback_remove(self._handle)
@@ -162,6 +165,8 @@ class open_ephestos(bpy.types.Operator):
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
             self._handle = context.region.callback_add(draw_ephestos, (self, context), 'POST_PIXEL')
 #PKHG.notneeded            self._handle_world = context.region.callback_add(draw_World, (self, context), 'POST_PIXEL')
+            self._timer = context.window_manager.event_timer_add(0.01,
+                    context.window)
             ephestos.running = True
             return {'RUNNING_MODAL'}
         else:
