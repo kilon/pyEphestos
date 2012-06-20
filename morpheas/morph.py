@@ -16,7 +16,6 @@ NameError: name 'Morph' is not defined
 from math import radians, sin, cos, sqrt
 debug_world = False
 
-
 #for the moment
 #from .  morpheas import Frame, Menu
 
@@ -89,7 +88,7 @@ class Morph(Node ):
         result = color_dict['ERROR'] #PKHG to be overwritten by good color
         if rgba:
             rgba = rgba[0]  #PKHG remove the * so to say
-#PKHG.works            print("set_color argument :",rgba)
+#PKHG.works
             if type(rgba) == type(""):
                 if rgba in color_dict.keys():
                     result = color_dict[rgba]
@@ -263,7 +262,6 @@ class Morph(Node ):
 #        if not self.is_visible:
 #            return
         "initialize my surface"
-        # print("I use color : ", self.color)
 
         bgl.glColor4f(*self.color)
         dimensions = self.get_extent().as_list()

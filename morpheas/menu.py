@@ -454,6 +454,7 @@ class Trigger(Morph):
                 input_morph_tmp = [el for el in world.children if isinstance(el,StringInput)]
             else:  
                 input_morph_tmp = ips_m
+            input_morph_tmp[0].set_color((0, 0, .1, 0.1))                
             if True: #len(input_morph_tmp) == 1:
                 input_morph = input_morph_tmp[0]
                 input_morph.is_visible = not input_morph.is_visible 

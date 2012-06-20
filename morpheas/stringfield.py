@@ -183,14 +183,14 @@ class StringInput( Morph):
         self.blinker = blinker 
         self.kbd_listener = hand.kbd_listener
         super(StringInput, self).__init__()
-        print("]]]]]]]]]]]]]]]] ",self.get_root())
         self.default = default
         self.minwidth = minwidth
         self.fontname = fontname
         self.fontsize = fontsize
         self.bold = bold
         self.italic = italic
-        self.color = (0.1, 0.1, 0.1, 0.1)
+#        self.color = (0.1, 0.1, 0.1, 0.1)
+        self.set_color((0.1, 0.1, 0.1, 0.1))
         #onlinetext needs a keyboardlistener! thus
         self.onelinetext = OneLineText(self, self.default)#,\
 #                 self.fontname, self.fontsize, self.bold, self.italic)
@@ -206,23 +206,17 @@ class StringInput( Morph):
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
-        super(StringInput, self).draw()
-        self.onelinetext.draw()
-        
-
-
+#        super(StringInput, self).draw()
+#        self.onelinetext.draw()        
         input_width = self.onelinetext.width + 5 #PKHG because of offset onelinetext
         if input_width < 100:
-
             dif = 0
             self.minwidth = 100
         else:
             dif = input_width - self.get_width()
 
-        if dif > 0:
-            
+        if dif > 0:            
             new_corner = self.bounds.corner + Point(dif,0)
-
             self.bounds = Rectangle(self.bounds.origin, new_corner)
         elif dif < 0:
             x = self.bounds.origin.x
@@ -231,19 +225,23 @@ class StringInput( Morph):
 
                 self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
             else:        
-
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
         children = self.children
 #PKHG.??? next lines really needed?
-        for child in children:
-            if child.is_visible:
-                child.draw()        
+
+#        for child in children:
+#            if child.is_visible:
+#                child.draw()
+        
         super(StringInput, self).draw()
+        if self.activation_info.is_visible:
+            self.activation_info.draw()
         self.onelinetext.draw()
+
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1        
         self.blinker.set_position(Point(x + input_width, y))
-
+        self.blinker.draw()
         return 
 
     def get_string(self):

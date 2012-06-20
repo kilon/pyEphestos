@@ -45,7 +45,7 @@ about.is_visible = False
 #test Blinker 16092012
 blinker = Blinker()
 blinker.set_position(Point(450,300))
-blinker.is_visible = True
+blinker.is_visible = False 
 world.add(blinker)
 
 
