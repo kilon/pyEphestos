@@ -26,7 +26,7 @@ class Hand(Morph):
         self.mouse_x = 0
         self.mouse_y = 0
         self.kbd_listener = KeyboardListener()
-        
+
     def __repr__(self):
         return 'Hand(' + self.get_center().__str__() + ')'
 
@@ -79,7 +79,7 @@ class Hand(Morph):
     def detect_release_event(self, event):
         """handle keyboard release"""
 
-        
+
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
@@ -97,7 +97,7 @@ class Hand(Morph):
     '''
     def process_mouse_event(self, event):
         """ Central method for processing all kind of events and calling approriate methods for different kind of events """
-        
+
         if event.type == 'MOUSEMOVE':
             return self.process_mouse_move(event)
         elif event.value in 'PRESS':
@@ -105,7 +105,7 @@ class Hand(Morph):
         elif event.value=='RELEASE':
             return self.process_mouse_up(event)
     '''
-    
+
     def get_morph_at_pointer(self):
         """ return the top morph that is under the current position of the mouse cursor """
 
@@ -196,7 +196,7 @@ class Hand(Morph):
                             print("-L96-> hand.py; morph" , morph, " does not handle left_mouse_click")
                         morph = morph.parent
                     if debug_get_morph_at_pointer:
-                        print(">>>hand.py L1197 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)                        
+                        print(">>>hand.py L1197 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
                     if debug_left_mouse_click_060512_1048:
                         print("-L299-> hand.py; morph" , morph, "  handles lef_mouse_click")
                     self.mouse_down_morph = morph
@@ -219,11 +219,16 @@ class Hand(Morph):
         """ here we process all the mouse_up events and trigger approriate events of the morph depending on the specific action performed """
         # if hand has children in case of a mouse button release remove all its children
         if self.children != []:
+            print("I am droping now !")
             self.drop()
             if self.moving_morph == True:
                     self.moving_morph = False
                     print("movement finished")
         else:
+            if self.moving_morph == True:
+                    self.moving_morph = False
+                    print("movement finished")
+
             pos = Point(event.mouse_region_x,
                         event.mouse_region_y)
             morph = self.get_morph_at_pointer()
@@ -237,18 +242,21 @@ class Hand(Morph):
                 if morph is self.mouse_down_morph:
                     # this morph event means that the left mouse button has been pressed and released, resulting in a single click
                     morph.mouse_click_left(pos)
+                return {'RUNNING_MODAL'}
 
             elif event.type == 'MIDDLEMOUSE' and event.value == 'RELEASE':
                 morph.mouse_up_middle(pos)
                 if morph is self.mouse_down_morph:
                     # this morph event means that the middle mouse button has been pressed and released, resulting in a single click
                     morph.mouse_click_middle(pos)
+                return {'RUNNING_MODAL'}
 
             elif event.type == 'RIGHTMOUSE' and event.value =='RELEASE' :
                 morph.mouse_up_right(pos)
                 if morph is self.mouse_down_morph:
                     # this morph event means that the right mouse button has been pressed and released, resulting in a single click
                     morph.mouse_click_right(pos)
+                return {'RUNNING_MODAL'}
 
         return {'PASS_THROUGH'}
 
@@ -341,7 +349,7 @@ lookup_kbd = { 'ONE':'1', 'ONE_SHIFT':'!', 'TWO':'2', \
 
 keybd =[ 'SPACE', 'ONE', 'TWO', 'THREE', 'FOUR' , 'FIVE', 'SIX', 'SEVEN',\
          'EIGHT', 'NINE' , 'ZERO', 'MINUS', 'EQUAL', 'COMMA', 'PERIOD', 'SLASH',\
-         'SEMI_COLON', 'QUOTE', 'BACK_SLASH', 'LEFT_BRACKET', 'RIGHT_BRACKET', 'ACCENT_GRAVE']     
+         'SEMI_COLON', 'QUOTE', 'BACK_SLASH', 'LEFT_BRACKET', 'RIGHT_BRACKET', 'ACCENT_GRAVE']
 
 
 numpad_specials = {'NUMPAD_PERIOD':'.', 'NUMPAD_SLASH':'/',\
@@ -355,7 +363,7 @@ def numpad_char(str):
         result = numpad_specials[str]
     return result
 
-    
+
 delete_dict= ['DEL','BACK_SPACE']
 
 
@@ -374,7 +382,7 @@ class KeyboardListener:
             if event.type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
                 self.shift_seen = not self.shift_seen
         return result
-                                
+
     def keyReleased(self, event):
         result = {'RUNNING_MODAL'}
         if self.users == 0:
@@ -389,7 +397,7 @@ class KeyboardListener:
         elif len(evt_type) == 1:
             if self.shift_seen:
                 self.text_input += evt_type
-            else:                
+            else:
                 self.text_input += evt_type.lower()
         else:
             if evt_type in ["LEFT_SHIFT", "RIGHT_SHIFT"]:
@@ -400,7 +408,7 @@ class KeyboardListener:
             elif evt_type in keybd:
                 if self.shift_seen:
                     evt_type += "_SHIFT"
-                self.text_input += lookup_kbd[evt_type]   
+                self.text_input += lookup_kbd[evt_type]
             elif evt_type == "TAB":
                 self.text_input += "    "
             elif evt_type.startswith("NUMPAD"):
@@ -408,17 +416,17 @@ class KeyboardListener:
                     self.text_input += numpad_specials[evt_type]
                 else:
                     self.text_input += evt_type[7:]
-            else: 
+            else:
                 self.text_input += " *" + evt_type + "* "
-                
+
         self.displayInfo(event)
         return result
-    
+
     def displayInfo(self, event):
 #        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
 #        print([self.shift_seen, self.text_input], event.type)
-        
-        if event.type in ["RET", "NUMPAD_ENTER"]:            
+
+        if event.type in ["RET", "NUMPAD_ENTER"]:
             #DEL not done! yet
             result = self.text_input[:-1]
 #            result = tmp #self.text_input
@@ -428,4 +436,3 @@ class KeyboardListener:
         print("\ntyped text now: ", result)
         self.last_result = result
  #       return result
-        

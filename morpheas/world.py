@@ -12,7 +12,9 @@ class World(Frame):
     def __init__(self, x=800, y=600):
         super(World, self).__init__()
         self.hand = Hand()
+        self.hand.parent = self
         self.hand.world = self
+        self.children.append(self.hand)
         self.kbd_listener = self.hand.kbd_listener
         self.text_cursor = None
         self.bounds = Rectangle(Point(0, 0), Point(x, y))

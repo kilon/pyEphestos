@@ -18,7 +18,7 @@ world = World()
 hand = world.hand
 tmp = hand.kbd_listener
 world.kbd_listener = tmp #PKHG: this worlds keyboardListener
-world.add(hand)
+
 crosshair = CrossHair(hand)
 world.add(crosshair)
 
