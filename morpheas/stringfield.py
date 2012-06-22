@@ -17,12 +17,7 @@ class OneLineText(Morph):
     """I am a single line to input text, NEEDS an owner with kbd_listener"""
 
     def __init__(self, owner = None,
-                 text = "",
-#                 fontname="verdana.ttf",
-#                 fontsize=12,
-#                 bold=False,
-#                 italic=False
-                 ):
+                 text = ""):
         super(OneLineText, self).__init__()
         self.owner = owner
         self.blinker = self.owner.blinker
@@ -44,24 +39,16 @@ class OneLineText(Morph):
         self.kbd_listener = self.owner.kbd_listener
         self.list_of_char_x_values =[]
         self.nr_of_chars = 0
-
+        self.nr_chars_old = 0
     def __repr__(self):
         return 'OneLineText("' + self.text + '")'
 
     def draw(self):
         """draw, if visible, my text"""
-
-        tmp = self.kbd_listener.text_input
-        #tmp2 = re_LEFT_ARROW.search(tmp)
-        res = re_RL_ARROW.search(tmp)
-        if res:
-            tmp2 = " *" + res.group(1) + "_ARROW* "
-            tmp = tmp.replace(res.group(),"<=>")
-        self.text = tmp
-        self.kbd_listener.text_input = tmp
+        if len(self.kbd_listener.text_input) !=  self.nr_of_chars:
+            self.add_keystroke()
         t_width, t_height  = blf.dimensions(self.font, self.text)
         self.width = int(t_width + 2.0)
-#        if self.is_editable:
         corner = Point(self.width, 2 + int(t_height))
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
@@ -69,10 +56,11 @@ class OneLineText(Morph):
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
-#            origin = self.blinker.bounds.origin
-#            new_origin = origin + Point(int(t_width),0)
-            self.blinker.set_position(Point(x + int(t_width + 1), y))
+            self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
             blf.draw(self.font, self.text)
+            mouse_location = (self.owner.hand.mouse_x, self.owner.hand.mouse_y)
+            text_end_location = self.bounds.get_bottom_right()
+#            print(mouse_location, text_end_location, self.blinker.bounds.origin)
 
     def get_width(self):
         """ the width of the text at actual font-size"""
@@ -85,25 +73,28 @@ class OneLineText(Morph):
     #OneLineText menu:
 
     def add_keystroke(self):
-        pass
-
-    '''
-    def developers_menu(self):
-        menu = super(OneLineText, self).developers_menu()
-        menu.add_line()
-        if not self.is_editable:
-            menu.add_item("edit...", 'edit')
-        menu.add_item("font name...", 'choose_font')
-        menu.add_item("font size...", 'choose_font_size')
-        menu.add_line()
-        if self.bold or self.italic:
-            menu.add_item("normal", 'set_to_normal')
-        if not self.bold:
-            menu.add_item("bold", 'set_to_bold')
-        if not self.italic:
-            menu.add_item("italic", 'set_to_italic')
-        return menu
-    '''
+        tmp = self.kbd_listener.text_input        
+        #tmp2 = re_LEFT_ARROW.search(tmp)
+        res = re_RL_ARROW.search(tmp)
+        if res:
+            tmp2 = " *" + res.group(1) + "_ARROW* "
+            tmp = tmp.replace(res.group(),"<=>")
+            self.kbd_listener.text_input = tmp
+        print("...old new", self.nr_chars_old, len(self.kbd_listener.text_input) )
+        if self.nr_chars_old < self.nr_of_chars:
+            dif = self.nr_of_chars - self.nr_chars_old
+            nn = tmp[-dif:]
+            print("\n---------> key added",nn, self.text, tmp)
+            self.text += tmp[-dif:]
+            self.nr_chars_old = len(self.text)
+        else:
+            self.text = tmp
+            print("\n---------> smaller ",)
+            self.nr_chars_old = len(tmp)
+        self.nr_of_chars = len(self.text)
+            
+        
+        
 
     def edit(self):
         """change text for each kbd-release"""
@@ -114,45 +105,6 @@ class OneLineText(Morph):
         print("///////////////OneLineText L85: I am about to be edited")
         return
 
-###### PKHG TODO font-stuff ##############33
-    '''
-    def choose_font(self):
-        fontname = world.fontname_by_user()
-        if fontname != None:
-            self.fontname = fontname
-            self.changed()
-            self.draw()
-            self.changed()
-
-    def choose_font_size(self):
-        fontsize = self.prompt("please enter\n the font size\nin points:",
-                               str(self.fontsize),
-                               50)
-        if fontsize != None:
-            self.fontsize = int(fontsize)
-            self.changed()
-            self.draw()
-            self.changed()
-
-    def set_to_normal(self):
-        self.bold = False
-        self.italic = False
-        self.changed()
-        self.draw()
-        self.changed()
-
-    def set_to_bold(self):
-        self.bold = True
-        self.changed()
-        self.draw()
-        self.changed()
-
-    def set_to_italic(self):
-        self.italic = True
-        self.changed()
-        self.draw()
-        self.changed()
-    '''
 
     #OneLineText events:
 
@@ -208,7 +160,7 @@ class StringInput( Morph):
         "draw and adjust size of morph, input_text dependant"
 #        super(StringInput, self).draw()
 #        self.onelinetext.draw()
-        input_width = self.onelinetext.width + 5 #PKHG because of offset onelinetext
+        input_width = self.onelinetext.width + 5 #+ 5 PKHG because of offset onelinetext
         if input_width < 100:
             dif = 0
             self.minwidth = 100

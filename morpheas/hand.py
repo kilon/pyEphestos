@@ -364,6 +364,7 @@ class KeyboardListener:
         self.text_input = ''
         self.shift_seen = False
         self.users = 0
+        self.last_result = ''
 
     def keyPressed(self, event):
         result = {'RUNNING_MODAL'}
@@ -419,11 +420,12 @@ class KeyboardListener:
         
         if event.type in ["RET", "NUMPAD_ENTER"]:            
             #DEL not done! yet
-            tmp = self.text_input[:-1]
-            result = self.text_input
+            result = self.text_input[:-1]
+#            result = tmp #self.text_input
             self.text_input = ''
         else:
             result = self.text_input
         print("\ntyped text now: ", result)
-        return result
+        self.last_result = result
+ #       return result
         
