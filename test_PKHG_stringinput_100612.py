@@ -15,7 +15,7 @@ from .morpheas import *
 #and all events are handled via the hand (an unvisible morph) but
 #can be made visible by a CrossHair-morph
 world = World()
-hand = Hand()
+hand = world.hand
 tmp = hand.kbd_listener
 world.kbd_listener = tmp #PKHG: this worlds keyboardListener
 world.add(hand)

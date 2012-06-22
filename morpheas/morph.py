@@ -50,6 +50,7 @@ class Morph(Node ):
         self.default_font = self.path_to_local_fonts + "/verdana.ttf"
         self.font_id = blf.load(self.default_font)
         self.my_name_size = 0
+        self.world = None
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""

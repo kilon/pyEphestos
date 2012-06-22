@@ -34,16 +34,16 @@ class World(Frame):
     '''
     def draw(self):
         """If ... is running show the world as rounded morph"""
-        
-        if self.running:            
+
+        if self.running:
             Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
             for child in self.children:
                 if debug_check_world_draws:
                     print("====world: checking ", child, " to draw")
                 if child.is_visible:
                     child.draw()
-                
-    
+
+
     def broken_for(self, morph):
         "private"
         result = []
@@ -58,10 +58,11 @@ class World(Frame):
             if isinstance(self.open_menu, Menu):
                 self.open_menu.delete()"""
         super(World, self).add(morph)
+        morph.world = self
         self.open_menu = morph
 
     #World displaying:
-#PKHG.??? surface superfluous???    
+#PKHG.??? surface superfluous???
     def full_draw_on(self, surface, rectangle=None):
         if rectangle == None:
             rectangle = self.bounds
@@ -94,12 +95,12 @@ class World(Frame):
             menu.add_item("switch to user mode", 'toggle_dev_mode')
             menu.add_line()
             menu.add_item("input",'StringField')
-    
+
 #not needed            menu.add_item("close", 'delete')
         else:
             menu.add_item("enter developer's mode", 'toggle_dev_mode')
-        menu.add_line()        
-        menu.add_item("about...", 'about') 
+        menu.add_line()
+        menu.add_item("about...", 'about')
         return menu
 
     def user_create_new_morph(self):
@@ -191,8 +192,3 @@ a lively GUI for Blender\ninspired by Squeak\nbased on Pygame\n\
 
     def get_handles_mouse_click(self):
         return True
-
-    #World mainloop:
-
-    def loop(self):
-        self.full_draw_on()
