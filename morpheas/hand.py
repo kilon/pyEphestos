@@ -1,6 +1,6 @@
 #PKHG debuginfo, please do not remove! Later ok ...
 debug_left_mouse_click_060512_1048 = False
-debug_get_morph_at_pointer = False
+debug_get_morph_at_pointer = True
 debug_kbd_listener = False #18-06
 import bpy
 
@@ -55,10 +55,13 @@ class Hand(Morph):
         self.mouse_y = event.mouse_region_y
 
         if event.type == 'MOUSEMOVE':
+            print("event detected -> ", event.type)
             result = self.process_mouse_move(event)
         elif event.value=='PRESS':
+            print("event detected -> ", event.type)
             result = self.detect_press_event(event)
         elif event.value=='RELEASE':
+            print("event detected -> ", event.type)
             result =  self.detect_release_event(event)
         return result
 
@@ -110,6 +113,7 @@ class Hand(Morph):
         """ return the top morph that is under the current position of the mouse cursor """
 
         morphs = self.parent.children
+        print("get_morph_at_pointer returns morphs : ",morphs)
         for m in morphs: # morphs[::-1]:
             if m.get_full_bounds().get_contains_point(self.bounds.origin) and m.is_visible and not isinstance(m,Hand):
                 return m.get_morph_at(self.bounds.origin)
@@ -122,7 +126,7 @@ class Hand(Morph):
         # morphs = self.world.all_children()
         morphs = self.parent.children
         for m in morphs:
-            if m.is_visible and (m.get_full_bounds().get_contains_point(self.bounds.origin)):
+            if m.is_visible and (m.get_full_bounds().get_contains_point(self.bounds.origin)) and not isinstance(m,Hand):
                 answer.append(m)
         return answer
 
@@ -138,6 +142,7 @@ class Hand(Morph):
     def grab(self, morph):
         """ Grab morph . That means that the morph is removed as a child of the world and added as a child of the hand """
         if self.children == []:
+            print("grab has been called for morph ",morph)
             #self.world.stop_editing()
             self.add(morph)
             self.changed()
@@ -147,7 +152,7 @@ class Hand(Morph):
 
     def drop(self):
         """ Drop morph. The morph is removed as a child of the hand and added back to its world."""
-
+        print("drop has been called")
         if self.children != []:
             morph = self.children[0]
             target = self.drop_target_for(morph)
@@ -212,12 +217,13 @@ class Hand(Morph):
                     morph.mouse_down_right(pos)
 
                 result = {'RUNNING_MODAL'}
-
+        print("mouse down is ",result)
         return result
 
     def process_mouse_up(self, event):
         """ here we process all the mouse_up events and trigger approriate events of the morph depending on the specific action performed """
         # if hand has children in case of a mouse button release remove all its children
+
         if self.children != []:
             print("I am droping now !")
             self.drop()
@@ -274,7 +280,7 @@ class Hand(Morph):
 
             # if morph is marked for grab and the mouse moves then drag it
 
-            if parent_morph is self.morph_to_grab and morph.is_draggable:
+            if parent_morph is self.morph_to_grab and morph.is_draggable and self.moving_morph:
 
                 self.grab(parent_morph)
                 value_returned = {'RUNNING_MODAL'}
@@ -288,7 +294,8 @@ class Hand(Morph):
 
 
        # mouse drag the morph if draging is enabled
-        self.detect_mouse_drag(event)
+        if  self.detect_mouse_drag(event):
+            value_returned = {'RUNNING_MODAL'}
 
         return value_returned
 
@@ -329,7 +336,7 @@ class Hand(Morph):
             morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y)
             self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
-            value_returned = {'RUNNING_MODAL'}
+            return  True
 
 
 #############test for keyboard letteres and digits
