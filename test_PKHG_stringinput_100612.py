@@ -26,6 +26,7 @@ world.add(crosshair)
 #Big if it is in developpers mode small if not needed
 #it is the menu built for the context of the world
 world_menu = world.context_menu()
+world_menu.create_my_objects()
 
 #test a Text morph as an about, always visible in the world_menu
 #Text is a multline morph

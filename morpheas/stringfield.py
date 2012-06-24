@@ -74,22 +74,20 @@ class OneLineText(Morph):
 
     def add_keystroke(self):
         tmp = self.kbd_listener.text_input        
-        #tmp2 = re_LEFT_ARROW.search(tmp)
         res = re_RL_ARROW.search(tmp)
         if res:
             tmp2 = " *" + res.group(1) + "_ARROW* "
             tmp = tmp.replace(res.group(),"<=>")
             self.kbd_listener.text_input = tmp
-        print("...old new", self.nr_chars_old, len(self.kbd_listener.text_input) )
+#PKHG debug will vanish        print("...old new", self.nr_chars_old, len(self.kbd_listener.text_input) )
         if self.nr_chars_old < self.nr_of_chars:
             dif = self.nr_of_chars - self.nr_chars_old
             nn = tmp[-dif:]
-            print("\n---------> key added",nn, self.text, tmp)
+#PKHG debug will vanish            print("\n---------> key added",nn, self.text, tmp)
             self.text += tmp[-dif:]
             self.nr_chars_old = len(self.text)
         else:
             self.text = tmp
-            print("\n---------> smaller ",)
             self.nr_chars_old = len(tmp)
         self.nr_of_chars = len(self.text)
             

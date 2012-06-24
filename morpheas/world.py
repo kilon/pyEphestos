@@ -80,7 +80,8 @@ class World(Frame):
 
     def context_menu(self):
         menu = Menu(self, self.__class__.__name__)
-        if self.is_dev_mode:
+#PKHG.2306.TODO        
+        if  True:#self.is_dev_mode:
             menu.add_item("create a morph...", 'user_create_new_morph')
             menu.add_line()
             menu.add_item("hide all", 'hide_all')
@@ -99,7 +100,7 @@ class World(Frame):
             menu.add_item("input",'StringField')
 
 #not needed            menu.add_item("close", 'delete')
-        else:
+#        else:
             menu.add_item("enter developer's mode", 'toggle_dev_mode')
         menu.add_line()
         menu.add_item("about...", 'about')

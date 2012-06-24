@@ -2,6 +2,7 @@
 debug_left_mouse_click_060512_1048 = False
 debug_get_morph_at_pointer = True
 debug_kbd_listener = False #18-06
+debug_typedtext = False #24-06 PKHG
 import bpy
 
 from .rectangle import *
@@ -430,16 +431,13 @@ class KeyboardListener:
         return result
 
     def displayInfo(self, event):
-#        print(" displayinfoo <<<<<<<>>>>>>>>\n hand L336 print upto RELEASE")
-#        print([self.shift_seen, self.text_input], event.type)
 
         if event.type in ["RET", "NUMPAD_ENTER"]:
             #DEL not done! yet
             result = self.text_input[:-1]
-#            result = tmp #self.text_input
             self.text_input = ''
         else:
             result = self.text_input
-        print("\ntyped text now: ", result)
+        if debug_typedtext:
+            print("\ntyped text now: ", result)
         self.last_result = result
- #       return result

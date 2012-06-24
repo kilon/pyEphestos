@@ -22,12 +22,17 @@ class Menu(RoundedBox):
         if target == None:
             self.target = self
         self.items = []
+        self.user_items = [] #PKHG for two types of this menu
+        self.dev_items =  [] #PKHG for two types of this menu
+        self.user_children = []
+        self.dev_children =  []
+
         self.label = None
         super(Menu, self).__init__()
         self.is_draggable = False
         self.my_width = 100
         self.stringfield_ID = None
-
+        
 
     def add_item(self, label="close", action='nop'):
         """add an item to the list of actions of a menu"""
@@ -43,13 +48,15 @@ class Menu(RoundedBox):
 #        field.is_draggable = False
 #        self.items.append(field)
 
+#PKHG.TODO if needed
+    '''
     def get_entries(self):
         entries = []
         for item in self.items:
             if isinstance (item, StringField):
                 entries.append(item.string())
         return entries
-
+    '''
 #    def get_color_picks(self):
 #        picks = []
 #        for item in self.items:
@@ -99,6 +106,8 @@ class Menu(RoundedBox):
         self.label.draw()
         self.label.add(text)
         self.label.text = text
+        #PKHG 2206_test creation of objects
+#PKHG???TODO
 
 #PKHG on 18-06-2012 Menu needs to have this def??
     def full_changed(self):
@@ -108,15 +117,6 @@ class Menu(RoundedBox):
         """draw the menu"""
         if debug_roundedbox_160512_1837:
             print("-------L112 menu.draw--------->Menu roundedbox width =", self.bounds.get_width())
-        #PKHG 050512 seems to be necessary!
-        if debug140512_delete_children:
-            print("=====L115 menu.draw=============before m.delete, children =", len(self.children[:]),self.children[:],"\n")
-
-############################ why was it m.delete() in pymorpheas?
-#??        for m in self.children:
-#??            m.delete()
-        self.children = []
-#PKHG.050512_1657???        self.children = []
         if debug140512_delete_children:
             print("======L120 menu.draw============m.delete = ",len(self.children[:]),self.children[:],"\n")
         self.edge = 5
@@ -124,18 +124,22 @@ class Menu(RoundedBox):
         self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
         self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
         self.set_extent(Point(0, 0))
-        if self.title != None:
-            self.create_label()
-            self.label.set_position(self.bounds.origin + 4)
-            self.add(self.label)
-            self.label.draw() #PKHG. to show it?
-            y = self.label.get_bottom()
-        else:
-            y = self.get_top() + 4
+        y = self.get_top() + 4
         x = self.get_left() + 4
         if debug050512_1659:
             print("will be position ",(x,y))
 #PKHG.TEST
+        item = None
+
+        #Switch the visible menu corresponding to the mode 
+        my_mode = self.world.is_dev_mode
+        if my_mode:
+            self.items = self.dev_items
+            self.children = self.dev_children
+        else:
+            self.items = self.user_items
+            self.children = self.user_children
+
         pair_item_0_counter = 0
         for pair in self.items:
             if debug050512_1659:
@@ -148,31 +152,70 @@ class Menu(RoundedBox):
                     debug_stringfield_060512_0723 += 1
             elif pair[0] == 0:
                 pair_item_0_counter += 1
-                item = Morph()
-                item.name = str(pair_item_0_counter) + "_type_item"
+                name = str(pair_item_0_counter) + "_type_item"
+                for el in self.children:
+                    if el.name == name:
+                        item = el
                 item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
                 item.set_height(pair[1]+2)
-            else:
-#self.target is world! PKHG
-#dbg                print(">>>>>>>>>Menu L160 target,actuib,label" ,self.target, pair[1], pair[0])
-                item = MenuItem(self.target, pair[1], pair[0])
+            else:                
+                for el in self.children:
+                    if el.name == pair[0]:
+                        item = el
                 item.color = (1,0,0,1) #PKHG test
-       #         item.create_label()
-#PKHG.works ;-)                item.color = (1,random(),0,1) #PKHG Test
                 item.name = pair[0]
                 item.with_name = True
-#PKHG.060612?????                item.bounds = Rectangle(Point(0,0), Point(self.my_name_size,60)) #PKHG test 140512_1820
-            item.set_position(Point(x, y))
-            self.add(item)
-            item.is_movable = False #PKHG 110612 do not move items in a Menu
-            y += item.get_height()
+                if item.is_visible: item.set_position(Point(x, y))
+#PKHG is_movable is set to false at creation time, so not needed here
+            y += item.get_height()        
+
         fb = self.get_full_bounds()
-        self.set_extent(fb.get_extent() + 4)
+        self.set_extent(fb.get_extent() + 10)
         self.adjust_widths()
         super(Menu, self).draw()
         if debug140512_delete_children:
             print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
 
+    def create_my_objects(self):
+        """create the menu-objects and the lists to distinguish the mode the menu is in"""
+        
+        tmp = []
+        pair_item_0_counter = 0
+        for pair in self.items:
+            if debug050512_1659:
+                print("pair is",pair)
+            if isinstance(pair,StringInput): #PKHG.TODO or isinstance(pair,ColorPicker):
+                item = pair
+                tmp.append(item)
+                item.with_name = True
+                if not debug_stringfield_060512_0723: #show properties of a StringField
+                    print("\n--------stringfield.bounds = ", item.bounds)
+                    debug_stringfield_060512_0723 += 1
+            elif pair[0] == 0:
+                pair_item_0_counter += 1
+                item = Morph()
+                item.name = str(pair_item_0_counter) + "_type_item"
+                item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+                item.set_height(pair[1]+2)
+            else:
+                item = MenuItem(self.target, pair[1], pair[0])
+                item.color = (1,0,0,1) #PKHG test
+                item.name = pair[0]
+                item.with_name = True
+            self.add(item)
+            item.is_movable = False #PKHG 110612 do not move items in a Menu
+            tmp.append(item)
+        small = ["enter developer's mode"]
+        self.user_items = [el for el in self.items if el[0] in small]
+        self.dev_items =  [el for el in self.items if not( el[0] in small)]
+        self.user_children = [el for el in tmp if el.name in small]
+        self.dev_children =  [el for el in tmp if not(el.name in small)]
+        for el in self.dev_children:
+            self.add_child(el)
+        self.items = self.dev_items
+#PKHG.test        print(small,"items",self.items,"\n----------")
+
+        
     def max_width(self):
         """compute the maximal width including all childredn"""
         w = self.my_width
@@ -329,36 +372,7 @@ class Trigger(Morph):
 #PKHG.09052012_1010 test        self.name = "trigger"
         self.name = label
         self.action = action
-        #PKHG.???? self.color = (0, 1, 0, 1) #PKHG.???
-        return
 
-###############################################################3
-        '''
-#        self.hilite_color = pygame.Color(192,192,192)
-        grey_192 = 192./255.
-        grey_128 = 0.5
-        self.hilite_color = (grey_192, grey_192, grey_192, 1.)
-#        self.press_color = pygame.Color(128,128,128)
-        self.press_color = (grey_128, grey_128, grey_128, 1.0)
-        self.label_string = label
-        self.fontname = fontname
-        self.fontsize = fontsize
-        self.bold = bold
-        self.italic = italic
-        self.label = None
-        self.font_id = blf.load(fontname)
-        blf.size(font_id, 16, 72) #PKHG 070512, this was needed size 16!
-        dims_x,dims_y = blf.dimensions(self.font_id, label)
-        self.my_label_width = dims_x
-        self.bounds = Rectangle(Point(0,0),Point(int(dims_x) + 4, int(dims_y) + 4))
-#        self.color = pygame.Color(254,254,254)
-        self.color = (.5, .5, .0 , 0) #geel weg 
-#        self.draw_new()
-        self.target = target
-        self.action = action
-        self.is_draggable = False
-        self.draw() #PKHG TODO
-        '''
         
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
@@ -378,6 +392,7 @@ class Trigger(Morph):
     def create_label(self):
         if self.label != None:
             self.label.delete()
+#PKHG. String renamed ... TODO if really needed            
         self.label = String(self.label_string,
                                  self.fontname,
                                  self.fontsize,
@@ -417,12 +432,10 @@ class Trigger(Morph):
             world_menu = world.context_menu()
             world.add(world_menu)
         elif self.action == "toggle_dev_mode":
-            world = self.parent.get_root() #PKHG gives back World ?!
+#PKHG.TODO a general trigger needed            
+#            world = self.parent.get_root() #PKHG gives back World ?!
             print("my world is ", world)
-            self.parent.delete()            
             world.toggle_dev_mode()
-            world_menu = world.context_menu()
-            world.add(world_menu)
         elif self.action == "choose_color":
             print("I am ", self)
             col = self.set_color("red")

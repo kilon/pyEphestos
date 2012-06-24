@@ -331,8 +331,8 @@ class morphas_1_Test(unittest.TestCase):
         assertFalse = self.assertFalse
         H1 = morph.Hand()
         H1.world = morph.World()
-        assertTrue(H1.distinguish_press_event)
-        assertTrue(H1.distinguish_release_event)        
+#        assertTrue(H1.distinguish_press_event)
+#        assertTrue(H1.distinguish_release_event)        
 #        check_contains(H1,'H1',print_value= True)
 #PKHG:  H1 contains children
 #PKHG,= []        print(H1.world.broken)
@@ -389,19 +389,23 @@ class morphas_1_Test(unittest.TestCase):
         print("test_String")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
-        assertFalse = self.assertFalse        
-        my_string = morph.String("Hallo, I should be one line")
+        assertFalse = self.assertFalse
+        hand = morph.Hand()
+        blinker = morph.Blinker()
+        my_string = morph.StringInput(hand, blinker, "Hallo, I should be one line")
         assertTrue(my_string)
-        assertEqual(my_string.text, "Hallo, I should be one line")
+        assertEqual(my_string.default, "Hallo, I should be one line")
 #PKHG.??? not all methods visible?        check_contains(my_string,"String", print_value=True)
 
     def test_Stringfield(self):
         print("test_String")
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
-        assertFalse = self.assertFalse        
-        string_field = morph.StringField()
-        assertTrue(string_field)
+        assertFalse = self.assertFalse
+        onelinrmorph = morph.OneLineText()
+        assertTrue(onelinrmorph)
+        stringinput = morph.StringInput()
+        assertTrue(stringinput)
 
 
         
