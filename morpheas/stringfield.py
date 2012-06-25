@@ -219,20 +219,18 @@ class StringInput( Morph):
         self.onelinetext.is_editable = False
         self.activation_info.is_visible = False #PKHG???False
 
-
-    def key_release(self,event):
-#PKHG.TODO what to do with RET ... and arrow and Page-down etc???
+########PKHG.TODO what to do with RET ... and arrow and Page-down etc???
+    def key_release(self,event): 
         if True: #event.type in {'RET','NUMPAD_ENTER'}:
             tmp = self.kbd_listener.text_input
-            self.insert_committed_text(tmp)
+#            self.insert_committed_text(tmp)
             self.onelinetext.text = tmp
-        #    set_Info_input(tmp, False)
-#PKHG.attention  return used:
-        return {'RUNNING_MODAL'} #keys eaton up
+        return {'RUNNING_MODAL'} #PKHG.attention  return used: keys eaton up
 
 
     def insert_committed_text(self, text):
-           print("StringInput.insert_committed_text (L241) text = ", text)
+        print("StringInput.insert_committed_text (L241) text = ", text)
+        pass
 
 class Blinker(Morph):
     "can be used for text cursors"

@@ -1,6 +1,6 @@
 #PKHG debuginfo, please do not remove! Later ok ...
 debug_left_mouse_click_060512_1048 = False
-debug_get_morph_at_pointer = True
+debug_get_morph_at_pointer = False
 debug_kbd_listener = False #18-06
 debug_typedtext = False #24-06 PKHG
 import bpy
@@ -56,13 +56,13 @@ class Hand(Morph):
         self.mouse_y = event.mouse_region_y
 
         if event.type == 'MOUSEMOVE':
-            print("event detected -> ", event.type)
+#            print("event detected -> ", event.type)
             result = self.process_mouse_move(event)
         elif event.value=='PRESS':
-            print("event detected -> ", event.type)
+#            print("event detected -> ", event.type)
             result = self.detect_press_event(event)
         elif event.value=='RELEASE':
-            print("event detected -> ", event.type)
+#            print("event detected -> ", event.type)
             result =  self.detect_release_event(event)
         return result
 
@@ -114,7 +114,8 @@ class Hand(Morph):
         """ return the top morph that is under the current position of the mouse cursor """
 
         morphs = self.parent.children
-        print("get_morph_at_pointer returns morphs : ",morphs)
+        if debug_get_morph_at_pointer:
+            print("get_morph_at_pointer returns morphs : ",morphs)
         for m in morphs: # morphs[::-1]:
             if m.get_full_bounds().get_contains_point(self.bounds.origin) and m.is_visible and not isinstance(m,Hand):
                 return m.get_morph_at(self.bounds.origin)

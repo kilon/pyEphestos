@@ -5,7 +5,7 @@ debug_stringfield_060512_0723 = True #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = False
-debug_ips = True #searching for strange error 
+debug_ips = False #True #searching for strange error 
 import blf
 from random import random
 from .roundedbox import *
@@ -72,8 +72,16 @@ class Menu(RoundedBox):
         return list.index(item)
        
     def perform(self, item):
-        print("--->>>----------Menu L94 item = ", item)
-#PKHG.TODO Menu delete?        self.delete()
+        print("--->>>---perform-------Menu L75 item = ", item,item.action, self, self.world)
+        if not (item.action == "StringField"):
+            res = self.world.__getattribute__(item.action)
+            print("\n===== menu L78",item.action, res)
+            res()
+        
+        
+
+#        print(item.__dict__) gives:
+#('is_draggable': True, 'is_visible': True, 'rounded': False, 'name': 'create a morph...', 'parent': Menu(node), 'default_font': 'C:\\BlenderSVN\\cmake_all3\\bin\\2.63\\scripts\\addons/Ephestos/fonts/verdana.ttf', 'color': (1, 0, 0, 1), 'is_movable': False, 'with_name': True, 'bounds': (4@4 | 160@39), 'font_id': 3, 'my_name_size': 0, 'fps': 0, 'action': 'user_create_new_morph', 'world': None, 'path_to_local_fonts': 'C:\\BlenderSVN\\cmake_all3\\bin\\2.63\\scripts\\addons/Ephestos/fonts', 'children': []}
 #???        item.target.__getattribute__(item.action)()
 
     def nop(self):
@@ -213,7 +221,6 @@ class Menu(RoundedBox):
         for el in self.dev_children:
             self.add_child(el)
         self.items = self.dev_items
-#PKHG.test        print(small,"items",self.items,"\n----------")
 
         
     def max_width(self):
@@ -271,6 +278,8 @@ class Menu(RoundedBox):
                 return
 
     def popup_at_hand(self):
+        print("*INFO* no popup at hand implemented sefl = ", self, self.world)
+        return
         self.popup(world, world.hand.position())
 
     def popup_centered_at_hand(self):
@@ -423,7 +432,8 @@ class Trigger(Morph):
 #        self.image = self.press_image
         print("=L384= menu.py mouse_down_left of Trigger; self = ", self, " pos = ", pos ,"my action =", self.action )
         world = self.get_root()
-        print("=L385= root is ", world, "self.action =", self.action )
+#        print("\n\ntest world self.world", self.world)
+#        print("=L385= root is ", world, "self.action =", self.action )
         if self.action == "delete":
             world = self.parent.get_root() #PKHG gives back World!
             print("my world is ", world)
@@ -455,25 +465,15 @@ class Trigger(Morph):
 #PKHG.TODO clean the rest!                    
         elif self.action == "StringField":
             world = self.parent.get_root()
-            inputmorph_id = self.parent.stringfield_ID
+            inputmorph_id = world.stringinput_ID
+            print("L467 menu inputmorph_id", inputmorph_id)
             ips  = [id(el)== inputmorph_id for el in world.children]
             if debug_ips:
-                print("\n\nmenu.py L453 ips = ", ips)
-            check_contains(self.parent, "MENU", print_value = True)
-#            print("\n\n self and parent", self, self.parent,  " ips = ", ips[:], inputmorph_id, world,"\n\n")
+                print("\n-----> menu.py L468 ips = ", ips)
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
-            if ips_m == []:
-                print("\n\nwhy not found????\n\n")
-                input_morph_tmp = [el for el in world.children if isinstance(el,StringInput)]
-            else:  
-                input_morph_tmp = ips_m
-            input_morph_tmp[0].set_color((0, 0, .1, 0.1))                
-            if True: #len(input_morph_tmp) == 1:
-                input_morph = input_morph_tmp[0]
-                input_morph.is_visible = not input_morph.is_visible 
-                print("\n\n--------->",input_morph)
-            else:
-                print("***WARNING*** click again on input!")
+            input_morph_tmp = ips_m[0]
+            input_morph_tmp.set_color((0, 0, .1, 0.1))                
+            input_morph_tmp.is_visible = not input_morph_tmp.is_visible #PKHG toggle!
         self.changed()
 
     def mouse_click_left(self, pos):
@@ -501,10 +501,16 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
 
     def mouse_click_left(self, pos):
         if debug_mouseclick_060812_0756:
-            print("\n\n=====================MenuItem L390: mouse_click_left self = ",self," pos = ", pos)
+            print("\n=MenuItem L506: mouse_click_left self = ",self," pos = ", pos, " self.parent", self.parent.world)
+            world = self.parent.world
+            action_todo = self.action
+            res = world.__getattribute__(self.action)
+            print("\n===== menu L510",action_todo, res)
+            #res() #???
+            
         if isinstance(self.parent, Menu):
 #PKHG.TODO???            self.get_world().open_menu = None
-            print("menu L456 TODO???")
+            print("I am a Menu (menu L456) TODO???")
         self.parent.perform(self)
 
 class Bouncer(Morph):
@@ -604,3 +610,5 @@ def check_contains(cl,name , print_value = False, no_underscore = True):
             else:
                 print(name , " contains ==>",el)
     print("\ncheck_contains finished\n\n")
+
+    

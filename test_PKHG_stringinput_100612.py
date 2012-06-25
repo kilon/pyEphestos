@@ -55,7 +55,7 @@ world.add(blinker)
 #stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
 stringinput = StringInput(hand, blinker, default="test StringInput  pkhg")
 
-world_menu.stringinput_ID = id(stringinput)
+world.stringinput_ID = id(stringinput)
 stringinput.set_position(Point(400,200))
 stringinput.name = "toggle editing: LM-click!"
 stringinput.is_visible = False
@@ -69,7 +69,8 @@ world.add_child(stringinput)
 #world.children is what (but better do not rely on this)
 world.add(world_menu)
 world.add(about)
-
+print("start of test_PKHG")
+#PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
 #for el in world.children: print(id(el))
 
 ##########end of default settings ########################

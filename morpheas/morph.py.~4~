@@ -1,7 +1,7 @@
 #PKHG Set debug values!
 debug050512_0900 = False #060512, seems to be OK now (problem with test_Menu)
-debug_changed_130512_0810 = False #all items seem to have world as root
-#do not use ^^^^^^^^^^^^^^^^^^^ too much output
+debug_changed_130512_0810 = True #all items seem to have world as root
+
 import bgl, blf
 from .rectangle import *
 from .node import *
@@ -299,8 +299,6 @@ class Morph(Node ):
         """hide me and all my children"""
         self.is_visible = False
         self.changed()
-        print("*INFO PKHG* hide in morph.py L302:   how to do hide now???")
-        return
         for morph in self.children:
             morph.hide()
 

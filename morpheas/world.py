@@ -80,31 +80,24 @@ class World(Frame):
 
     def context_menu(self):
         menu = Menu(self, self.__class__.__name__)
-#PKHG.2306.TODO        
-        if  True:#self.is_dev_mode:
-            menu.add_item("create a morph...", 'user_create_new_morph')
-            menu.add_line()
-            menu.add_item("hide all", 'hide_all')
-            menu.add_item("show all", 'show_all_hiddens')
-            menu.add_item("move all inside...", 'keep_all_submorphs_within')
-#PKHG not yet
-            menu.add_item("color...", 'choose_color')
-            menu.add_line()
-#PKHG not yet
-            menu.add_item("stop all bouncers", 'stop_all_bouncers')
-#PKHG not yet
-            menu.add_item("start all bouncers", 'start_all_bouncers')
-            menu.add_line()
-            menu.add_item("switch to user mode", 'toggle_dev_mode')
-            menu.add_line()
-            menu.add_item("input",'StringField')
-
-#not needed            menu.add_item("close", 'delete')
-#        else:
-            menu.add_item("enter developer's mode", 'toggle_dev_mode')
+        menu.add_item("create a morph...", 'user_create_new_morph')
+        menu.add_line()
+        menu.add_item("hide all", 'hide_all') #PKHG not yet
+        menu.add_item("show all", 'show_all_hiddens') #PKHG not yet
+        menu.add_item("move all inside...", 'keep_all_submorphs_within')#PKHG not yet
+        menu.add_item("color...", 'choose_color')#PKHG not yet
+        menu.add_line()
+        menu.add_item("stop all bouncers", 'stop_all_bouncers')
+        menu.add_item("start all bouncers", 'start_all_bouncers')
+        menu.add_line()
+        menu.add_item("switch to user mode", 'toggle_dev_mode')
+        menu.add_line()
+        menu.add_item("input",'StringField')
+        menu.add_item("enter developer's mode", 'toggle_dev_mode')
         menu.add_line()
         menu.add_item("about...", 'about')
-        return menu
+        return menu #PKHG needed 24-6 in test_PKHG_stringinput*.py TODO?!
+
 
     def user_create_new_morph(self):
         menu = Menu(self, "create new")
@@ -121,18 +114,21 @@ class World(Frame):
 #PKHG not yet        menu.add_item("frame...", 'user_create_frame')
 #PKHG not yet        menu.add_item("palette...", 'user_create_color_palette')
 #PKHG not yet        menu.add_item("slider...", 'user_create_slider')
-
         menu.popup_at_hand()
 
     def user_create_rectangle(self):
         Morph().pick_up()
 
     def stop_all_bouncers(self):
+        print("error: world has no attribute 'all_children', why?",self,type(self))
+        return
         for m in self.all_children():
             if isinstance(m, Bouncer):
                 m.is_stopped = True
 
     def start_all_bouncers(self):
+        print("error: world has no attribute 'all_children', why?",self,type(self))
+        return
         for m in self.all_children():
             if isinstance(m, Bouncer):
                 m.is_stopped = False
@@ -152,9 +148,20 @@ class World(Frame):
                 morph.show()
 
     def hide_all(self):
+        print("*INFO PKHG* what to do with hide_all?? self = ",self, self.world)
+#        self.is_visible = False
+        #self.hide()
+#        return
         for morph in self.children:
-            morph.hide()
+            if isinstance(self, Menu):
+                print("*INFO PKHG* do not hide " , self)
+            else:
+                morph.hide()
 
+    def choose_color(self):
+        print("*INFO* no chose_color (yet) implemented")
+        pass #PKHG.TODO
+    
     def pick_up(self):
         pass
 
@@ -171,9 +178,10 @@ class World(Frame):
         self.keyboard_receiver = None
 
     def about(self):
+        return
         self.inform("morphic.py\n\n\
 a lively GUI for Blender\ninspired by Squeak\nbased on Pygame\n\
-" + version + "\n\nwritten by k & p ")
+"  + "\n\nwritten by k & p ")
 
     #World utilities:
 
