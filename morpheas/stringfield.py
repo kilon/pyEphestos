@@ -18,28 +18,27 @@ class OneLineText(Morph):
 
     def __init__(self, owner = None,
                  text = ""):
-        super(OneLineText, self).__init__()
+        super(OneLineText, self).__init__()        
         self.owner = owner
         self.blinker = self.owner.blinker
 #        print("\n>>>>>> owners blinker",self.owner.blinker)
 #PKHGOK        print(">>>>>>>>>>> OneLineText root of owner ",owner.get_root(),owner.hand)
         self.text = text
-#        self.fontname = "verdana.ttf" #fontname
         self.fontsize =  12 #fontsize
-        self.bold = False #bold
+        self.bold = False   #bold
         self.italic = False #italic
         self.is_editable = False
         self.width = 10
-#        super(OneLineText, self).__init__()
-        self.color = (1, 1, 1, 1)
+        self.color = (1.0, 1.0, 1.0, 1.0)
+        #PKHG only verdana.ttf used
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"# + fontname
         self.font = blf.load(tmp)
-#PKHG.TODO DPI = ???
         blf.size(self.font, self.fontsize, 72) #DPI default 72?
         self.kbd_listener = self.owner.kbd_listener
         self.list_of_char_x_values =[]
         self.nr_of_chars = 0
         self.nr_chars_old = 0
+        
     def __repr__(self):
         return 'OneLineText("' + self.text + '")'
 
@@ -140,7 +139,7 @@ class StringInput( Morph):
         self.bold = bold
         self.italic = italic
 #        self.color = (0.1, 0.1, 0.1, 0.1)
-        self.set_color((0.1, 0.1, 0.1, 0.1))
+        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
         #onlinetext needs a keyboardlistener! thus
         self.onelinetext = OneLineText(self, self.default)#,\
 #                 self.fontname, self.fontsize, self.bold, self.italic)

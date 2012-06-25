@@ -82,14 +82,14 @@ class World(Frame):
         menu = Menu(self, self.__class__.__name__)
         menu.add_item("create a morph...", 'user_create_new_morph')
         menu.add_line()
-        menu.add_item("hide all", 'hide_all') #PKHG not yet
-        menu.add_item("show all", 'show_all_hiddens') #PKHG not yet
-        menu.add_item("move all inside...", 'keep_all_submorphs_within')#PKHG not yet
-        menu.add_item("color...", 'choose_color')#PKHG not yet
-        menu.add_line()
-        menu.add_item("stop all bouncers", 'stop_all_bouncers')
-        menu.add_item("start all bouncers", 'start_all_bouncers')
-        menu.add_line()
+        menu.add_item("hide all", 'hide_all') 
+        menu.add_item("show all", 'show_all_hiddens') 
+#        menu.add_item("move all inside...", 'keep_all_submorphs_within')#PKHG not yet
+#        menu.add_item("color...", 'choose_color')#PKHG not yet
+#        menu.add_line()
+#        menu.add_item("stop all bouncers", 'stop_all_bouncers')
+#        menu.add_item("start all bouncers", 'start_all_bouncers')
+#        menu.add_line()
         menu.add_item("switch to user mode", 'toggle_dev_mode')
         menu.add_line()
         menu.add_item("input",'StringField')
@@ -148,13 +148,15 @@ class World(Frame):
                 morph.show()
 
     def hide_all(self):
-        print("*INFO PKHG* what to do with hide_all?? self = ",self, self.world)
+        print("*INFO PKHG* world L151 what to do with hide_all?? self = ",self, self.world)
 #        self.is_visible = False
         #self.hide()
 #        return
         for morph in self.children:
             if isinstance(self, Menu):
                 print("*INFO PKHG* do not hide " , self)
+            elif morph.name.startswith("MAIN"):
+                print("*INFO* world L159 do not hiding", morph)
             else:
                 morph.hide()
 

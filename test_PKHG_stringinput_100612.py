@@ -16,16 +16,19 @@ from .morpheas import *
 #can be made visible by a CrossHair-morph
 world = World()
 hand = world.hand
+hand.name = "MAIN hand"
 tmp = hand.kbd_listener
 world.kbd_listener = tmp #PKHG: this worlds keyboardListener
 
 crosshair = CrossHair(hand)
+crosshair.name = "MAIN crosshair"
 world.add(crosshair)
 
 #at least one Menu will be visible in the lower left corner
 #Big if it is in developpers mode small if not needed
 #it is the menu built for the context of the world
 world_menu = world.context_menu()
+world_menu.name = "MAIN menu of world"
 world_menu.create_my_objects()
 
 #test a Text morph as an about, always visible in the world_menu

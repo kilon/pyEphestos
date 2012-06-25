@@ -299,8 +299,9 @@ class Morph(Node ):
         """hide me and all my children"""
         self.is_visible = False
         self.changed()
-        print("*INFO PKHG* hide in morph.py L302:   how to do hide now???")
-        return
+#        print("*INFO PKHG* hide in morph.py L302:   how to do hide now??? self =", self, type(self) )
+#        return
+        ##PKHG.??? needed? 
         for morph in self.children:
             morph.hide()
 
