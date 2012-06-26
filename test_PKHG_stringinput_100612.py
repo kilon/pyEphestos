@@ -7,6 +7,20 @@ import bpy
 import bgl
 import blf
 from .morpheas import *
+#######
+def check_contains(cl,name , print_value = True, no_underscore = True):
+    dir_class = dir(cl)
+    for el in dir_class:
+        if el.startswith("_") and no_underscore:
+            pass
+        else:
+            if print_value:
+                tmp = getattr(cl,el)
+#                if el == 'stringfield_ID':
+                print(name , " contains ==>",el," value = ", tmp)
+            else:
+                print(name , " contains ==>",el)
+    print("\ncheck_contains finished\n\n")
 
 ##########start of default settings (today example for test_StringInput.py) ##
 
@@ -72,6 +86,7 @@ world.add_child(stringinput)
 #world.children is what (but better do not rely on this)
 world.add(world_menu)
 world.add(about)
+#PKHG to see what world contains:check_contains(world,"world")
 print("start of test_PKHG")
 #PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
 #for el in world.children: print(id(el))

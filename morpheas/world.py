@@ -149,7 +149,7 @@ class World(Frame):
         rectangle.set_color((0,1,0,0.2))
         rectangle.set_position(Point(500,500))
         #PKHG>TODO add a MenuItem with delete_me_from_worlds_children
-        remove_me = Trigger(rectangle, action = "delete_me_from_worlds_children")
+        remove_me = MenuItem(rectangle, action = "delete_me_from_worlds_children")
         remove_me.with_name = True
         remove_me.set_color((0,1,1,1))
         remove_me.is_visible = True
@@ -160,14 +160,14 @@ class World(Frame):
         return
         Morph().pick_up() #PKHG does only pass at 250612
 
-        def delete_me_from_worlds_children(self, object):
-            """returns None if object is not a child of world, otherwise object"""
-            result = None
-            if self.children.count(object):
-                result = object
-                index = self.children.index(object)
-                del self.children[index]
-            return result
+    def delete_me_from_worlds_children(self, object):
+        """returns None if object is not a child of world, otherwise object"""
+        result = None
+        if self.children.count(object):
+            result = object
+            index = self.children.index(object)
+            del self.children[index]
+        return result
         
             
 

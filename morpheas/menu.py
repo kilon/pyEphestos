@@ -75,6 +75,7 @@ class Menu(RoundedBox):
     def perform(self, item):
         print("--->>>---perform-------Menu L75 item = ", item,item.action, self, self.world)
         if not (item.action == "StringField"):
+            
             res = self.world.__getattribute__(item.action)
             print("\n===== menu L78",item.action, res)
             res()
@@ -565,8 +566,16 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         if isinstance(self.parent, Menu):
 #PKHG.TODO???            self.get_world().open_menu = None
             print("I am a Menu (menu L456) TODO???")
-        print("\n*********DBG menu L567, self,",self,"parent=",self.parent)    
-        self.parent.perform(self)
+        print("\n*********DBG menu L567, self,",self,"parent=",self.parent,self.get_root())
+        if isinstance(self.parent, Menu):
+            self.parent.perform(self)
+        else:
+            world = self.get_root()
+            res = world.__getattribute__(self.action)
+            print("\n===== menu L78",self.action, res)
+            tmp = res(self.parent)
+            print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)
+            
 
 class Bouncer(Morph):
 
