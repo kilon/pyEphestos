@@ -567,14 +567,17 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
 #PKHG.TODO???            self.get_world().open_menu = None
             print("I am a Menu (menu L456) TODO???")
         print("\n*********DBG menu L567, self,",self,"parent=",self.parent,self.get_root())
-        if isinstance(self.parent, Menu):
+        if isinstance(self.parent, Menu) and self.parent.name.startswith("MAIN"):
             self.parent.perform(self)
         else:
             world = self.get_root()
             res = world.__getattribute__(self.action)
             print("\n===== menu L78",self.action, res)
-            tmp = res(self.parent)
-            print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)
+            if self.action == "delete_me_from_worlds_children":
+                tmp = res(self.parent)
+                print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)
+            else:
+                res()
             
 
 class Bouncer(Morph):

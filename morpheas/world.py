@@ -122,16 +122,22 @@ class World(Frame):
         item = Morph()
         item.name = str(pair_item_0_counter) + "_type_item"
         item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
-        item.set_height(+100) #PKHG 10 = 2 normal
+        item.set_height(+2) #PKHG 10 = 2 normal
         menu.add(item)
         menu.add_line()
-        pair_item_0_counter += 1
-        item = Morph()
-        item.name = str(pair_item_0_counter) + "_type_item"
-        item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
-        item.set_height(+2)
-        menu.add(item)
+        remove_me = MenuItem(self, action = "delete_me_from_worlds_children")
+        remove_me.with_name = True
+        remove_me.name = "del"
+        remove_me.set_color((0,.2,1,1))
+        remove_me.is_visible = True
+        remove_me.set_position(menu.get_top_right())
+        menu.add(remove_me)
         print("\n******DBG world L132, menu children",menu.children[:])
+        fb = menu.get_full_bounds()
+        menu.set_extent(fb.get_extent() + 10)
+        menu.adjust_widths()
+     #   super(Menu, self).draw()
+        
 #        menu.add_item("string...", 'user_create_string')
 #        menu.add_item("text...", 'user_create_text')
 #        menu.add_line()
