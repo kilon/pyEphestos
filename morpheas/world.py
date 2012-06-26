@@ -130,7 +130,7 @@ class World(Frame):
         remove_me.name = "del"
         remove_me.set_color((0,.2,1,1))
         remove_me.is_visible = True
-        remove_me.set_position(menu.get_top_right())
+        remove_me.set_position(menu.get_bottom_right())
         menu.add(remove_me)
         print("\n******DBG world L132, menu children",menu.children[:])
         fb = menu.get_full_bounds()
