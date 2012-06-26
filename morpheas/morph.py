@@ -285,14 +285,14 @@ class Morph(Node ):
             size = int(size * quot)
         y = self.bounds.corner.y - size
 
-        if self.with_name:
-
 #PKHG. bounds should include name of morph
 #PKHG 040612 does not work???!           self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
 #                                    self.bounds.corner.y))
-#PKHG.1jun12 the foregoing line causes strange behavior!
+#PKHG.1jun12 the foregoing line causes strange behavior!        
+        if self.with_name:
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
-
+        for el in self.children:
+            el.draw()
 
 
     def hide(self):

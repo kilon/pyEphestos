@@ -142,14 +142,34 @@ class World(Frame):
         menu.popup_at_hand()
 
     def user_create_rectangle(self):
-        print("*DBG world L134, a rectangle should be created self =" , self)
+        print("*** for now only (hi hi) \n;-) is! \n******DBG world L134, a rectangle should be created ")
         rectangle = Morph()
         rectangle.name = "Rectangle"
         rectangle.with_name = True
+        rectangle.set_color((0,1,0,0.2))
         rectangle.set_position(Point(500,500))
+        #PKHG>TODO add a MenuItem with delete_me_from_worlds_children
+        remove_me = Trigger(rectangle, action = "delete_me_from_worlds_children")
+        remove_me.with_name = True
+        remove_me.set_color((0,1,1,1))
+        remove_me.is_visible = True
+        remove_me.set_position(rectangle.get_position())
+        rectangle.add(remove_me)      
         self.add(rectangle)
+                        
         return
         Morph().pick_up() #PKHG does only pass at 250612
+
+        def delete_me_from_worlds_children(self, object):
+            """returns None if object is not a child of world, otherwise object"""
+            result = None
+            if self.children.count(object):
+                result = object
+                index = self.children.index(object)
+                del self.children[index]
+            return result
+        
+            
 
     def stop_all_bouncers(self):
         print("error: world has no attribute 'all_children', why?",self,type(self))
