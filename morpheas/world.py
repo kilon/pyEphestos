@@ -100,16 +100,41 @@ class World(Frame):
 
 
     def user_create_new_morph(self):
-        menu = Menu(self, "create new")
+        print("\n*TEST* world L103 user_create_new_morph called self = ",self,"\n")
+        menu = Menu(target = self, title = "create new") #PKHG self is world!
+        menu.is_draggable = True
+        #PKHG>??? does not work: menu.with_name = True 
+        menu.counter = 0 #PKHG show or show no content counter times
+        self.add(menu)
+        pair_item_0_counter = 0
         menu.add_item("rectangle...", 'user_create_rectangle')
-        menu.add_item("ellipse...", 'user_create_ellipse')
+        item_rectangle = MenuItem(self,'user_create_rectangle',"rectangle...")
+        item_rectangle.name = "rectangle..."
+        item_rectangle.with_name = True
+        menu.add(item_rectangle)
+#        menu.children.append(item_rectangle)
+#        menu.add_item("ellipse...", 'user_create_ellipse')
 #PKHG not yet        menu.add_item("circle box...", 'user_create_circle_box')
-        menu.add_item("rounded box...", 'user_create_rounded_box')
+#        menu.add_item("rounded box...", 'user_create_rounded_box')
 #PKHG not yet        menu.add_item("polygon...", 'user_create_polygon')
+        menu.add_line() #PKHG.??? with creation of object??
+        pair_item_0_counter += 1
+        item = Morph()
+        item.name = str(pair_item_0_counter) + "_type_item"
+        item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+        item.set_height(+100) #PKHG 10 = 2 normal
+        menu.add(item)
         menu.add_line()
-        menu.add_item("string...", 'user_create_string')
-        menu.add_item("text...", 'user_create_text')
-        menu.add_line()
+        pair_item_0_counter += 1
+        item = Morph()
+        item.name = str(pair_item_0_counter) + "_type_item"
+        item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+        item.set_height(+2)
+        menu.add(item)
+        print("\n******DBG world L132, menu children",menu.children[:])
+#        menu.add_item("string...", 'user_create_string')
+#        menu.add_item("text...", 'user_create_text')
+#        menu.add_line()
 #PKHG not yet        menu.add_item("bouncer...", 'user_create_bouncer')
 #PKHG not yet        menu.add_item("frame...", 'user_create_frame')
 #PKHG not yet        menu.add_item("palette...", 'user_create_color_palette')
@@ -117,7 +142,14 @@ class World(Frame):
         menu.popup_at_hand()
 
     def user_create_rectangle(self):
-        Morph().pick_up()
+        print("*DBG world L134, a rectangle should be created self =" , self)
+        rectangle = Morph()
+        rectangle.name = "Rectangle"
+        rectangle.with_name = True
+        rectangle.set_position(Point(500,500))
+        self.add(rectangle)
+        return
+        Morph().pick_up() #PKHG does only pass at 250612
 
     def stop_all_bouncers(self):
         print("error: world has no attribute 'all_children', why?",self,type(self))

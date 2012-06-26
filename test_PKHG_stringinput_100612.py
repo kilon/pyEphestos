@@ -28,6 +28,7 @@ world.add(crosshair)
 #Big if it is in developpers mode small if not needed
 #it is the menu built for the context of the world
 world_menu = world.context_menu()
+world_menu.target = world
 world_menu.name = "MAIN menu of world"
 world_menu.create_my_objects()
 
@@ -51,7 +52,6 @@ blinker = Blinker()
 blinker.set_position(Point(450,300))
 blinker.is_visible = False
 world.add(blinker)
-
 
 ##StringInput test
 
