@@ -48,7 +48,7 @@ world_menu.create_my_objects()
 
 #test a Text morph as an about, always visible in the world_menu
 #Text is a multline morph
-about = Text("About\nbased on pymorpheas\nmorph adjusted for Blender\nby Dimitris and Peter", max_width = 350)
+about = Text("Ephestos: Age of Morpheas (c)  2012 by PKHG and Kilon.GPL Licence . Based on Pymorphic.py by Jens Moenig jens@moenig.org \n ", max_width = 350)
 
 #normal procedure
 #give it a name
