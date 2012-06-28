@@ -1,6 +1,7 @@
 import bgl, blf
 from .rectangle import *
 from .morph import *
+import addon_utils
 
 class Text(Morph):
     "I am a mult line, word wrapping string"
@@ -14,14 +15,10 @@ class Text(Morph):
                  alignment='left',
 #PKHG.INFO a real Text needs a max_with > 0 !!!
                  max_width=200):
-#PKHG.TODO or always only font_id = 0 the default??
-#        self.font = blf.load("c:/Windows/Fonts/Verdana.ttf") #this works
-#        self.font = blf.load("c:/Windows/Fonts/arial.ttf") #this works
-#        self.font = blf.load("c:/Windows/Fonts/baln.ttf") #this works but too small
-        import addon_utils
+
+
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
-#PKHG not needed        print("TEXT init: tmp and font_id ", tmp, self.font, text)
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
         self.background_color = (0,0,0, 0.5)
         self.text = text
@@ -48,16 +45,16 @@ class Text(Morph):
         w = blf.dimensions(self.font, res)
         hight_line = round(w[1] + 1.51)
         wi,hei = int(max(self.max_line_width, w[0]+2)),\
-                 nr_of_lines * hight_line        
+                 nr_of_lines * hight_line
         self.bounds = Point(0,0).corner(Point(wi, hei ))
         '''
         self.adjust_text(text)
-        
+
     def __repr__(self):
-#PKHG.not usable        return 'Text("' + self.text + '")'
+
         return 'Text("' + self.name + '")'
 
-    def parse(self):    
+    def parse(self):
         self.words = []
         paragraphs = self.text.splitlines()
         self.max_line_width = 0
@@ -78,7 +75,7 @@ class Text(Morph):
                 if self.max_width > 0:
                     newline = oldline + word + ' '
 #                    w = self.font.size(newline)
-                    w = blf.dimensions(self.font, newline)                    
+                    w = blf.dimensions(self.font, newline)
                     if w[0] > self.max_width:
                         self.lines.append(oldline)
                         w = blf.dimensions(self.font, oldline)
@@ -91,26 +88,26 @@ class Text(Morph):
                 else:
                     oldline = oldline + word + ' '
 #        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
-#Text ...    
+#Text ...
     def draw(self):
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
         xx = self.bounds.corner.x
-        yy = self.bounds.corner.y 
+        yy = self.bounds.corner.y
         hei = yy - y
         nr = len(self.lines)
-        lineHei = -1 +  hei // nr 
+        lineHei = -1 +  hei // nr
         color = self.get_color()
         bgcol = self.background_color
-        bgl.glEnable(bgl.GL_BLEND) #PKHG. needed for color of rectangle!
+
         bgl.glColor4f(*bgcol)
         dime = self.get_extent().as_list()
         bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x + dime[0], self.get_position().y + dime[1])
         for el in range(nr):
             Morph.draw_string_to_viewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
         return
-    
+
     #Text menu:
 
     def developers_menu(self):
@@ -231,9 +228,9 @@ class Text(Morph):
         y = position.y
 #        self.bounds = position.get_corner(Point(wi + x , hei + y ))
         self.bounds = Rectangle(position, Point(wi + x , hei + y ))
-            
+
     def wants_drop_of(self, morph): #PKHG.test?
-        return {'FINISHED'} 
+        return {'FINISHED'}
 
     def get_width(self):
         return self.max_line_width
