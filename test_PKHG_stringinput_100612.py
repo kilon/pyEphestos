@@ -48,10 +48,9 @@ world_menu.create_my_objects()
 
 #test a Text morph as an about, always visible in the world_menu
 #Text is a multline morph
-about = Text("Ephestos: Age of Morpheas (c)  2012 by PKHG and Kilon  [ thekilon@yahoo.co.uk ] .GPL Licence . Based on Pymorphic.py by Jens Moenig [ jens@moenig.org ] \n ", max_width = 350)
+about = Text("Ephestos: Age of Morpheas \n (c)  2012 by PKHG and Kilon  [ thekilon@yahoo.co.uk ] .GPL Licence . Based on Pymorphic.py by Jens Moenig [ jens@moenig.org ] \n ", max_width = 390 , fontsize = 16)
 
-#normal procedure
-#give it a name
+#normal procedur#give it a name
 #give it a startposition
 #set its visbility
 #add it (a must yet) to the world see later!
@@ -104,31 +103,10 @@ def draw_ephestos(self,context):
     bgl.glColor4f(0.0, 0.0, 0.0, 0.5)
     bgl.glLineWidth(1.5)
 
-    """
-    #set colour to use
-    bgl.glColor4f(0.5,0.0,0.5,0.3)
 
-    x_region = round((bpy.context.area.regions[4].width-5)/2)
-    y_region = round((bpy.context.area.regions[4].height-5)/2)
-    print("x_region : ",x_region)
-    print("y_region : ",y_region)
-    bgl.glRecti(5,5,x_region, y_region)
-    """
 #    if show_world:
     world.draw()
-    '''
-    good_rounded_box.draw_new(ephestos)
-    world.draw_new(ephestos)
-#        show_world = False
-    red_morph.draw_new(ephestos)
-    green_morph.draw_new(ephestos)
-    blue_morph.draw_new(ephestos)
-    multiline_text.draw_new(ephestos)
-    rounded_box.draw_new(ephestos)
-    one_String.draw_new(ephestos)
-#PKHG.stringfieldTest.???
-    test_stringfield.draw_new( ephestos)
-    '''
+
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
