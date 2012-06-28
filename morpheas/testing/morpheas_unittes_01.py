@@ -296,18 +296,24 @@ class morphas_1_Test(unittest.TestCase):
 #PKHG.= <class 'Ephestos.morpheas.Rectangle'>        print(type(M0.bounds))
         assertEqual(M0.bounds.get_area(), 6000)
         assertEqual(M0.delete(), None)
-        M0 = morph.Morph()
         M1 = morph.Morph()
         M0.add_child(M1)
         assertEqual(M1.get_depth(),1)
         M2 = morph.Morph()
         M1.add_child(M2)
+        assertEqual(M2.get_depth(),2)
         Rect = morph.Rectangle(morph.Point(-3,-5),morph.Point(0,60))
         M1.bounds = Rect
-        assertEqual(M2.get_depth(),2)
         assertTrue(M0.get_wants_to_step())
         M1.is_visible = False
         assertFalse(M1.get_wants_to_step())
+
+        #PKHG 2806
+        corner = morph.Point( 10, 2 + int(16.5))
+        assertEqual(corner.x, 10, "corner.x should be 10")
+        
+        M0.bounds.corner = M0.bounds.origin + corner
+        assertEqual(M0.bounds, morph.Rectangle(morph.Point(0,0), morph.Point(10,18)))
 #PKHG.= [0@0, 0@40, 50@40, 50@0]        print(M0.corners())
 #PKHG.= (-3@-5 | 50@60)        print(M0.full_bounds())
 
@@ -402,10 +408,14 @@ class morphas_1_Test(unittest.TestCase):
         assertTrue = self.assertTrue
         assertEqual = self.assertEqual
         assertFalse = self.assertFalse
-        onelinrmorph = morph.OneLineText()
-        assertTrue(onelinrmorph)
-        stringinput = morph.StringInput()
+        hand = morph.Hand()
+#        check_contains(morph,"is there hand??", print_value = True)
+                       
+        blinker = morph.Blinker()
+        stringinput = morph.StringInput(hand,blinker) #needs blinker for OneLineText
         assertTrue(stringinput)
+        onelinemorph = morph.OneLineText(owner = stringinput)
+        assertTrue(onelinemorph)
 
 
         

@@ -128,6 +128,7 @@ class World(Frame):
         remove_me = MenuItem(self, action = "delete_me_from_worlds_children")
         remove_me.with_name = True
         remove_me.name = "del"
+        remove_me.label = "del"
         remove_me.set_color((0,.2,1,1))
         remove_me.is_visible = True
         remove_me.set_position(menu.get_bottom_right())
@@ -156,6 +157,7 @@ class World(Frame):
         rectangle.set_position(Point(500,500))
         #PKHG>TODO add a MenuItem with delete_me_from_worlds_children
         remove_me = MenuItem(rectangle, action = "delete_me_from_worlds_children")
+        remove_me.name = "del"
         remove_me.with_name = True
         remove_me.set_color((0,1,1,1))
         remove_me.is_visible = True

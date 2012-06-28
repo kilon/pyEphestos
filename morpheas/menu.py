@@ -522,9 +522,9 @@ class Trigger(Morph):
             world = self.parent.get_root()
             inputmorph_id = world.stringinput_ID
             print("L467 menu inputmorph_id", inputmorph_id)
-            ips  = [id(el)== inputmorph_id for el in world.children]
-            if debug_ips:
-                print("\n-----> menu.py L468 ips = ", ips)
+#            ips  = [id(el)== inputmorph_id for el in world.children]
+#            if debug_ips:
+#                print("\n-----> menu.py L468 ips = ", ips)
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
             input_morph_tmp = ips_m[0]
             input_morph_tmp.set_color((0, 0, .1, 0.1))                

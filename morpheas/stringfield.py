@@ -53,7 +53,7 @@ class OneLineText(Morph):
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
         bgl.glColor4f(*self.color)
-        blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
+        blf.position(self.font,x ,y, 1) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
             self.blinker.is_visible = True
             self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
