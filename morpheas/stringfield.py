@@ -55,12 +55,14 @@ class OneLineText(Morph):
         bgl.glColor4f(*self.color)
         blf.position(self.font,x ,y, 0) #PKHG.??? 0 is z-depth?!
         if self.is_visible:
+            self.blinker.is_visible = True
             self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
             blf.draw(self.font, self.text)
             mouse_location = (self.owner.hand.mouse_x, self.owner.hand.mouse_y)
             text_end_location = self.bounds.get_bottom_right()
-#            print(mouse_location, text_end_location, self.blinker.bounds.origin)
-
+        else:
+            self.blinker.is_visible = False
+            
     def get_width(self):
         """ the width of the text at actual font-size"""
         return self.width
@@ -157,6 +159,7 @@ class StringInput( Morph):
         "draw and adjust size of morph, input_text dependant"
 #        super(StringInput, self).draw()
 #        self.onelinetext.draw()
+ 
         input_width = self.onelinetext.width + 5 #+ 5 PKHG because of offset onelinetext
         if input_width < 100:
             dif = 0
@@ -176,22 +179,25 @@ class StringInput( Morph):
             else:
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
         children = self.children
-#PKHG.??? next lines really needed?
-
-#        for child in children:
-#            if child.is_visible:
-#                child.draw()
-
-        super(StringInput, self).draw()
-        if self.activation_info.is_visible:
-            self.activation_info.draw()
-        self.onelinetext.draw()
 
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
-        self.blinker.set_position(Point(x + input_width, y))
-        self.blinker.draw()
-        return
+
+        if self.activation_info.is_visible:
+            self.activation_info.name = "IP active"
+            self.activation_info.set_color("green")
+            self.activation_info.draw()
+            super(StringInput, self).draw()
+            self.blinker.set_position(Point(x + input_width, y))
+            self.blinker.draw()
+        else:
+            self.activation_info.is_visible = True
+            self.activation_info.name = "IP inactive"            
+            self.activation_info.set_color("red")
+            self.activation_info.draw()
+            self.activation_info.is_visible = False
+            self.blinker.is_visible = False            
+            
 
     def get_string(self):
         """ getter of input-text at THIS moment"""

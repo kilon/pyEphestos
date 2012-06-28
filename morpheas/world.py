@@ -211,7 +211,7 @@ class World(Frame):
         #self.hide()
 #        return
         for morph in self.children:
-            if isinstance(self, Menu):
+            if isinstance(morph, Menu):
                 print("*INFO PKHG* do not hide " , self)
             elif morph.name.startswith("MAIN"):
                 print("*INFO* world L159 do not hiding", morph)
