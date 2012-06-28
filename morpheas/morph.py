@@ -35,7 +35,7 @@ class Morph(Node ):
         with_name : This one set a name for the morph for easy access """
 
         super(Morph, self).__init__()
-        if bounds:
+        if bounds: #PKHG>???28jun  and isinstance(bounds, Rectangle):
             self.bounds = bounds
         else:
             self.bounds = Rectangle(Point(0, 0), Point(100,60))
