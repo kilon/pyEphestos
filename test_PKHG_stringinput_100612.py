@@ -199,7 +199,7 @@ class the_world(bpy.types.Operator):
             sce.world_is_running = True
         return result
 
-stringfield_input = "for input"
+#stringfield_input = "for input"
 class change_text(bpy.types.Operator):
     bl_idname = "textmorph.text"
     bl_label = "TestchangeText"
@@ -211,7 +211,7 @@ class change_text(bpy.types.Operator):
             old_text = sce.text_for_text
             multiline_text.adjust_text(old_text)
         return {'FINISHED'}
-
+'''
 class for_stringfield_text(bpy.types.Operator):
     bl_idname = "forinput.text"
     bl_label = "change global stringfield"
@@ -222,6 +222,7 @@ class for_stringfield_text(bpy.types.Operator):
         if  stringfield_input!= sce.text_for_input:
             stringfield_input = sce.text_for_input
         return {'FINISHED'}
+'''
 
 # button for toggling visibility of green morph, to test morp.hide() and morph.show() together with world.draw()
 class morph_visibility(bpy.types.Operator):
@@ -248,14 +249,14 @@ class ephestos_panel(bpy.types.Panel):
         box = layout.box()
         box.label(text="Ephestos WIP not finished yet")
         box.operator("ephestos_button.modal")
-        col = layout.column()
-        col.prop(sce,'world_is_running')
-        col.operator('world.toggle')
-        col.prop(sce,'text_for_text')
-        col.operator('textmorph.text')
-        col.prop(sce,'text_for_input')
+#        col = layout.column()
+#        col.prop(sce,'world_is_running')
+#        col.operator('world.toggle')
+#        col.prop(sce,'text_for_text')
+#        col.operator('textmorph.text')
+#        col.prop(sce,'text_for_input')
 #        col.operator('forinput.text')
-        col.operator('morph.visibility')
+#        col.operator('morph.visibility')
 
 
 def register():
