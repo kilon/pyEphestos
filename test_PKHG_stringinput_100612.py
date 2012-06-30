@@ -73,7 +73,7 @@ stringinput = StringInput(hand, blinker, default="test StringInput  pkhg")
 
 world.stringinput_ID = id(stringinput)
 stringinput.set_position(Point(400,200))
-stringinput.name = "toggle editing: LM-click!"
+stringinput.name = "I am IP"
 stringinput.is_visible = False
 stringinput.with_name = True
 #stringinput.keyboard_listener = world.keyboard_listener

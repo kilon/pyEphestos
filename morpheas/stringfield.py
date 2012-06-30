@@ -27,11 +27,11 @@ class OneLineText(Morph):
         self.fontsize =  12 #fontsize
         self.bold = False   #bold
         self.italic = False #italic
-        self.is_editable = False
+#PKHG>??? 30jun        self.is_editable = False
         self.width = 10
-        self.color = (1.0, .0, 1.0, 0.0) #PKHG color of text?!
+        #PKHG 3006512 name is written always in WHITE and name is used!
         #PKHG only verdana.ttf used
-        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"# + fontname
+        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"
         self.font = blf.load(tmp)
         blf.size(self.font, self.fontsize, 72) #DPI default 72?
         self.kbd_listener = self.owner.kbd_listener
@@ -54,11 +54,16 @@ class OneLineText(Morph):
         y = self.bounds.origin.y + 1
         bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
         blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
-        if self.is_visible:
+        if True: #self.is_visible:
             self.blinker.is_visible = True
             self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
             blf.draw(self.font, self.text)
-#not needed??? PKHG            mouse_location = (self.owner.hand.mouse_x, self.owner.hand.mouse_y)
+#not needed??? PKHG
+            mouse_location = Point(self.owner.hand.mouse_x, self.owner.hand.mouse_y)
+            #PKHG is show all is pressed set me to invisible!
+            if not self.owner.bounds.get_contains_point(mouse_location):
+                self.owner.activation_info.is_visible = False
+            
             text_end_location = self.bounds.get_bottom_right()
         else:
             self.blinker.is_visible = False
@@ -152,7 +157,7 @@ class StringInput( Morph):
         self.activation_info.name = "active"
         self.activation_info.set_position(self.bounds.corner)
         self.activation_info.is_visible = False
-        self.activation_info.set_color("green")
+        self.activation_info.set_color("red")
         self.add(self.activation_info)
 
     def draw(self):
