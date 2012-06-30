@@ -74,10 +74,9 @@ class Menu(RoundedBox):
        
     def perform(self, item):
         print("--->>>---perform-------Menu L75 item = ", item,item.action, self, self.world)
-        if not (item.action == "StringField"):
-            
+        if not (item.action == "StringField"):            
             res = self.world.__getattribute__(item.action)
-            print("\n===== menu L78",item.action, res)
+            print("==== menu L78 item action and code = ",item.action, res)
             res()
         
         
@@ -572,7 +571,7 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         else:
             world = self.get_root()
             res = world.__getattribute__(self.action)
-            print("\n===== menu L78",self.action, res)
+            print("\n===== menu L574 self.action and code",self.action, res)
             if self.action == "delete_me_from_worlds_children":
                 tmp = res(self.parent)
                 print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)

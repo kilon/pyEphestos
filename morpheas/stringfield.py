@@ -29,7 +29,7 @@ class OneLineText(Morph):
         self.italic = False #italic
         self.is_editable = False
         self.width = 10
-        self.color = (1.0, 1.0, 1.0, 1.0)
+        self.color = (1.0, .0, 1.0, 0.0) #PKHG color of text?!
         #PKHG only verdana.ttf used
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"# + fontname
         self.font = blf.load(tmp)
@@ -52,13 +52,13 @@ class OneLineText(Morph):
         self.bounds.corner = self.bounds.origin + corner
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
-        bgl.glColor4f(*self.color)
-        blf.position(self.font,x ,y, 1) #PKHG.??? 0 is z-depth?!
+        bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
+        blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
         if self.is_visible:
             self.blinker.is_visible = True
             self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
             blf.draw(self.font, self.text)
-            mouse_location = (self.owner.hand.mouse_x, self.owner.hand.mouse_y)
+#not needed??? PKHG            mouse_location = (self.owner.hand.mouse_x, self.owner.hand.mouse_y)
             text_end_location = self.bounds.get_bottom_right()
         else:
             self.blinker.is_visible = False
@@ -112,7 +112,7 @@ class OneLineText(Morph):
 #        return self.is_editable
 
     def mouse_click_left(self, pos):
-        print("onelinetext.mouse_click_left (stringfield.py L132) called")
+        print("\n\n<<<<<<<<<>>>>>>>>>onelinetext.mouse_click_left (stringfield.py L132) called\n\n")
         pass
         return
 ########???????? does someone else?
@@ -141,7 +141,7 @@ class StringInput( Morph):
         self.bold = bold
         self.italic = italic
 #        self.color = (0.1, 0.1, 0.1, 0.1)
-        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
+#????        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
         #onlinetext needs a keyboardlistener! thus
         self.onelinetext = OneLineText(self, self.default)#,\
 #                 self.fontname, self.fontsize, self.bold, self.italic)
@@ -157,12 +157,12 @@ class StringInput( Morph):
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
-#        super(StringInput, self).draw()
+        super(StringInput, self).draw()
 #        self.onelinetext.draw()
  
         input_width = self.onelinetext.width + 5 #+ 5 PKHG because of offset onelinetext
         if input_width < 100:
-            dif = 0
+            dif = -1 #PKHG 0 was wrong!
             self.minwidth = 100
         else:
             dif = input_width - self.get_width()
@@ -197,7 +197,6 @@ class StringInput( Morph):
             self.activation_info.draw()
             self.activation_info.is_visible = False
             self.blinker.is_visible = False            
-            
 
     def get_string(self):
         """ getter of input-text at THIS moment"""
@@ -254,9 +253,9 @@ class Blinker(Morph):
         return True
 
     def step(self):
+        """make it blinking by changing color, fps dependant"""
         self.time_now = time()
         if (self.time_now - self.start_time) > self.fps :
-#            self.toggle_visibility()
             self.start_time = self.time_now
             if self.color[0] == 1.0:
                 self.set_color((0, 1.0, 0, 0.7))
@@ -264,12 +263,8 @@ class Blinker(Morph):
                 self.set_color((1.0, 0, 0, 0.7))
 
     def draw(self):
+        """set the blinkers layout"""
         self.step()
-       # bgl.glEnable(bgl.GL_BLEND) #PKHG.??? needed?
-        bgl.glColor4f(*self.color)
+        bgl.glColor4f(*self.color) #PKHG color changed by timedepedant step!
         [x,y] = [self.get_position().x, self.get_position().y]
-#        dimensions = self.get_extent().as_list()
-        #if self.rounded:
-        #    Morph.draw_rounded_morph(self, 0.3, self.color, rectangle = False)
-        #else:
-        bgl.glRecti(x, y, x + 3, y + 20)
+        bgl.glRecti(x, y, x + 3, y + 20) #PKHG of blinker:(0,0) x (3,20)

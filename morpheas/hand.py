@@ -9,7 +9,6 @@ from .rectangle import *
 from .morph import *
 from .menu import *
 
-
 class Hand(Morph):
     "A hand is a morph that is not visual and represent the mouse cursor. It hadles and process all events as long as the mouse cursor is on top of another moprh and also trigger the approriate event methods of each morph"
 
@@ -89,9 +88,8 @@ class Hand(Morph):
             return self.process_mouse_up(event)
         else:
             self.kbd_listener.keyReleased(event)
-            tmp = self.get_morph_at_pointer() #PKHG. at least world?!
-            key_release = tmp.key_release(event) #PKHG error was TypeError: key_release() takes exactly 2 arguments (1 given)
-
+            tmp = self.get_morph_at_pointer()    #PKHG. at least world?!
+            key_release = tmp.key_release(event) #key_release() takes exactly 2 arguments (1 given)
             if key_release == True :
                 return {'RUNNING_MODAL'}
             else:
@@ -117,7 +115,7 @@ class Hand(Morph):
         if debug_get_morph_at_pointer:
             print("get_morph_at_pointer returns morphs : ",morphs)
         for m in morphs: # morphs[::-1]:
-            if m.get_full_bounds().get_contains_point(self.bounds.origin) and m.is_visible and not isinstance(m,Hand):
+            if m.get_full_bounds().get_contains_point(self.bounds.origin) and m.is_visible and not isinstance(m, Hand) and not( m == self.parent):
                 return m.get_morph_at(self.bounds.origin)
         return self.parent
 
@@ -319,7 +317,7 @@ class Hand(Morph):
                 self.mouse_over_list.append(new)
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
-                    print("I entering the area of a morph")
+                    print("I am entering the area of a morph")
 
 # trigger the mouse_leave event of the morph in case mouse cursor leaves morph
     def detect_mouse_leave(self,event):
@@ -330,7 +328,7 @@ class Hand(Morph):
                 self.mouse_over_list.remove(old)
                 if event.type == 'MOUSEMOVE':
                     old.mouse_leave_dragging()
-                    print("I am leaving the area of the morph")
+                    print("I am leaving the area of the morph", self.get_morph_at_pointer())
 
     # move morph by mouse drag
     def detect_mouse_drag(self,event):

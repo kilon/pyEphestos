@@ -1,4 +1,5 @@
 #PKHG Set debug values!
+debug_color = 5
 debug050512_0900 = False #060512, seems to be OK now (problem with test_Menu)
 debug_changed_130512_0810 = False #all items seem to have world as root
 #do not use ^^^^^^^^^^^^^^^^^^^ too much output
@@ -259,11 +260,12 @@ class Morph(Node ):
 
     #Morph displaying:
     def draw(self):
+        global debug_color
 #        print("morph", self, "visibility = ", self.is_visible)
 #        if not self.is_visible:
 #            return
         "initialize my surface"
-
+#        print(">>>>>>>>>>> self and color = ",self, self.color)
         bgl.glColor4f(*self.color)
         dimensions = self.get_extent().as_list()
         if self.rounded:
@@ -291,9 +293,16 @@ class Morph(Node ):
 #PKHG.1jun12 the foregoing line causes strange behavior!        
         if self.with_name:
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
+        if debug_color and self.name == "toggle editing: LM-click!":
+            tmp = [self]
+            tmp.extend(self.children[:])
+            print(">....color debug draw in morph\nself and chidren",tmp)
+            tmpcol = [el.color for el in tmp]
+            print("their color = ", tmpcol)
+            print(debug_color)
+            debug_color -=1 
         for el in self.children:
             el.draw()
-
 
     def hide(self):
         """hide me and all my children"""
