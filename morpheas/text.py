@@ -16,7 +16,6 @@ class Text(Morph):
 #PKHG.INFO a real Text needs a max_with > 0 !!!
                  max_width=200):
 
-
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
@@ -31,7 +30,7 @@ class Text(Morph):
 #PKHG.??? is complicated   20<= max_width <= world width
         self.max_width = max(20, min(max_width, 800))
         super(Text, self).__init__()
-        self.color = (1.0, 1.0, 1.0, 1.0)
+        self.color = (.0, 1.0, 1.0, 1.0)
 #PKHG.not yet        self.draw_new()
         self.max_line_width = 0
         '''
@@ -74,13 +73,10 @@ class Text(Morph):
             else:
                 if self.max_width > 0:
                     newline = oldline + word + ' '
-#                    w = self.font.size(newline)
                     w = blf.dimensions(self.font, newline)
                     if w[0] > self.max_width:
                         self.lines.append(oldline)
                         w = blf.dimensions(self.font, oldline)
-#                        self.max_line_width = max(self.max_line_width,
-#                                                    self.font.size(oldline)[0])
                         self.max_line_width = max(self.max_line_width, w[0])
                         oldline = word + ' '
                     else:
@@ -88,8 +84,10 @@ class Text(Morph):
                 else:
                     oldline = oldline + word + ' '
 #        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
-#Text ...
+    #Text ...
     def draw(self):
+        """a multiline output drawn"""
+        super(Text,self).draw()
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
@@ -100,7 +98,6 @@ class Text(Morph):
         lineHei = -1 +  hei // nr
         color = self.get_color()
         bgcol = self.background_color
-
         bgl.glColor4f(*bgcol)
         dime = self.get_extent().as_list()
         bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x + dime[0], self.get_position().y + dime[1])
