@@ -4,7 +4,7 @@ from .rectangle import *
 class RoundedBox(Morph):
 
 #    def __init__(self, edge=4, border=2, bordercolor=pygame.Color(0,0,0)):
-    def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,1), outer_per = 0.05, inner_per = 0.02):
+    def __init__(self, edge=4, border=20, color = (1,1,1,1),  bordercolor=(0,0,0,.3), outer_per = 0.05, inner_per = 0.02):
         super(RoundedBox, self).__init__()
 #        self.bounds = Point(0,0).get_corner( Point(100,100))
         self.bounds = Rectangle(Point(0,0), Point(100,100))

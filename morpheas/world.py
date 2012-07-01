@@ -107,11 +107,7 @@ class World(Frame):
         menu.counter = 0 #PKHG show or show no content counter times
         self.add(menu)
         pair_item_0_counter = 0
-        menu.add_item("rectangle...", 'user_create_rectangle')
-        item_rectangle = MenuItem(self,'user_create_rectangle',"rectangle...")
-        item_rectangle.name = "rectangle..."
-        item_rectangle.with_name = True
-        menu.add(item_rectangle)
+
 #        menu.children.append(item_rectangle)
 #        menu.add_item("ellipse...", 'user_create_ellipse')
 #PKHG not yet        menu.add_item("circle box...", 'user_create_circle_box')
@@ -124,7 +120,31 @@ class World(Frame):
         item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
         item.set_height(+2) #PKHG 10 = 2 normal
         menu.add(item)
-        menu.add_line()
+
+        #'''
+        menu.add_item("rectangle...", 'user_create_rectangle')
+        item_rectangle = MenuItem(self,'user_create_rectangle',"rectangle...")
+        item_rectangle.name = "rectangle..."
+        item_rectangle.with_name = True
+        menu.add(item_rectangle)        
+        #'''
+
+        menu.add_item("rounded...", 'user_create_rounded')
+        item_rounded = MenuItem(self,'user_create_rounded',"rounded...")
+        item_rounded.name = "rounded..."
+        item_rounded.with_name = True
+        item_rounded.bordercolor = (.5, 0, 0, .5)
+        menu.add(item_rounded)        
+
+        menu.add_line() #PKHG.??? with creation of object??
+        pair_item_0_counter += 1
+        item = Morph()
+        item.name = str(pair_item_0_counter) + "_type_item"
+        item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+        item.set_height(+2) #PKHG 10 = 2 normal
+        menu.add(item)
+
+        #menu.add_line()
         remove_me = MenuItem(self, action = "delete_me_from_worlds_children")
         remove_me.with_name = True
         remove_me.name = "del"
@@ -133,7 +153,8 @@ class World(Frame):
         remove_me.is_visible = True
         remove_me.set_position(menu.get_bottom_right())
         menu.add(remove_me)
-        print("\n******DBG world L132, menu children",menu.children[:])
+        print("--->>>--- world L150, menu items",menu.items[:])
+        print("--->>>--- world L151, menu children",menu.children[:])
         fb = menu.get_full_bounds()
         menu.set_extent(fb.get_extent() + 10)
         menu.adjust_widths()
@@ -148,6 +169,25 @@ class World(Frame):
 #PKHG not yet        menu.add_item("slider...", 'user_create_slider')
         menu.popup_at_hand()
 
+
+    def user_create_rounded(self):
+        print("create rounded morph world L166")
+        rounded = RoundedBox()
+        rounded.name ="Round"
+        rounded.with_name = True
+        rounded.set_color((0, 0, 1, 1))
+        rounded.set_position(Point(400,400))
+        self.add(rounded)
+        remove_me = MenuItem(rounded, action = "delete_me_from_worlds_children")
+        remove_me.name = "del"
+        remove_me.with_name = True
+        remove_me.set_color((0,0,1,1))
+        remove_me.is_visible = True
+        remove_me.set_position(rounded.get_position())
+        rounded.add(remove_me)      
+        self.add(rounded)
+        
+        
     def user_create_rectangle(self):
         print("*** for now only (hi hi) \n;-) is! \n******DBG world L134, a rectangle should be created ")
         rectangle = Morph()

@@ -6,6 +6,8 @@ debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = False
 debug_ips = False #True #searching for strange error 
+L221_counter = 1 #PKHG for debugging create morph menu
+
 import blf
 from random import random
 from .roundedbox import *
@@ -73,10 +75,10 @@ class Menu(RoundedBox):
         return list.index(item)
        
     def perform(self, item):
-        print("--->>>---perform-------Menu L75 item = ", item,item.action, self, self.world)
+        print("--->>>---perform-------Menu L75 item = ", item,item.action, self, "\n--->>>--- self and its world ", self, self.world)
         if not (item.action == "StringField"):            
             res = self.world.__getattribute__(item.action)
-            print("==== menu L78 item action and code = ",item.action, res)
+            print("--->>>--- menu L78 item action and code = ",item.action," will be called now:")
             res()
         
         
@@ -124,6 +126,7 @@ class Menu(RoundedBox):
         
     def draw(self):
         """draw the menu"""
+        global L221_counter #for debugging create_menu
         if self.name.startswith("MAIN"):
             if self.counter > 0:
                 print("\n------> menu L126 self is now",self)
@@ -189,6 +192,9 @@ class Menu(RoundedBox):
             if debug140512_delete_children:
                 print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
         else:
+#            print(">>>> DBG menu L192 normal one? self is ",self)
+#            print("self.children",self.children[:])
+            
             self.is_visible = True
             if self.counter > 0:
                 print("I am an", self)
@@ -197,17 +203,20 @@ class Menu(RoundedBox):
             self.edge = 5
             self.border = 2
             self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
-            self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
+            self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisible
             self.set_extent(Point(0, 0))
             y = self.get_top() + 4
             x = self.get_left() + 4
             if debug050512_1659:
                 print("will be position ",(x,y))
-    #PKHG.TEST
             item = None
             pair_item_0_counter = 0
-            #Switch the visible menu corresponding to the mode 
-            my_mode = self.world.is_dev_mode
+            if L221_counter > 0:
+                print(">>>> for dbg  menu L221")
+                print("self.items =", self.items[:])
+                print("self.children =", self.children[:])
+                L221_counter -= 1
+
             for pair in self.items:            
                 if pair[0] == 0:
                     pair_item_0_counter += 1
@@ -217,15 +226,17 @@ class Menu(RoundedBox):
                             item = el
                     item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
                     item.set_height(pair[1]+2)
-                else:                
+                else:  
+
                     for el in self.children:
+                        #continue
                         if el.name == pair[0]:
                             item = el
-                    item.color = (1,0,0,1) #PKHG test
+                    #PKHG>???  30jun12 item.color = (1,0,0,1) #PKHG test
                     item.name = pair[0]
                     item.with_name = True
                     if item.is_visible: item.set_position(Point(x, y))
-    #PKHG is_movable is set to false at creation time, so not needed here
+                    #PKHG is_movable is set to false at creation time, so not needed here
                 y += item.get_height()        
     
             fb = self.get_full_bounds()
@@ -316,11 +327,13 @@ class Menu(RoundedBox):
 
 #PKHG not done, todo???
     def popup(self, world, pos):
+        print("--->>>---  menu L330 popup called")
         self.set_position(pos)
-        self.draw()        
+        self.draw()
+        ###INFO start########################
 #        self.add_shadow("shade", Point(2,2), 80)
-        print("\n******DBG* menu 521 pymorpheas adds shadow, self = ", self,pos)
-        
+        print("***INFO***  menu L335 PYMORPHEAS adds shadow, self = ", self,pos)        
+        ###INFO end########################
         self.keep_within(world)
         world.add(self)
         world.open_menu = self
@@ -331,7 +344,7 @@ class Menu(RoundedBox):
 #                return
 
     def popup_at_hand(self):
-        print("******INFO menu L333* popup implemented self = ", self, self.get_root())
+        print("******INFO menu L347* popup_at_hand implemented self = ", self, self.get_root())
         world = self.target
         self.popup(world, Point(400,400))
 
