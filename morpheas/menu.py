@@ -202,8 +202,9 @@ class Menu(RoundedBox):
                 print(dir(self))
             self.edge = 5
             self.border = 2
-            self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
-            self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisible
+            #PKHG>??? 1jul color problem
+            self.color = (1, 1, 1, .2) #outer color of RoundedBox nearly invisible
+            self.bordercolor = (0, 1., 1., 0.2) #PKHG a = 0 MUST! inner color RoundedBox invisible
             self.set_extent(Point(0, 0))
             y = self.get_top() + 4
             x = self.get_left() + 4

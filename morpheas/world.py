@@ -128,12 +128,23 @@ class World(Frame):
         item_rectangle.with_name = True
         menu.add(item_rectangle)        
         #'''
+        
+        pair_item_0_counter += 1
+        menu.add_line() #PKHG.??? with creation of object??
+        item = Morph()
+        item.name = str(pair_item_0_counter) + "_type_item"
+        item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+        item.set_height(+10) #PKHG 10 = 2 normal
+        menu.add(item)
 
         menu.add_item("rounded...", 'user_create_rounded')
         item_rounded = MenuItem(self,'user_create_rounded',"rounded...")
         item_rounded.name = "rounded..."
         item_rounded.with_name = True
-        item_rounded.bordercolor = (.5, 0, 0, .5)
+#        item_rounded.outer_per = 0.2
+#        item_rounded.inner_per = 0.2
+#        item_rounded.border = 0
+#        item_rounded.bordercolor = (0, 0, 0, 1)
         menu.add(item_rounded)        
 
         menu.add_line() #PKHG.??? with creation of object??
@@ -144,12 +155,11 @@ class World(Frame):
         item.set_height(+2) #PKHG 10 = 2 normal
         menu.add(item)
 
-        #menu.add_line()
         remove_me = MenuItem(self, action = "delete_me_from_worlds_children")
         remove_me.with_name = True
         remove_me.name = "del"
         remove_me.label = "del"
-        remove_me.set_color((0,.2,1,1))
+        remove_me.set_color((0, 0, 1, .1)) #PKHG>??? 1jul color???
         remove_me.is_visible = True
         remove_me.set_position(menu.get_bottom_right())
         menu.add(remove_me)
@@ -173,16 +183,21 @@ class World(Frame):
     def user_create_rounded(self):
         print("create rounded morph world L166")
         rounded = RoundedBox()
+        rounded.bounds = rounded.bounds.get_scale_by(0.5)
         rounded.name ="Round"
-        rounded.with_name = True
-        rounded.set_color((0, 0, 1, 1))
+        rounded.outer_per = 0.5
+        rounded.inner_per = 0.499        
+#        rounded.with_name = True
+        rounded.set_color((1, 1, 1, 1))
+        rounded.bordercolor = (1, 0, 0, 1)
+        rounded.border = 15
         rounded.set_position(Point(400,400))
         self.add(rounded)
         remove_me = MenuItem(rounded, action = "delete_me_from_worlds_children")
-        remove_me.name = "del"
-        remove_me.with_name = True
-        remove_me.set_color((0,0,1,1))
-        remove_me.is_visible = True
+#        remove_me.name = "del"
+#        remove_me.with_name = True
+#        remove_me.set_color((0,0,1,1))
+#        remove_me.is_visible = True
         remove_me.set_position(rounded.get_position())
         rounded.add(remove_me)      
         self.add(rounded)

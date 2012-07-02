@@ -19,6 +19,8 @@ class RoundedBox(Morph):
         self.fill_rounded(self.edge, self.bordercolor, 0)
         self.fill_rounded(max(self.edge - (self.border // 2),0),
                           self.bordercolor, self.border)
+#        super(RoundedBox,self).draw() #PKHG>??? 1jul
+
 #PKHG.means no inset black color if not changed at creation-time
 
     def fill_rounded(self, edge, color, inset):        
