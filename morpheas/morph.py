@@ -264,6 +264,20 @@ class Morph(Node ):
     #Morph displaying:
     def draw(self):
         """ the draw function of the morph """
+        if self.texture == None:
+            self.draw_untextured()
+        else:
+            self.draw_textured()
+
+        for el in self.children:
+            el.draw()
+
+    def draw_textured(self):
+        """ call this draw function only if morphs uses texture """
+        return
+
+    def draw_untextured(self):
+        """ call this draw function only if morph does not use texture"""
         global debug_color
 #        print("morph", self, "visibility = ", self.is_visible)
 #        if not self.is_visible:
@@ -305,8 +319,6 @@ class Morph(Node ):
             print("their color = ", tmpcol)
             print(debug_color)
             debug_color -=1
-        for el in self.children:
-            el.draw()
 
     def hide(self):
         """hide me and all my children"""
