@@ -54,6 +54,7 @@ class Morph(Node ):
         self.font_id = blf.load(self.default_font)
         self.my_name_size = 0
         self.world = None
+        self.texture = None
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -262,11 +263,12 @@ class Morph(Node ):
 
     #Morph displaying:
     def draw(self):
+        """ the draw function of the morph """
         global debug_color
 #        print("morph", self, "visibility = ", self.is_visible)
 #        if not self.is_visible:
 #            return
-        "initialize my surface"
+
 #        print(">>>>>>>>>>> self and color = ",self, self.color)
         bgl.glColor4f(*self.color)
         dimensions = self.get_extent().as_list()
@@ -292,7 +294,7 @@ class Morph(Node ):
 #PKHG. bounds should include name of morph
 #PKHG 040612 does not work???!           self.bounds = Rectangle(self.bounds.origin,Point(int(dims_x) + 2,\
 #                                    self.bounds.corner.y))
-#PKHG.1jun12 the foregoing line causes strange behavior!        
+#PKHG.1jun12 the foregoing line causes strange behavior!
         if self.with_name:
             Morph.draw_string_to_viewport(self.name, self, size , (1,1,1,1), font_id, x , y)
         if debug_color and self.name == "toggle editing: LM-click!":
@@ -302,7 +304,7 @@ class Morph(Node ):
             tmpcol = [el.color for el in tmp]
             print("their color = ", tmpcol)
             print(debug_color)
-            debug_color -=1 
+            debug_color -=1
         for el in self.children:
             el.draw()
 
@@ -312,7 +314,7 @@ class Morph(Node ):
         self.changed()
 #        print("*INFO PKHG* hide in morph.py L302:   how to do hide now??? self =", self, type(self) )
 #        return
-        ##PKHG.??? needed? 
+        ##PKHG.??? needed?
         for morph in self.children:
             morph.hide()
 
