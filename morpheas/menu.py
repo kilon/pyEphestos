@@ -6,7 +6,7 @@ debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = False
 debug_ips = False #True #searching for strange error 
-L221_counter = 1 #PKHG for debugging create morph menu
+L221_counter = 0 #PKHG for debugging create morph menu
 
 import blf
 from random import random
@@ -75,10 +75,10 @@ class Menu(RoundedBox):
         return list.index(item)
        
     def perform(self, item):
-        print("--->>>---perform-------Menu L75 item = ", item,item.action, self, "\n--->>>--- self and its world ", self, self.world)
+#        print("--->>>---perform-------Menu L75 item = ", item,item.action, self, "\n--->>>--- self and its world ", self, self.world)
         if not (item.action == "StringField"):            
             res = self.world.__getattribute__(item.action)
-            print("--->>>--- menu L78 item action and code = ",item.action," will be called now:")
+#            print("--->>>--- menu L78 item action and code = ",item.action," will be called now:")
             res()
         
         
@@ -328,7 +328,7 @@ class Menu(RoundedBox):
 
 #PKHG not done, todo???
     def popup(self, world, pos):
-        print("--->>>---  menu L330 popup called")
+#        print("--->>>---  menu L330 popup called")
         self.set_position(pos)
         self.draw()
         ###INFO start########################
@@ -345,7 +345,7 @@ class Menu(RoundedBox):
 #                return
 
     def popup_at_hand(self):
-        print("******INFO menu L347* popup_at_hand implemented self = ", self, self.get_root())
+        print("***INFO*** error?? TODO??? menu L347* popup_at_hand implemented self = ", self, self.get_root())
         world = self.target
         self.popup(world, Point(400,400))
 
@@ -498,7 +498,7 @@ class Trigger(Morph):
 
     def mouse_down_left(self, pos):
 #        self.image = self.press_image
-        print("=L384= menu.py mouse_down_left of Trigger; self = ", self, " pos = ", pos ,"my action =", self.action )
+#        print("=L384= menu.py mouse_down_left of Trigger; self = ", self, " pos = ", pos ,"my action =", self.action )
         world = self.get_root()
 #        print("\n\ntest world self.world", self.world)
 #        print("=L385= root is ", world, "self.action =", self.action )
@@ -534,10 +534,7 @@ class Trigger(Morph):
         elif self.action == "StringField":
             world = self.parent.get_root()
             inputmorph_id = world.stringinput_ID
-            print("L467 menu inputmorph_id", inputmorph_id)
-#            ips  = [id(el)== inputmorph_id for el in world.children]
-#            if debug_ips:
-#                print("\n-----> menu.py L468 ips = ", ips)
+#            print("L467 menu inputmorph_id", inputmorph_id)
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
             input_morph_tmp = ips_m[0]
             input_morph_tmp.set_color((0, 0, .1, 0.1))                
@@ -579,16 +576,18 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         if isinstance(self.parent, Menu):
 #PKHG.TODO???            self.get_world().open_menu = None
             print("I am a Menu (menu L456) TODO???")
-        print("\n<<< menu L567, self,",self,"parent=",self.parent,self.get_root())
+            pass
+            
+#        print("\n<<< menu L567, self,",self,"parent=",self.parent,self.get_root())
         if isinstance(self.parent, Menu) and self.parent.name.startswith("MAIN"):
             self.parent.perform(self)
         else:
             world = self.get_root()
             res = world.__getattribute__(self.action)
-            print("\n===== menu L574 self.action and code",self.action, res)
+#            print("\n===== menu L574 self.action and code",self.action, res)
             if self.action == "delete_me_from_worlds_children":
                 tmp = res(self.parent)
-                print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)
+#                print("\n self=", self, "\n--------- menu L576 result of res(self)",tmp)
             else:
                 res()
             

@@ -163,8 +163,8 @@ class World(Frame):
         remove_me.is_visible = True
         remove_me.set_position(menu.get_bottom_right())
         menu.add(remove_me)
-        print("--->>>--- world L150, menu items",menu.items[:])
-        print("--->>>--- world L151, menu children",menu.children[:])
+#        print("--->>>--- world L150, menu items",menu.items[:])
+#        print("--->>>--- world L151, menu children",menu.children[:])
         fb = menu.get_full_bounds()
         menu.set_extent(fb.get_extent() + 10)
         menu.adjust_widths()
@@ -263,15 +263,17 @@ class World(Frame):
                 morph.show()
 
     def hide_all(self):
-        print("*INFO PKHG* world L151 what to do with hide_all?? self = ",self, self.world)
+#        print("*INFO PKHG* world L151 what to do with hide_all?? self = ",self, self.world)
 #        self.is_visible = False
         #self.hide()
 #        return
         for morph in self.children:
             if isinstance(morph, Menu):
-                print("*INFO PKHG* do not hide " , self)
+#                print("*INFO PKHG* do not hide " , self)
+                pass
             elif morph.name.startswith("MAIN"):
-                print("*INFO* world L159 do not hiding", morph)
+#                print("*INFO* world L159 do not hiding", morph)
+                pass
             else:
                 morph.hide()
 

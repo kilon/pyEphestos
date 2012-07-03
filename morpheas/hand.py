@@ -1,5 +1,5 @@
 #PKHG debuginfo, please do not remove! Later ok ...
-debug_left_mouse_click_060512_1048 = True
+debug_left_mouse_click_060512_1048 = False
 debug_get_morph_at_pointer = False
 debug_kbd_listener = False #18-06
 debug_typedtext = False #24-06 PKHG
@@ -198,7 +198,7 @@ class Hand(Morph):
             self.drop()
         else:
             morph = self.get_morph_at_pointer()
-            if True: #debug_get_morph_at_pointer:
+            if debug_get_morph_at_pointer:
                 print("\n>>>hand.py L190 get_morph_at_pointer morph = (and parent)", morph, morph.parent)
             pos = self.bounds.origin
             if morph != self.parent: #world is it's own parent PKHG???
@@ -213,7 +213,7 @@ class Hand(Morph):
                         self.moving_morph = True
                     #searh for a morph(parent) to handle a click!
                     tmp = morph.get_handles_mouse_click()
-                    print(">>> hand L198 morph and get_handles_mouse_click() =", morph, tmp)
+#                    print(">>> hand L198 morph and get_handles_mouse_click() =", morph, tmp)
                     while not morph.get_handles_mouse_click():
                         if debug_left_mouse_click_060512_1048:
                             print("-L202-> hand.py; morph" , morph, " does not handle left_mouse_click")
@@ -330,8 +330,8 @@ class Hand(Morph):
 # trigger the mouse_leave event of the morph in case mouse cursor leaves morph
     def detect_mouse_leave(self,event):
         morphs_at_pointer = self.get_all_morphs_at_pointer()
-        print("<<< mouse leaves L342 at pointer at and who ",(self.mouse_x, self.mouse_y),  morphs_at_pointer[:])
-        print("L343 mouse_over_list", self.mouse_over_list[:])
+#        print("<<< mouse leaves L342 at pointer at and who ",(self.mouse_x, self.mouse_y),  morphs_at_pointer[:])
+#        print("L343 mouse_over_list", self.mouse_over_list[:])
         for old in self.mouse_over_list:
             if old not in morphs_at_pointer :
                 old.mouse_leave()
