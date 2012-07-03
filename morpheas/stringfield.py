@@ -2,14 +2,12 @@ from .morph import *
 from .rectangle import *
 
 import addon_utils
-import re
 
-#PKHG for Blinker we need time-measurments
-import time
+#PKHG for Blinker we need time-measurements
 from time import time
 
-re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
-
+import re
+#re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 #re_LEFT_ARROW = re.compile(" \*LEFT_ARR0W\* *$")
 #re_RIGHT_ARROW = re.compile(" \*RIGHT_ARR0W\* *$")
 re_RL_ARROW = re.compile(" \*(LEFT|RIGHT)_ARROW\*  *$")
@@ -20,14 +18,10 @@ class OneLineText(Morph):
                  text = ""):
         super(OneLineText, self).__init__()        
         self.owner = owner
-        self.blinker = self.owner.blinker
-#        print("\n>>>>>> owners blinker",self.owner.blinker)
-#PKHGOK        print(">>>>>>>>>>> OneLineText root of owner ",owner.get_root(),owner.hand)
         self.text = text
         self.fontsize =  12 #fontsize
         self.bold = False   #bold
         self.italic = False #italic
-#PKHG>??? 30jun        self.is_editable = False
         self.width = 10
         #PKHG 3006512 name is written always in WHITE and name is used!
         #PKHG only verdana.ttf used
@@ -38,6 +32,7 @@ class OneLineText(Morph):
         self.list_of_char_x_values =[]
         self.nr_of_chars = 0
         self.nr_chars_old = 0
+#        self.color = owner.color #PKHG>3jul????
         
     def __repr__(self):
         return 'OneLineText("' + self.text + '")'
@@ -54,26 +49,18 @@ class OneLineText(Morph):
         y = self.bounds.origin.y + 1
         bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
         blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
-        if True: #self.is_visible:
-            self.blinker.is_visible = True
-            self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
+        if self.is_visible:
+            self.owner.blinker.set_position(Point(x + int(t_width + 1), y - 1))
             blf.draw(self.font, self.text)
-#not needed??? PKHG
             mouse_location = Point(self.owner.hand.mouse_x, self.owner.hand.mouse_y)
-            #PKHG is show all is pressed set me to invisible!
+            #PKHG is show_all is pressed set me to invisible!
             if not self.owner.bounds.get_contains_point(mouse_location):
-                self.owner.activation_info.is_visible = False
-            
+                self.owner.activation_info.is_visible = False            
             text_end_location = self.bounds.get_bottom_right()
-        else:
-            self.blinker.is_visible = False
             
     def get_width(self):
         """ the width of the text at actual font-size"""
         return self.width
-
-#    def place_blinker(self, x, y,  dx):
-#        return Point(x + dx, y)
 
 
     #OneLineText menu:
@@ -85,11 +72,9 @@ class OneLineText(Morph):
             tmp2 = " *" + res.group(1) + "_ARROW* "
             tmp = tmp.replace(res.group(),"<=>")
             self.kbd_listener.text_input = tmp
-#PKHG debug will vanish        print("...old new", self.nr_chars_old, len(self.kbd_listener.text_input) )
         if self.nr_chars_old < self.nr_of_chars:
             dif = self.nr_of_chars - self.nr_chars_old
             nn = tmp[-dif:]
-#PKHG debug will vanish            print("\n---------> key added",nn, self.text, tmp)
             self.text += tmp[-dif:]
             self.nr_chars_old = len(self.text)
         else:
@@ -97,34 +82,6 @@ class OneLineText(Morph):
             self.nr_chars_old = len(tmp)
         self.nr_of_chars = len(self.text)
             
-        
-        
-
-    def edit(self):
-        """change text for each kbd-release"""
-        tmp = self.kbd_listener.text_input
-        if re_LEFT_ARROW(tmp):
-            tmp.replace(" *LEFT_ARR0W* ","<=")
-        self.text = tmp #self.kbd_listener.text_input
-        print("///////////////OneLineText L85: I am about to be edited")
-        return
-
-
-    #OneLineText events:
-
-    def handles_mouse_click(self):
-        return True
-#        return self.is_editable
-
-    def mouse_click_left(self, pos):
-        print("\n\n<<<<<<<<<>>>>>>>>>onelinetext.mouse_click_left (stringfield.py L132) called\n\n")
-        pass
-        return
-########???????? does someone else?
-        self.edit()
-        #PKHG not implemented ...
-        world.text_cursor.goto_pos(pos)
-
 
 class StringInput( Morph):
     """StringInput is used to get/show a one-line input text-string"""
@@ -135,43 +92,44 @@ class StringInput( Morph):
                  fontsize=12,
                  bold=False,
                  italic=False):
+        super(StringInput, self).__init__()
+        self.activated = False
         self.hand = hand
         self.blinker = blinker
         self.kbd_listener = hand.kbd_listener
-        super(StringInput, self).__init__()
         self.default = default
         self.minwidth = minwidth
         self.fontname = fontname
         self.fontsize = fontsize
         self.bold = bold
         self.italic = italic
-#        self.color = (0.1, 0.1, 0.1, 0.1)
+#        self.color = (0.9, 0.1, 0.1, 1) #??? why standard color? shown????
 #????        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
         #onlinetext needs a keyboardlistener! thus
         self.onelinetext = OneLineText(self, self.default)#,\
 #                 self.fontname, self.fontsize, self.bold, self.italic)
         self.add(self.onelinetext)
+        self.add(blinker) #PKHG>??? 3jul        
         self.onelinetext.set_position(self.get_bottom_left() + 5)
         self.is_activated = False
-        self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = True)
-        self.activation_info.name = "active"
-        self.activation_info.set_position(self.bounds.corner)
+        self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = False)
+        self.activation_info.set_position(self.bounds.origin - Point(0,25)) 
         self.activation_info.is_visible = False
         self.activation_info.set_color("red")
         self.add(self.activation_info)
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
+        
         super(StringInput, self).draw()
-#        self.onelinetext.draw()
- 
-        input_width = self.onelinetext.width + 5 #+ 5 PKHG because of offset onelinetext
+#PKHG>??? why not possible???        print("\n????? color super",super(StringInput,self).color)
+        input_width = self.onelinetext.width + 5
+        #+ 5 PKHG because of offset onelinetext
         if input_width < 100:
             dif = -1 #PKHG 0 was wrong!
             self.minwidth = 100
         else:
             dif = input_width - self.get_width()
-
         if dif > 0:
             new_corner = self.bounds.corner + Point(dif,0)
             self.bounds = Rectangle(self.bounds.origin, new_corner)
@@ -183,26 +141,21 @@ class StringInput( Morph):
                 self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
             else:
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
-        children = self.children
-
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
+        self.activation_info.draw()
+        self.onelinetext.draw()
 
-        if self.activation_info.is_visible:
-            self.activation_info.name = "IP active"
+        if self.activated:
+#            print("\n\n\n++++ active+++")
             self.activation_info.set_color("green")
-            self.activation_info.draw()
-            super(StringInput, self).draw()
             self.blinker.set_position(Point(x + input_width, y))
-            self.blinker.draw()
+            self.blinker.is_visible = True
         else:
-            self.activation_info.is_visible = True
-            self.activation_info.name = "IP inactive"            
+#            print("\n\n\n---- INACTIVE")
             self.activation_info.set_color("red")
-            self.activation_info.draw()
-            self.activation_info.is_visible = False
             self.blinker.is_visible = False            
-
+        
     def get_string(self):
         """ getter of input-text at THIS moment"""
         return self.text.text
@@ -212,21 +165,18 @@ class StringInput( Morph):
         return True
 
     def mouse_click_left(self, pos):
-        """start editing of text via a mouse-click"""
-        self.is_activated = not self.is_activated
-#        print("\n>>>>>> StringInput.py L210 mouse_click_left is_editable", self.is_activated)
+        """??? not used PKHG start editing of text via a mouse-click"""
+        pass
 
     def mouse_enter(self):
-        self.is_activated = True
-        self.onelinetext.is_editable = True
+        self.activated = True
+        self.onelinetext.is_visible = True
         self.kbd_listener.users += 1
-        self.activation_info.is_visible = True #PKHG???False
 
     def mouse_leave(self):
-        self.is_activated = False
+        self.activated = False
         self.kbd_listener.users -= 1
-        self.onelinetext.is_editable = False
-        self.activation_info.is_visible = False #PKHG???False
+        self.onelinetext.is_visble = False
 
 ########PKHG.TODO what to do with RET ... and arrow and Page-down etc???
     def key_release(self,event): 
@@ -252,13 +202,11 @@ class Blinker(Morph):
         self.bounds = Rectangle(Point(0,0),Point(3,20))
         self.start_time = time()
         self.time_now = time()
-        self.draw() #PKHG must be later then start_time and time_now
-
-    def wants_to_step(self):
-        return True
-
+    
     def step(self):
         """make it blinking by changing color, fps dependant"""
+        if not self.is_visible:
+            return
         self.time_now = time()
         if (self.time_now - self.start_time) > self.fps :
             self.start_time = self.time_now
@@ -266,7 +214,8 @@ class Blinker(Morph):
                 self.set_color((0, 1.0, 0, 0.7))
             else:
                 self.set_color((1.0, 0, 0, 0.7))
-
+    
+    
     def draw(self):
         """set the blinkers layout"""
         self.step()

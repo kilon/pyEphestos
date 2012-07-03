@@ -40,7 +40,9 @@ class Morph(Node ):
             self.bounds = bounds
         else:
             self.bounds = Rectangle(Point(0, 0), Point(100,60))
-        self.color = (0.3, 0.3, 0.3, 1.0)
+#PKHG test 3jul        self.color = (0.3, 0.3, 0.3, 1.0)
+#sometimes working ???
+        self.color = (0, 0, 1, 1)
         self.is_visible = True
         self.is_draggable = True
         self.fps = 0

@@ -579,7 +579,7 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
         if isinstance(self.parent, Menu):
 #PKHG.TODO???            self.get_world().open_menu = None
             print("I am a Menu (menu L456) TODO???")
-        print("\n*********DBG menu L567, self,",self,"parent=",self.parent,self.get_root())
+        print("\n<<< menu L567, self,",self,"parent=",self.parent,self.get_root())
         if isinstance(self.parent, Menu) and self.parent.name.startswith("MAIN"):
             self.parent.perform(self)
         else:

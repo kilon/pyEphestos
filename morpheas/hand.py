@@ -52,12 +52,24 @@ class Hand(Morph):
         result = {'PASS_THROUGH'} #PKHG default value
 
         #PKHG mouse_x and mouse_y needed for CrossHair
+        old_mouse_x = self.mouse_x
+        old_mouse_y = self.mouse_y
+        oldPoint = Point(old_mouse_x, old_mouse_y)
         self.mouse_x = event.mouse_region_x
         self.mouse_y = event.mouse_region_y
+        newPoint = Point(self.mouse_x, self.mouse_y)
+
+########PKHG question #############################################
+#       why does MOUSEMOVE be called even the mouse is NOT moved???
+###################################################################
 
         if event.type == 'MOUSEMOVE':
 #            print("event detected -> ", event.type)
-            result = self.process_mouse_move(event)
+            if (self.mouse_x != old_mouse_x) or (self.mouse_y != old_mouse_y):
+#                print("YES <<< all events L44 type = ",event.type, newPoint == oldPoint)
+                result = self.process_mouse_move(event)
+#            else:
+#                print("NO <<< all events L67 type = ",event.type, newPoint == oldPoint)
         elif event.value=='PRESS':
 #            print("event detected -> ", event.type)
             result = self.detect_press_event(event)
@@ -113,7 +125,7 @@ class Hand(Morph):
         """ return the top morph that is under the current position of the mouse cursor """
 
         morphs = self.parent.children
-        if True: #debug_get_morph_at_pointer:
+        if debug_get_morph_at_pointer:
             print(">>> hand L117 get_morph_at_pointer returns morphs : ",morphs)
         #PKHG.TODO return problem!
         for m in morphs: # morphs[::-1]:
@@ -135,7 +147,7 @@ class Hand(Morph):
               and not isinstance(m, Hand)\
               and not isinstance(m, type(self.parent)): #PKHG nothing with world!
                 answer.append(m)
-        print("<<< tmp hand L135 all morph at pointer =", answer[:])
+#PKHG>3jul        print("<<< tmp hand L135 all morph at pointer =", answer[:])
         return answer
 
     #Hand dragging and dropping:
@@ -187,11 +199,9 @@ class Hand(Morph):
         else:
             morph = self.get_morph_at_pointer()
             if True: #debug_get_morph_at_pointer:
-                print("\n>>>hand.py L190 get_morph_at_pointer morph =", morph, self.parent)
+                print("\n>>>hand.py L190 get_morph_at_pointer morph = (and parent)", morph, morph.parent)
             pos = self.bounds.origin
-
-            if morph != self.parent:
-
+            if morph != self.parent: #world is it's own parent PKHG???
                 if event.type == 'LEFTMOUSE':
 
                     # mark morph for drag only if mouse cursor is top of it
@@ -209,13 +219,13 @@ class Hand(Morph):
                             print("-L202-> hand.py; morph" , morph, " does not handle left_mouse_click")
                         morph = morph.parent
                     if debug_get_morph_at_pointer:
-                        print(">>> hand.py L1197 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
+                        print("-L222-> hand.py in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
                     if debug_left_mouse_click_060512_1048:
-                        print("-L207-> hand.py; morph" , morph, "  handles lef_mouse_click")
+                        print("-L224-> hand.py; morph" , morph, "  handles lef_mouse_click")
                     self.mouse_down_morph = morph
                     # trigger also the approriate morph event
                     if debug_left_mouse_click_060512_1048:
-                        print("-L303-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
+                        print("-L228-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
                     morph.mouse_down_left(pos)
 
 
@@ -281,30 +291,21 @@ class Hand(Morph):
 
         # trigger mouse move event and trigger the approriate mouse move event of the morph
 
-        if self.children == [] and event.type == 'MOUSEMOVE':
+        if self.children == []:
+#PKHG??? is already discovered??        and event.type == 'MOUSEMOVE':
             morph = self.get_morph_at_pointer()
-
             parent_morph = morph.get_root_for_grab()
-
             # if morph is marked for grab and the mouse moves then drag it
-
             if parent_morph is self.morph_to_grab and morph.is_draggable and self.moving_morph:
-
                 self.grab(parent_morph)
                 value_returned = {'RUNNING_MODAL'}
-
-
-        # trigger the mouse_leave event of the morph in case mouse cursro enters morph
+            # trigger the mouse_leave event of the morph in case mouse cursor enters morph
             self.detect_mouse_leave(event)
-
-        # trigger mouse_enter_dragging of the morph in case mouse cursor enters a morph
+            # trigger mouse_enter_dragging of the morph in case mouse cursor enters a morph
             self.detect_mouse_enter(event)
-
-
        # mouse drag the morph if draging is enabled
         if  self.detect_mouse_drag(event):
             value_returned = {'RUNNING_MODAL'}
-
         return value_returned
 
 #Hand testing:
@@ -329,13 +330,16 @@ class Hand(Morph):
 # trigger the mouse_leave event of the morph in case mouse cursor leaves morph
     def detect_mouse_leave(self,event):
         morphs_at_pointer = self.get_all_morphs_at_pointer()
+        print("<<< mouse leaves L342 at pointer at and who ",(self.mouse_x, self.mouse_y),  morphs_at_pointer[:])
+        print("L343 mouse_over_list", self.mouse_over_list[:])
         for old in self.mouse_over_list:
             if old not in morphs_at_pointer :
                 old.mouse_leave()
+                old.mouse_leave_dragging()
                 self.mouse_over_list.remove(old)
-                if event.type == 'MOUSEMOVE':
-                    old.mouse_leave_dragging()
-                    print("I am leaving the area of the morph L332", self.get_morph_at_pointer())
+#                if event.type == 'MOUSEMOVE':
+#                    old.mouse_leave_dragging()
+#                    print("I am leaving the area of the morph L350", self.get_morph_at_pointer())
 
     # move morph by mouse drag
     def detect_mouse_drag(self,event):
