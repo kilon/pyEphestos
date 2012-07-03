@@ -69,7 +69,7 @@ world.add(blinker)
 ##StringInput test
 
 #stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
-stringinput = StringInput(hand, blinker, default="test StringInput  pkhg")
+stringinput = StringInput(hand, blinker, default="start typing if GREEN light")
 
 world.stringinput_ID = id(stringinput)
 stringinput.set_position(Point(400,200))
