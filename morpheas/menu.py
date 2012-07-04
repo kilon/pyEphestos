@@ -1,32 +1,31 @@
 debug140512_delete_children = False
-debug050512_maxwidth = False #True #width checking ...
-debug050512_1659 = False #MenuItem test
-debug_stringfield_060512_0723 = True #for stringfield test
+debug050512_maxwidth = False         #True #width checking ...
+debug050512_1659 = False             #MenuItem test
+debug_stringfield_060512_0723 = False #for stringfield test
 debug_mouseclick_060812_0756 = False #self and pos
 debug_roundedbox_160512_1837 = False
 debug_trigger_size_17_05_1618 = False
 debug_ips = False #True #searching for strange error 
-L221_counter = 0 #PKHG for debugging create morph menu
+L221_counter = 0  #PKHG for debugging create morph menu
 
 import blf
 from random import random
 from .roundedbox import *
 from .text import *
 from .stringfield import * #see Menu add_input_StringField
-#PKHG.error from .world import * #PKHG test 0505012
 
-class Menu(RoundedBox):
+class Menu(RoundedBox):  #PKHG.??? does Morph suffice?
     """a menu is needed"""
     
     def __init__(self, target=None, title=None):
         self.target = target
-#        self.title = title
+#        self.title = title #PKHG I usede name not title yet
         self.name = title
         if target == None:
             self.target = self
         self.items = []
-        self.user_items = [] #PKHG for two types of this menu
-        self.dev_items =  [] #PKHG for two types of this menu
+        self.user_items = [] #PKHG for two types of this menu: user
+        self.dev_items =  [] #PKHG for two types of this menu: developer
         self.user_children = []
         self.dev_children =  []
 
@@ -36,6 +35,9 @@ class Menu(RoundedBox):
         self.my_width = 100
         self.stringfield_ID = None
         self.counter = 1
+        self.color = (1, 1, 1, 0.2) #outer color of RoundedBox nearly invisible
+        self.bordercolor = (1, 0, 0., 0) #PKHG a = 0 MUST?!? inner color RoundedBox invisble
+
 
     def add_item(self, label="close", action='nop'):
         """add an item to the list of actions of a menu"""
@@ -82,14 +84,11 @@ class Menu(RoundedBox):
             res()
         
         
-
-#        print(item.__dict__) gives:
-#('is_draggable': True, 'is_visible': True, 'rounded': False, 'name': 'create a morph...', 'parent': Menu(node), 'default_font': 'C:\\BlenderSVN\\cmake_all3\\bin\\2.63\\scripts\\addons/Ephestos/fonts/verdana.ttf', 'color': (1, 0, 0, 1), 'is_movable': False, 'with_name': True, 'bounds': (4@4 | 160@39), 'font_id': 3, 'my_name_size': 0, 'fps': 0, 'action': 'user_create_new_morph', 'world': None, 'path_to_local_fonts': 'C:\\BlenderSVN\\cmake_all3\\bin\\2.63\\scripts\\addons/Ephestos/fonts', 'children': []}
-#???        item.target.__getattribute__(item.action)()
-
     def nop(self):
         pass
 
+    #PKHG not used
+    
     def create_label(self):
         '''PKHG 050512_1516 because of error message ValueError: list.remove(x): x not in list
         if self.label != None:
@@ -117,8 +116,6 @@ class Menu(RoundedBox):
         self.label.draw()
         self.label.add(text)
         self.label.text = text
-        #PKHG 2206_test creation of objects
-#PKHG???TODO
 
 #PKHG on 18-06-2012 Menu needs to have this def??
     def full_changed(self):
@@ -137,16 +134,14 @@ class Menu(RoundedBox):
                 print("======L120 menu.draw============m.delete = ",len(self.children[:]),self.children[:],"\n")
             self.edge = 5
             self.border = 2
-            self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
-            self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
+#            self.color = (1.0, 1.0, .0, .3) #outer color of RoundedBox nearly invisible
+#            self.bordercolor = (0., 0., 0., 0.0) #PKHG a = 0 MUST! inner color RoundedBox invisble
             self.set_extent(Point(0, 0))
             y = self.get_top() + 4
             x = self.get_left() + 4
             if debug050512_1659:
                 print("will be position ",(x,y))
-    #PKHG.TEST
             item = None
-    
             #Switch the visible menu corresponding to the mode 
             my_mode = self.world.is_dev_mode
             if my_mode:
@@ -172,16 +167,18 @@ class Menu(RoundedBox):
                     for el in self.children:
                         if el.name == name:
                             item = el
-                    item.color = (0,0,1,1) #debug050512_1659 self.bordercolor
+#???today4jul
+                    item.color = (1,1,1,1) #debug050512_1659 self.bordercolor
                     item.set_height(pair[1]+2)
                 else:                
                     for el in self.children:
                         if el.name == pair[0]:
                             item = el
-                    item.color = (1,0,0,1) #PKHG test
+#???today4jul                    item.color = (1,0,0,0) #PKHG test
                     item.name = pair[0]
                     item.with_name = True
-                    if item.is_visible: item.set_position(Point(x, y))
+                    if item.is_visible:
+                        item.set_position(Point(x, y))
     #PKHG is_movable is set to false at creation time, so not needed here
                 y += item.get_height()        
     
@@ -191,10 +188,8 @@ class Menu(RoundedBox):
             super(Menu, self).draw()
             if debug140512_delete_children:
                 print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
+######### now normal menu's are handled here                
         else:
-#            print(">>>> DBG menu L192 normal one? self is ",self)
-#            print("self.children",self.children[:])
-            
             self.is_visible = True
             if self.counter > 0:
                 print("I am an", self)
@@ -230,7 +225,6 @@ class Menu(RoundedBox):
                 else:  
 
                     for el in self.children:
-                        #continue
                         if el.name == pair[0]:
                             item = el
                     #PKHG>???  30jun12 item.color = (1,0,0,1) #PKHG test
@@ -246,7 +240,9 @@ class Menu(RoundedBox):
             super(Menu, self).draw()
             if debug140512_delete_children:
                 print("+++++++L174 Menu end of draw len and children ",len(self.children), self.children[:])
-                
+
+
+##### for MAIN menu: other have to create objects themselves too
     def create_my_objects(self):
         """create the menu-objects and the lists to distinguish the mode the menu is in"""
         
@@ -270,7 +266,8 @@ class Menu(RoundedBox):
                 item.set_height(pair[1]+2)
             else:
                 item = MenuItem(self.target, pair[1], pair[0])
-                item.color = (1,0,0,1) #PKHG test
+#???today4jul                
+                item.color = (0, 0, 1, 1) #PKHG test
                 item.name = pair[0]
                 item.with_name = True
             self.add(item)
@@ -299,7 +296,6 @@ class Menu(RoundedBox):
                 print("Menu max_width  child", item, " it width =", item.get_width())
 #PKHG.TODO no widget at this moment 25Apr12            
 #PKHG>???            if isinstance(item, Morph): #PKHG.TODO Widget):
-#                w = max(w, item.width())
             w = max(w, item.get_width())
             if debug050512_maxwidth:
                 print("Menu max_width w = ", w)
@@ -314,7 +310,7 @@ class Menu(RoundedBox):
 
     def adjust_widths(self):
         """adjust morph, such that all children of menu are inside its bounds"""
-        
+#PKHG>TODO 4jul12???!!check the rest of this def        
         w =  max(self.my_width ,self.max_width()) 
         for item in self.children:
             item.set_width(w)
@@ -322,9 +318,6 @@ class Menu(RoundedBox):
                 item.create_backgrounds()
             else:
                 item.draw()
-#PKHG.09052012_1010                if item is self.label:
-#                    item.text.set_position(
-#                        item.get_center() - (item.text.get_extent() // 2))
 
 #PKHG not done, todo???
     def popup(self, world, pos):
@@ -433,6 +426,7 @@ class Trigger(Morph):
                  bold=False,
                  italic=False):
         #PKHG>??? once and for all that font stuff?
+        super(Trigger, self).__init__()
         import  addon_utils
         path_to_local_fonts  = addon_utils.paths()[0] + "/Ephestos/fonts"
         font = path_to_local_fonts + "/" + fontname
@@ -443,10 +437,9 @@ class Trigger(Morph):
 #        mylabel_width = int(dims_x) + 75
 #        bounds = Rectangle(Point(0,0),Point(mylabel_width, int(dims_y) + 20))
 #        super(Trigger, self).__init__(bounds = bounds)
-        super(Trigger, self).__init__()
+        
         self.set_width(int(dims_x) + 2)
         self.set_height(int(dims_y) + 15)   #PKHG old: 20)
-#PKHG.09052012_1010 test        self.name = "trigger"
         self.name = label
         self.action = action
 
@@ -454,18 +447,9 @@ class Trigger(Morph):
     def create_backgrounds(self):
 #        print("Trigger create_backgrounds called self and type =", self, type(self))
         super(Trigger, self).draw()
-#        self.normal_image = pygame.Surface(self.extent().as_list())
-#        self.normal_image.fill(self.color)
-#        self.normal_image.set_alpha(self.alpha)
-#        self.hilite_image = pygame.Surface(self.extent().as_list())
-#        self.hilite_image.fill(self.hilite_color)
-#        self.hilite_image.set_alpha(self.alpha)
-#        self.press_image = pygame.Surface(self.extent().as_list())
-#        self.press_image.fill(self.press_color)
-#        self.press_image.set_alpha(self.alpha)
-#        self.image = self.normal_image 
         pass
-    
+
+    #PKHG not used?!
     def create_label(self):
         if self.label != None:
             self.label.delete()
@@ -485,6 +469,7 @@ class Trigger(Morph):
 
     def get_handles_mouse_click(self):
         return True
+    
 #PKHG.TODO self.image ..
     def mouse_enter(self):
 #        self.image = self.hilite_image
@@ -534,10 +519,9 @@ class Trigger(Morph):
         elif self.action == "StringField":
             world = self.parent.get_root()
             inputmorph_id = world.stringinput_ID
-#            print("L467 menu inputmorph_id", inputmorph_id)
             ips_m  = [el for el in world.children if id(el) == inputmorph_id]
             input_morph_tmp = ips_m[0]
-            input_morph_tmp.set_color((0, 0, .1, 0.1))                
+#???4jul            input_morph_tmp.set_color((0, 0, .1, 0.1))                
             input_morph_tmp.is_visible = not input_morph_tmp.is_visible #PKHG toggle!
         self.changed()
 
@@ -591,7 +575,7 @@ class MenuItem(Trigger):#test zonder morph via Trigger! seems OK, Morph): #PKHG>
             else:
                 res()
             
-
+###PKHG Bouncer not done yet
 class Bouncer(Morph):
 
     def __init__(self, type="vertical", speed=1):
@@ -676,18 +660,4 @@ class Bouncer(Morph):
     def toggle_motion(self):
         self.is_stopped = not self.is_stopped
 
-def check_contains(cl,name , print_value = False, no_underscore = True):
-    dir_class = dir(cl)
-    for el in dir_class:
-        if el.startswith("_") and no_underscore:
-            pass
-        else:
-            if print_value:
-                tmp = getattr(cl,el)
-                if el == 'stringfield_ID':
-                    print(name , " contains ==>",el," value = ", tmp)
-            else:
-                print(name , " contains ==>",el)
-    print("\ncheck_contains finished\n\n")
 
-    

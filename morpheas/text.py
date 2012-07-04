@@ -13,13 +13,15 @@ class Text(Morph):
                  bold=False,
                  italic=False,
                  alignment='left',
-#PKHG.INFO a real Text needs a max_with > 0 !!!
+                 #PKHG.INFO a real Text needs a max_with > 0 !!!
                  max_width=200):
-
+        super(Text, self).__init__()
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
         blf.size(self.font, fontsize, 72) #DPI = 72 !!
-        self.background_color = (0,0,0, 0.5)
+        self.background_color = [0, 0, 0, 1]
+        #PKHG.??? if a of background_color  not 1 strange things can happen
+        #4jul12 show about use input move about =>strange behavior
         self.text = text
         self.words = []
         self.fontname = fontname
@@ -27,33 +29,17 @@ class Text(Morph):
         self.bold = bold
         self.italic = italic
         self.alignment=alignment
-#PKHG.??? is complicated   20<= max_width <= world width
         self.max_width = max(20, min(max_width, 800))
-        super(Text, self).__init__()
-        self.color = (.0, 1.0, 1.0, 1.0)
-#PKHG.not yet        self.draw_new()
+#        self.color = (.0, 1.0, 1.0, 1.0) #PKHG 7jul12 white forced in draw
         self.max_line_width = 0
-        '''
-        self.parse() #once?!
-        nr_of_lines = len(self.lines)
-        res = ""
-        for el in self.lines:
-            if len(el) > len(res):
-                res = el
-        blf.size(self.font, fontsize, 72) #DPI = 72 !!
-        w = blf.dimensions(self.font, res)
-        hight_line = round(w[1] + 1.51)
-        wi,hei = int(max(self.max_line_width, w[0]+2)),\
-                 nr_of_lines * hight_line
-        self.bounds = Point(0,0).corner(Point(wi, hei ))
-        '''
         self.adjust_text(text)
 
     def __repr__(self):
-
+        """ Text('myname') returned"""
         return 'Text("' + self.name + '")'
 
     def parse(self):
+        """parsing of text, \n gives newline"""
         self.words = []
         paragraphs = self.text.splitlines()
         self.max_line_width = 0
@@ -65,8 +51,6 @@ class Text(Morph):
         for word in self.words:
             if word == '\n':
                 self.lines.append(oldline)
-#                self.max_line_width = max(self.max_line_width,
-#                                          self.font.size(oldline)[0])
                 w = blf.dimensions(self.font,oldline)
                 self.max_line_width = max(self.max_line_width, w[0])
                 oldline = ''
@@ -83,11 +67,9 @@ class Text(Morph):
                         oldline = newline
                 else:
                     oldline = oldline + word + ' '
-#        print("\n---DBG L1569 parse text, max_line_width", self.max_line_width)
-    #Text ...
     def draw(self):
         """a multiline output drawn"""
-        super(Text,self).draw()
+#        super(Text,self).draw() #PKHG 7jul12 drawn by this draw
         tmp = self.bounds
         x = self.bounds.origin.x
         y = self.bounds.origin.y
@@ -96,17 +78,21 @@ class Text(Morph):
         hei = yy - y
         nr = len(self.lines)
         lineHei = -1 +  hei // nr
-        color = self.get_color()
+#        color = self.get_color()
         bgcol = self.background_color
+        bgcol[3] = 1.0
         bgl.glColor4f(*bgcol)
         dime = self.get_extent().as_list()
         bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x + dime[0], self.get_position().y + dime[1])
         for el in range(nr):
-            Morph.draw_string_to_viewport(self.lines[el], self,24, color, self.font, x, yy - lineHei  - el * lineHei)
+        #PKHG fixed white color forced
+            Morph.draw_string_to_viewport(self.lines[el], self, 24,\
+                    (1, 1, 1 ,1), self.font, x, yy - lineHei  - el * lineHei)
         return
 
     #Text menu:
-
+    ### a lot of things not yet implemented ###
+    '''
     def developers_menu(self):
         menu = super(Text, self).developers_menu()
         menu.add_line()
@@ -204,7 +190,7 @@ class Text(Morph):
         self.max_width = point.x
         self.draw()
         self.changed()
-
+    '''
     def adjust_text(self, word):
         words = word.replace("\\n","\n")
         position = self.get_position()
@@ -225,9 +211,17 @@ class Text(Morph):
         y = position.y
 #        self.bounds = position.get_corner(Point(wi + x , hei + y ))
         self.bounds = Rectangle(position, Point(wi + x , hei + y ))
-
+    '''
     def wants_drop_of(self, morph): #PKHG.test?
+        print("\n\n\n>>>text L229 wants_drop_of called")
         return {'FINISHED'}
-
+    '''
+    
     def get_width(self):
         return self.max_line_width
+
+    def mouse_up_left(self,up):
+        print("\n\n>>> text L236 mouse_up_left called")        
+        self.draw()
+
+    

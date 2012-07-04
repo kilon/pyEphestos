@@ -95,7 +95,6 @@ class Hand(Morph):
     def detect_release_event(self, event):
         """handle keyboard release"""
 
-
         if event.type in ['MIDDLEMOUSE','LEFTMOUSE',
                           'RIGHTMOUSE', 'WHEELDOWNMOUSE','WHEELUPMOUSE']:
             return self.process_mouse_up(event)
@@ -154,9 +153,10 @@ class Hand(Morph):
 
     def drop_target_for(self, morph):
         target = self.get_morph_at_pointer()
-        print("DBG handle drop_target_for L63 morph = ", morph)
+        print(">>> hand L156 drop_target_for  morph = ", morph, "target =", target)
         while target.get_wants_drop_of(morph) == False:
             target = target.parent
+        print(">>> finished while hand L159 drop_target_for  morph = ", morph, "target =", target)            
         return target
 #Hand
     def grab(self, morph):
@@ -174,16 +174,16 @@ class Hand(Morph):
         """ Drop morph. The morph is removed as a child of the hand and added back to its world."""
         print("drop has been called")
         if self.children != []:
+            print(">>> hand L176 hands children", self.children[:])
             morph = self.children[0]
             target = self.drop_target_for(morph)
-            print("droped to target : ", target)
+            print("droped self =", self, " to target : ", target)
             self.changed()
             target.add(morph)
             morph.changed()
             self.morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
-
             print("morph has been droped")
 
 

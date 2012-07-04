@@ -1,15 +1,15 @@
 from .morph import *
 from .rectangle import *
-
 import addon_utils
-
 #PKHG for Blinker we need time-measurements
 from time import time
 
 import re
+#### maybe other re's ??? to be used
 #re_CAS = re.compile("^(LEFT|RIGHT)_CTRL$|^(LEFT|RIGHT)_ALT$|^(LEFT|RIGHT)_SHIFT$")
 #re_LEFT_ARROW = re.compile(" \*LEFT_ARR0W\* *$")
 #re_RIGHT_ARROW = re.compile(" \*RIGHT_ARR0W\* *$")
+
 re_RL_ARROW = re.compile(" \*(LEFT|RIGHT)_ARROW\*  *$")
 class OneLineText(Morph):
     """I am a single line to input text, NEEDS an owner with kbd_listener"""
@@ -32,7 +32,7 @@ class OneLineText(Morph):
         self.list_of_char_x_values =[]
         self.nr_of_chars = 0
         self.nr_chars_old = 0
-#        self.color = owner.color #PKHG>3jul????
+#PKHG>???        self.color = owner.color #PKHG>3jul????
         
     def __repr__(self):
         return 'OneLineText("' + self.text + '")'
@@ -62,12 +62,11 @@ class OneLineText(Morph):
         """ the width of the text at actual font-size"""
         return self.width
 
-
-    #OneLineText menu:
-
     def add_keystroke(self):
+        
         tmp = self.kbd_listener.text_input        
         res = re_RL_ARROW.search(tmp)
+        #PKHG, right and left arrows as example are tranformed int <=>
         if res:
             tmp2 = " *" + res.group(1) + "_ARROW* "
             tmp = tmp.replace(res.group(),"<=>")
@@ -86,7 +85,7 @@ class OneLineText(Morph):
 class StringInput( Morph):
     """StringInput is used to get/show a one-line input text-string"""
 
-    def __init__(self, hand, blinker,  default='I am the default',
+    def __init__(self, hand, blinker,  default='mouse here to activates me',
                  minwidth=100,
                  fontname="verdana.ttf",
                  fontsize=12,
@@ -109,7 +108,7 @@ class StringInput( Morph):
         self.onelinetext = OneLineText(self, self.default)#,\
 #                 self.fontname, self.fontsize, self.bold, self.italic)
         self.add(self.onelinetext)
-        self.add(blinker) #PKHG>??? 3jul        
+        self.add(blinker) #PKHG>??? 3jul, yes wanted ...        
         self.onelinetext.set_position(self.get_bottom_left() + 5)
         self.is_activated = False
         self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = False)
@@ -120,8 +119,8 @@ class StringInput( Morph):
 
     def draw(self):
         "draw and adjust size of morph, input_text dependant"
-        
-        super(StringInput, self).draw()
+        self.blinker.draw()
+#        super(StringInput, self).draw()
 #PKHG>??? why not possible???        print("\n????? color super",super(StringInput,self).color)
         input_width = self.onelinetext.width + 5
         #+ 5 PKHG because of offset onelinetext
@@ -136,8 +135,7 @@ class StringInput( Morph):
         elif dif < 0:
             x = self.bounds.origin.x
             y = self.bounds.corner.y
-            if input_width < 100:
-
+            if input_width < 100: #PKHG if colored background minimal size
                 self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
             else:
                 self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
@@ -161,7 +159,7 @@ class StringInput( Morph):
         return self.text.text
 
     def get_handles_mouse_click(self):
-#dbg    print("\n\n get_handles_mouse_click called in StringInput.py")
+#        print("\n\n>>>stringfield L162 get_handles_mouse_click called in StringInput.py")
         return True
 
     def mouse_click_left(self, pos):
@@ -219,6 +217,6 @@ class Blinker(Morph):
     def draw(self):
         """set the blinkers layout"""
         self.step()
-        bgl.glColor4f(*self.color) #PKHG color changed by timedepedant step!
+        bgl.glColor4f(*self.color) #PKHG color changed by timedependant step!
         [x,y] = [self.get_position().x, self.get_position().y]
         bgl.glRecti(x, y, x + 3, y + 20) #PKHG of blinker:(0,0) x (3,20)

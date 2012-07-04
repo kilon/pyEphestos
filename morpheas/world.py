@@ -98,9 +98,9 @@ class World(Frame):
         menu.add_item("about...", 'about')
         return menu #PKHG needed 24-6 in test_PKHG_stringinput*.py TODO?!
 
-
+#PKHG>TODO  repeated code =>> make a suitable def?!
     def user_create_new_morph(self):
-        print("\n*TEST* world L103 user_create_new_morph called self = ",self,"\n")
+        """user_create_new_morph is one of the menu functions"""
         menu = Menu(target = self, title = "create new") #PKHG self is world!
         menu.is_draggable = True
         #PKHG>??? does not work: menu.with_name = True 
@@ -181,7 +181,8 @@ class World(Frame):
 
 
     def user_create_rounded(self):
-        print("create rounded morph world L166")
+        """user_create_rounded one of main menu actions"""
+#        print("create rounded morph world L166")
         rounded = RoundedBox()
         rounded.bounds = rounded.bounds.get_scale_by(0.5)
         rounded.name ="Round"
@@ -204,7 +205,6 @@ class World(Frame):
         
         
     def user_create_rectangle(self):
-        print("*** for now only (hi hi) \n;-) is! \n******DBG world L134, a rectangle should be created ")
         rectangle = Morph()
         rectangle.name = "Rectangle"
         rectangle.with_name = True
@@ -218,10 +218,10 @@ class World(Frame):
         remove_me.is_visible = True
         remove_me.set_position(rectangle.get_position())
         rectangle.add(remove_me)      
-        self.add(rectangle)
-                        
+        self.add(rectangle)                        
         return
-        Morph().pick_up() #PKHG does only pass at 250612
+    
+#???        Morph().pick_up() #PKHG does only pass at 250612
 
     def delete_me_from_worlds_children(self, object):
         """returns None if object is not a child of world, otherwise object"""
@@ -233,7 +233,7 @@ class World(Frame):
         return result
         
             
-
+#PKHG not yet used 4jul12
     def stop_all_bouncers(self):
         print("error: world has no attribute 'all_children', why?",self,type(self))
         return
@@ -263,10 +263,6 @@ class World(Frame):
                 morph.show()
 
     def hide_all(self):
-#        print("*INFO PKHG* world L151 what to do with hide_all?? self = ",self, self.world)
-#        self.is_visible = False
-        #self.hide()
-#        return
         for morph in self.children:
             if isinstance(morph, Menu):
 #                print("*INFO PKHG* do not hide " , self)
@@ -296,13 +292,14 @@ class World(Frame):
             self.text_cursor.delete()
         self.keyboard_receiver = None
 
+    #PKHG differently done 4jul12
     def about(self):
         return
         self.inform("morphic.py\n\n\
 a lively GUI for Blender\ninspired by Squeak\nbased on Pygame\n\
 "  + "\n\nwritten by k & p ")
 
-    #World utilities:
+    #World utilities not used yet
 
     def fontname_by_user(self):
         names = sorted(pygame.font.get_fonts())
