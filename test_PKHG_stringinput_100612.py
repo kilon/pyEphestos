@@ -85,6 +85,16 @@ world.add_child(stringinput)
 #world.children is what (but better do not rely on this)
 world.add(world_menu)
 world.add(about)
+
+#add a texture morph
+textured_morph = Morph()
+textured_morph.is_textured = True
+textured_morph.set_position(Point(100,100))
+world.add(textured_morph)
+print("textured_morph x position: ",textured_morph.get_position().x)
+print("textured_morph y position: ",textured_morph.get_position().y)
+print("textured_morph height : ",textured_morph.get_height())
+print("textured_morph width : ",textured_morph.get_width())
 #PKHG to see what world contains:check_contains(world,"world")
 print("start of test_PKHG")
 #PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
