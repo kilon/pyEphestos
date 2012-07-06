@@ -96,6 +96,11 @@ print("textured_morph y position: ",textured_morph.get_position().y)
 print("textured_morph height : ",textured_morph.get_height())
 print("textured_morph width : ",textured_morph.get_width())
 #PKHG to see what world contains:check_contains(world,"world")
+
+
+repl = Repl(world)
+world.add(repl)
+
 print("start of test_PKHG")
 #PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
 #for el in world.children: print(id(el))

@@ -55,6 +55,7 @@
 
 #from .point import *
 #PKHG not yet from .button import *
+PKHG = True  #PKHG my dev tests
 from .frame import *
 from .hand import *
 from .menu import *
@@ -64,11 +65,13 @@ from .rectangle import *
 from .roundedbox import *
 from .stringfield import *
 from .text import *
+#if PKHG:
+#    from .worldNew import *
 from .world import *
 from .yesnomenu import *
 from .crosshair import *
 
-
-
-
+#error?? print(dir(morpheas))
+from .repl import *
+            
 
