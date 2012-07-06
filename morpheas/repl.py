@@ -45,7 +45,7 @@ class Repl(Morph):
                 res = eval(tmp)
                 print("***RESULT = ", res)
                 
-                self.info_test.text =   str(res) 
+                self.info_test.text += "\n" + str(res) 
                 print(self.info_test.text)
                 self.info_test.parse()
                 self.info_test.draw()
