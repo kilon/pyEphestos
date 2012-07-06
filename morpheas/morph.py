@@ -3,7 +3,7 @@ debug_color = 5
 debug050512_0900 = False #060512, seems to be OK now (problem with test_Menu)
 debug_changed_130512_0810 = False #all items seem to have world as root
 #do not use ^^^^^^^^^^^^^^^^^^^ too much output
-import bgl, blf
+import bgl, blf, bpy
 from .rectangle import *
 from .node import *
 #from .world import * #error ==> 050512_1225
@@ -55,6 +55,7 @@ class Morph(Node ):
         self.my_name_size = 0
         self.world = None
         self.texture = None
+        self.is_textured = False
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -264,16 +265,42 @@ class Morph(Node ):
     #Morph displaying:
     def draw(self):
         """ the draw function of the morph """
-        if self.texture == None:
-            self.draw_untextured()
-        else:
+        if self.is_textured:
             self.draw_textured()
+        else:
+            self.draw_untextured()
 
         for el in self.children:
             el.draw()
 
     def draw_textured(self):
         """ call this draw function only if morphs uses texture """
+
+        if len(bpy.data.images)>0:
+
+            img = bpy.data.images[0]
+            texture= img.gl_load()
+
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
+
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST)
+            bgl.glEnable(bgl.GL_TEXTURE_2D)
+
+            #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
+            bgl.glColor4f(self.color[0], self.color[1], self.color[2], self.color[3])
+            bgl.glBegin(bgl.GL_QUADS)
+            bgl.glTexCoord2f(0,0)
+            bgl.glVertex2f(self.get_position().x,self.get_position().y)
+            bgl.glTexCoord2f(0,1)
+            bgl.glVertex2f(self.get_position().x,self.get_height())
+            bgl.glTexCoord2f(1,1)
+            bgl.glVertex2f(self.get_width(),self.get_height())
+            bgl.glTexCoord2f(1,0)
+            bgl.glVertex2f(self.get_width(),self.get_position().y)
+            bgl.glEnd()
+            bgl.glDisable(bgl.GL_TEXTURE_2D)
+
         return
 
     def draw_untextured(self):
