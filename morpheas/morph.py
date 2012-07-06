@@ -279,8 +279,9 @@ class Morph(Node ):
         if len(bpy.data.images)>0:
 
             img = bpy.data.images[0]
-            img.gl_load(bgl.GL_NEAREST, bgl.GL_NEAREST)
-            bgl.glBindTexture(bgl.GL_TEXTURE_2D, img.bindcode)
+            texture= img.gl_load()
+
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST)
