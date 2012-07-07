@@ -15,6 +15,15 @@ class Text(Morph):
                  alignment='left',
                  #PKHG.INFO a real Text needs a max_with > 0 !!!
                  max_width=200):
+#### PKHG idea to make scrolling easy?
+        '''
+        max_nr_of_lines >= 1
+        show lines from startline >= 0
+        show_nr_of_lines
+        show_upto = min(startline + show_nr_of_lines, max_nr_of_lines)
+        ==> range(startline,show_upto,1)
+        problem, if because of width lines were added?!
+        '''
         super(Text, self).__init__()
         tmp = addon_utils.paths()[0] + "/Ephestos/fonts/" + fontname
         self.font = blf.load(tmp)
@@ -24,6 +33,7 @@ class Text(Morph):
         #4jul12 show about use input move about =>strange behavior
         self.text = text
         self.words = []
+        self.lines = []
         self.fontname = fontname
         self.fontsize = fontsize
         self.bold = bold
@@ -33,6 +43,7 @@ class Text(Morph):
 #        self.color = (.0, 1.0, 1.0, 1.0) #PKHG 7jul12 white forced in draw
         self.max_line_width = 0
         self.adjust_text(text)
+        
 
     def __repr__(self):
         """ Text('myname') returned"""
@@ -67,6 +78,7 @@ class Text(Morph):
                         oldline = newline
                 else:
                     oldline = oldline + word + ' '
+
     def draw(self):
         """a multiline output drawn"""
 #        super(Text,self).draw() #PKHG 7jul12 drawn by this draw
@@ -78,14 +90,15 @@ class Text(Morph):
         hei = yy - y
         nr = len(self.lines)
         lineHei = -1 +  hei // nr
-#        color = self.get_color()
-        bgcol = self.background_color
+        #PKHG force a list?? background_color wat not changed it is OK
+        bgcol = self.background_color 
+        #PKHG no transparency!(strange behavior if allowed)
         bgcol[3] = 1.0
         bgl.glColor4f(*bgcol)
         dime = self.get_extent().as_list()
         bgl.glRecti(self.get_position().x, self.get_position().y, self.get_position().x + dime[0], self.get_position().y + dime[1])
+        #PKHG  white color forced
         for el in range(nr):
-        #PKHG fixed white color forced
             Morph.draw_string_to_viewport(self.lines[el], self, 24,\
                     (1, 1, 1 ,1), self.font, x, yy - lineHei  - el * lineHei)
         return

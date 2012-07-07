@@ -36,18 +36,22 @@ class Repl(Morph):
         return True
     
     def mouse_down_left(self, pos):
-        print("\n>>++ repl L39 got a mouse down")
         tmp = self.string_input.onelinetext.text
-        print(">>++ seeing" ,tmp)
         if tmp.endswith("=?"):
             tmp = tmp[:-2]
             try:
                 res = eval(tmp)
-                print("***RESULT = ", res)
-                
-                self.info_test.text += "\n" + str(res) 
-                print(self.info_test.text)
+                print("***REPL RESULT = ", res)
+                tmp2 = self.info_test.text
+                #PKHG remove first line (no scrolling yet)
+                firstnl = tmp2.index("\n") + 1
+                tmp2 = tmp2[firstnl:] + "\n"
+#                print("\n\ntest",type(tmp2),tmp2)
+#                self.info_test.text += "\n" + str(res)
+                self.info_test.text = tmp2 + str(res)
                 self.info_test.parse()
                 self.info_test.draw()
             except Exception as excep:
                 print("***ERROR evaluation tmp", tmp, excep)
+        else:
+            print(">>REPL++ seeing," ,tmp, "\nto eval, =? at end of string needed ;-)")
