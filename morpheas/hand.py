@@ -54,10 +54,10 @@ class Hand(Morph):
         #PKHG mouse_x and mouse_y needed for CrossHair
         old_mouse_x = self.mouse_x
         old_mouse_y = self.mouse_y
-        oldPoint = Point(old_mouse_x, old_mouse_y)
+  #      oldPoint = Point(old_mouse_x, old_mouse_y)
         self.mouse_x = event.mouse_region_x
         self.mouse_y = event.mouse_region_y
-        newPoint = Point(self.mouse_x, self.mouse_y)
+  #      newPoint = Point(self.mouse_x, self.mouse_y)
 
 ########PKHG question #############################################
 #       why does MOUSEMOVE be called even the mouse is NOT moved???
@@ -101,6 +101,8 @@ class Hand(Morph):
         else:
             self.kbd_listener.keyReleased(event)
             tmp = self.get_morph_at_pointer()    #PKHG. at least world?!
+#PKHG.for debug interesting:
+#            print("\nhand L104 ",tmp, " 's key_release called!!")
             key_release = tmp.key_release(event) #key_release() takes exactly 2 arguments (1 given)
             if key_release == True :
                 return {'RUNNING_MODAL'}
@@ -444,7 +446,7 @@ class KeyboardListener:
 
         if event.type in ["RET", "NUMPAD_ENTER"]:
             #DEL not done! yet
-            result = self.text_input[:-1]
+            result = self.text_input #PKHG 0707 ??? [:-1]
             self.text_input = ''
         else:
             result = self.text_input

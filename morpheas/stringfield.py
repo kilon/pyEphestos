@@ -11,183 +11,6 @@ import re
 #re_RIGHT_ARROW = re.compile(" \*RIGHT_ARR0W\* *$")
 
 re_RL_ARROW = re.compile(" \*(LEFT|RIGHT)_ARROW\*  *$")
-class OneLineText(Morph):
-    """I am a single line to input text, NEEDS an owner with kbd_listener"""
-
-    def __init__(self, owner = None,
-                 text = ""):
-        super(OneLineText, self).__init__()        
-        self.owner = owner
-        self.text = text
-        self.fontsize =  12 #fontsize
-        self.bold = False   #bold
-        self.italic = False #italic
-        self.width = 10
-        #PKHG 3006512 name is written always in WHITE and name is used!
-        #PKHG only verdana.ttf used
-        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"
-        self.font = blf.load(tmp)
-        blf.size(self.font, self.fontsize, 72) #DPI default 72?
-        self.kbd_listener = self.owner.kbd_listener
-        self.list_of_char_x_values =[]
-        self.nr_of_chars = 0
-        self.nr_chars_old = 0
-#PKHG>???        self.color = owner.color #PKHG>3jul????
-        
-    def __repr__(self):
-        return 'OneLineText("' + self.text + '")'
-
-    def draw(self):
-        """draw, if visible, my text"""
-        if len(self.kbd_listener.text_input) !=  self.nr_of_chars:
-            self.add_keystroke()
-        t_width, t_height  = blf.dimensions(self.font, self.text)
-        self.width = int(t_width + 2.0)
-        corner = Point(self.width, 2 + int(t_height))
-        self.bounds.corner = self.bounds.origin + corner
-        x = self.bounds.origin.x + 1
-        y = self.bounds.origin.y + 1
-        bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
-        blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
-        if self.is_visible:
-            self.owner.blinker.set_position(Point(x + int(t_width + 1), y - 1))
-            blf.draw(self.font, self.text)
-            mouse_location = Point(self.owner.hand.mouse_x, self.owner.hand.mouse_y)
-            #PKHG is show_all is pressed set me to invisible!
-            if not self.owner.bounds.get_contains_point(mouse_location):
-                self.owner.activation_info.is_visible = False            
-            text_end_location = self.bounds.get_bottom_right()
-            
-    def get_width(self):
-        """ the width of the text at actual font-size"""
-        return self.width
-
-    def add_keystroke(self):
-        
-        tmp = self.kbd_listener.text_input        
-        res = re_RL_ARROW.search(tmp)
-        #PKHG, right and left arrows as example are tranformed int <=>
-        if res:
-            tmp2 = " *" + res.group(1) + "_ARROW* "
-            tmp = tmp.replace(res.group(),"<=>")
-            self.kbd_listener.text_input = tmp
-        if self.nr_chars_old < self.nr_of_chars:
-            dif = self.nr_of_chars - self.nr_chars_old
-            nn = tmp[-dif:]
-            self.text += tmp[-dif:]
-            self.nr_chars_old = len(self.text)
-        else:
-            self.text = tmp
-            self.nr_chars_old = len(tmp)
-        self.nr_of_chars = len(self.text)
-            
-
-class StringInput( Morph):
-    """StringInput is used to get/show a one-line input text-string"""
-
-    def __init__(self, hand, blinker,  default='mouse here to activates me',
-                 minwidth=100,
-                 fontname="verdana.ttf",
-                 fontsize=12,
-                 bold=False,
-                 italic=False):
-        super(StringInput, self).__init__()
-        self.activated = False
-        self.hand = hand
-        self.blinker = blinker
-        self.kbd_listener = hand.kbd_listener
-        self.default = default
-        self.minwidth = minwidth
-        self.fontname = fontname
-        self.fontsize = fontsize
-        self.bold = bold
-        self.italic = italic
-#        self.color = (0.9, 0.1, 0.1, 1) #??? why standard color? shown????
-#????        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
-        #onlinetext needs a keyboardlistener! thus
-        self.onelinetext = OneLineText(self, self.default)#,\
-#                 self.fontname, self.fontsize, self.bold, self.italic)
-        self.add(self.onelinetext)
-        self.add(blinker) #PKHG>??? 3jul, yes wanted ...        
-        self.onelinetext.set_position(self.get_bottom_left() + 5)
-        self.is_activated = False
-        self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = False)
-        self.activation_info.set_position(self.bounds.origin - Point(0,25)) 
-        self.activation_info.is_visible = False
-        self.activation_info.set_color("red")
-        self.add(self.activation_info)
-
-    def draw(self):
-        "draw and adjust size of morph, input_text dependant"
-        self.blinker.draw()
-#        super(StringInput, self).draw()
-#PKHG>??? why not possible???        print("\n????? color super",super(StringInput,self).color)
-        input_width = self.onelinetext.width + 5
-        #+ 5 PKHG because of offset onelinetext
-        if input_width < 100:
-            dif = -1 #PKHG 0 was wrong!
-            self.minwidth = 100
-        else:
-            dif = input_width - self.get_width()
-        if dif > 0:
-            new_corner = self.bounds.corner + Point(dif,0)
-            self.bounds = Rectangle(self.bounds.origin, new_corner)
-        elif dif < 0:
-            x = self.bounds.origin.x
-            y = self.bounds.corner.y
-            if input_width < 100: #PKHG if colored background minimal size
-                self.bounds = Rectangle(self.bounds.origin, Point(x + 100, y))
-            else:
-                self.bounds = Rectangle(self.bounds.origin,Point(x + input_width, y))
-        x = self.bounds.origin.x + 1
-        y = self.bounds.origin.y + 1
-        self.activation_info.draw()
-        self.onelinetext.draw()
-
-        if self.activated:
-#            print("\n\n\n++++ active+++")
-            self.activation_info.set_color("green")
-            self.blinker.set_position(Point(x + input_width, y))
-            self.blinker.is_visible = True
-        else:
-#            print("\n\n\n---- INACTIVE")
-            self.activation_info.set_color("red")
-            self.blinker.is_visible = False            
-        
-    def get_string(self):
-        """ getter of input-text at THIS moment"""
-        return self.text.text
-
-    def get_handles_mouse_click(self):
-#        print("\n\n>>>stringfield L162 get_handles_mouse_click called in StringInput.py")
-        return True
-
-    def mouse_click_left(self, pos):
-        """??? not used PKHG start editing of text via a mouse-click"""
-        pass
-
-    def mouse_enter(self):
-        self.activated = True
-        self.onelinetext.is_visible = True
-        self.kbd_listener.users += 1
-
-    def mouse_leave(self):
-        self.activated = False
-        self.kbd_listener.users -= 1
-        self.onelinetext.is_visble = False
-
-########PKHG.TODO what to do with RET ... and arrow and Page-down etc???
-    def key_release(self,event): 
-        if True: #event.type in {'RET','NUMPAD_ENTER'}:
-            tmp = self.kbd_listener.text_input
-#            self.insert_committed_text(tmp)
-            self.onelinetext.text = tmp
-        return {'RUNNING_MODAL'} #PKHG.attention  return used: keys eaton up
-
-
-    def insert_committed_text(self, text):
-        print("StringInput.insert_committed_text (L241) text = ", text)
-        pass
 
 class Blinker(Morph):
     "can be used for text cursors"
@@ -212,11 +35,173 @@ class Blinker(Morph):
                 self.set_color((0, 1.0, 0, 0.7))
             else:
                 self.set_color((1.0, 0, 0, 0.7))
-    
-    
+
     def draw(self):
         """set the blinkers layout"""
         self.step()
         bgl.glColor4f(*self.color) #PKHG color changed by timedependant step!
         [x,y] = [self.get_position().x, self.get_position().y]
         bgl.glRecti(x, y, x + 3, y + 20) #PKHG of blinker:(0,0) x (3,20)
+
+class StringInput(Morph):
+    def __init__(self, hand, blinker,  default='mouse here to activates me',
+                 fontname="verdana.ttf",
+                 fontsize=12,
+                 bold=False,
+                 italic=False):
+        bounds = Rectangle(Point(0,0),Point(800,30))
+        super(StringInput, self).__init__(bounds = bounds)
+        tmp = addon_utils.paths()[0] + "/Ephestos/fonts/verdana.ttf"
+        self.font = blf.load(tmp)
+        self.info = default
+        self.activated = False
+        self.hand = hand
+        self.blinker = blinker
+        self.kbd_listener = hand.kbd_listener
+        self.default = default
+        self.fontname = fontname
+        self.fontsize = fontsize
+        self.bold = bold
+        self.italic = italic
+#        self.color = (0.9, 0.1, 0.1, 1) #??? why standard color? shown????
+#????        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
+        #onlinetext needs a keyboardlistener! thus
+        self.add(blinker) #PKHG>??? 3jul, yes wanted ...        
+        self.is_activated = False
+        self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = False)
+        self.activation_info.set_position(self.bounds.origin - Point(0,25)) 
+        self.activation_info.is_visible = False
+        self.activation_info.set_color("red")
+        self.add(self.activation_info)
+        self.relative_pos_of_chars = [0]
+        self.mouse_click_left_toggle = False
+        self.prefix = ""
+        self.postfix = ""
+        self.text = ""
+
+    def draw(self):
+        """StringInput draw and adjust size of morph, input_text dependant"""
+#PKHG NO! super(...).draw()!!!
+
+        
+        self.blinker.draw()
+        x = self.bounds.origin.x + 1
+        y = self.bounds.origin.y + 1
+        self.activation_info.draw()
+        if self.activation_info.color == (0, 0, 1, 1): #blue => insert mode
+            mouse_x = self.hand.mouse_x
+            if self.postfix == "": #start of inser?
+                text_now = self.hand.kbd_listener.text_input
+                len_text_now = len(text_now)
+                tmp = ""
+                for i in range(len_text_now):
+                    tmp += text_now[i]
+                    t_width, t_height  = blf.dimensions(self.font, tmp)
+                    if (x + int(t_width + 2)) > mouse_x:
+                        self.prefix = tmp
+                        self.postfix = text_now[i + 1:]
+                        break
+                self.hand.kbd_listener.text_input = tmp
+            
+#            print("\n now blue action>", self.prefix,"<>", self.postfix,"<")
+            text =  self.kbd_listener.text_input
+            t_width, t_height  = blf.dimensions(self.font, text)
+            self.width = int(t_width + 2.0)
+            x = self.bounds.origin.x + 2
+            y = self.bounds.origin.y + 2
+            bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
+            blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
+            if self.is_visible:
+                self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
+                blf.draw(self.font, text)
+                mouse_location = Point(self.hand.mouse_x, self.hand.mouse_y)
+                #PKHG is show_all is pressed set me to invisible!
+                if not self.bounds.get_contains_point(mouse_location):
+                    self.activation_info.is_visible = False            
+            
+        else: # elif self.activation_info.color == (0, 1, 0, 1): #green normal
+            if len(self.postfix) > 0:
+                self.kbd_listener.text_input += self.postfix
+                self.postfix = ""
+                self.prefix = ""
+                #back to normal processing
+            text =  self.kbd_listener.text_input
+            t_width, t_height  = blf.dimensions(self.font, text)
+            self.width = int(t_width + 2.0)
+            x = self.bounds.origin.x + 2
+            y = self.bounds.origin.y + 2
+            bgl.glColor4f(1.0, 1.0, 1.0, 1.0) #PKHG: 28jun12 always white
+            blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
+            if self.is_visible:
+                self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
+                blf.draw(self.font, text)
+                mouse_location = Point(self.hand.mouse_x, self.hand.mouse_y)
+                #PKHG is show_all is pressed set me to invisible!
+                if not self.bounds.get_contains_point(mouse_location):
+                    self.activation_info.is_visible = False            
+    #PKHG.not yet used
+    #            text_length_on_sreen  = self.bounds.get_width() - 2
+    
+        if self.activated:
+#            print("\n\n\n++++ active+++")
+            if self.activation_info.color == (1, 0, 0, 1): #red
+                self.activation_info.set_color("green")
+            if self.activation_info.color == (0, 0, 1, 1): #blue insertmode
+                if self.postfix:
+                    self.blinker.set_position(Point(x + self.width, y))
+                else:
+                    self.blinker.set_position(Point(self.hand.mouse_x, y))
+            else: #green
+                self.blinker.set_position(Point(x + self.width, y))
+            self.blinker.is_visible = True
+        else:
+#            print("\n\n\n---- INACTIVE")
+            t_width, t_height  = blf.dimensions(self.font, text)
+            bgl.glColor4f(0, 1, 0, 1) #green
+            blf.position(self.font,x ,y + 20 , 0)   #PKHG.??? 0 is z-depth?!
+            blf.draw(self.font, self.default)
+            self.activation_info.set_color("red")
+            self.blinker.is_visible = False            
+        self.text = self.hand.kbd_listener.text_input
+        
+    def get_string(self):
+        """ getter of input-text at THIS moment"""
+        return self.text
+
+    def get_handles_mouse_click(self):
+#        print("\n\n>>>stringfield L162 get_handles_mouse_click called in StringInput.py")
+        return True
+
+#PKHG 07jul12 TODO using blinker!
+    def mouse_click_left(self, pos):
+        """??? not used PKHG start editing of text via a mouse-click"""
+        ####### test and info########
+        self.mouse_click_left_toggle = not self.mouse_click_left_toggle
+        if self.mouse_click_left_toggle:
+            mouse_position = pos
+            self.activation_info.set_color('blue')
+        else:
+            self.activation_info.set_color('green')
+        ####### test end ############33
+        pass
+
+    def mouse_enter(self):
+        self.activated = True
+        self.kbd_listener.users += 1
+
+    def mouse_leave(self):
+        self.activated = False
+        self.kbd_listener.users -= 1
+
+########PKHG.TODO what to do with RET ... and arrow and Page-down etc???
+    def key_release(self,event): 
+#PKHG.TODO???        if True: #event.type in {'RET','NUMPAD_ENTER'}:
+        tmp = self.kbd_listener.text_input
+        self.insert_committed_text(tmp)
+#        print("stringfield key_release", tmp)
+        return {'RUNNING_MODAL'} #PKHG.attention  return used: keys eaton up
+
+
+    def insert_committed_text(self, text):
+        print("StringInput.insert_committed_text (L217) text = ", text)
+        pass

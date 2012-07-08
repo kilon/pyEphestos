@@ -36,7 +36,7 @@ class Repl(Morph):
         return True
     
     def mouse_down_left(self, pos):
-        tmp = self.string_input.onelinetext.text
+        tmp = self.string_input.text
         if tmp.endswith("=?"):
             tmp = tmp[:-2]
             try:
@@ -55,3 +55,7 @@ class Repl(Morph):
                 print("***ERROR evaluation tmp", tmp, excep)
         else:
             print(">>REPL++ seeing," ,tmp, "\nto eval, =? at end of string needed ;-)")
+
+        def mouse_down_right(self,pos):
+            print("\n\n mouse_down_right of repl called")
+            self.is_visible = False
