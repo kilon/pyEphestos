@@ -64,8 +64,6 @@ class StringInput(Morph):
         self.bold = bold
         self.italic = italic
 #        self.color = (0.9, 0.1, 0.1, 1) #??? why standard color? shown????
-#????        self.set_color((0.1, 0.1, 0.1, 0.1)) #PKHG??? 25-06-12
-        #onlinetext needs a keyboardlistener! thus
         self.add(blinker) #PKHG>??? 3jul, yes wanted ...        
         self.is_activated = False
         self.activation_info = Morph(bounds = Rectangle(Point(0,0),Point(20,20)), with_name = False)
@@ -78,12 +76,16 @@ class StringInput(Morph):
         self.prefix = ""
         self.postfix = ""
         self.text = ""
+        self.width = 0
 
     def draw(self):
         """StringInput draw and adjust size of morph, input_text dependant"""
 #PKHG NO! super(...).draw()!!!
 
-        
+#        bgl.glColor4f(*self.color) #PKHG color changed by timedependant step!
+        bgl.glColor4f(0.6, 0.6, 0.3, 1) #PKHG color changed by timedependant step!
+        [x,y] = [self.get_position().x, self.get_position().y]
+        bgl.glRecti(x, y, x + self.width + 20, y + 25) #PKHG of blinker:(0,0) x (3,20)        
         self.blinker.draw()
         x = self.bounds.origin.x + 1
         y = self.bounds.origin.y + 1
@@ -197,7 +199,7 @@ class StringInput(Morph):
     def key_release(self,event): 
 #PKHG.TODO???        if True: #event.type in {'RET','NUMPAD_ENTER'}:
         tmp = self.kbd_listener.text_input
-        self.insert_committed_text(tmp)
+#        self.insert_committed_text(tmp)
 #        print("stringfield key_release", tmp)
         return {'RUNNING_MODAL'} #PKHG.attention  return used: keys eaton up
 
