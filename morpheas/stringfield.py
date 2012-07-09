@@ -97,7 +97,7 @@ class StringInput(Morph):
                 for i in range(len_text_now):
                     tmp += text_now[i]
                     t_width, t_height  = blf.dimensions(self.font, tmp)
-                    if (x + int(t_width + 2)) > mouse_x:
+                    if (x + int(t_width) + 7) > mouse_x:
                         self.prefix = tmp
                         self.postfix = text_now[i + 1:]
                         break

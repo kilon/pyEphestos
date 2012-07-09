@@ -40,7 +40,7 @@ class Repl(Morph):
         if tmp.endswith("=?"):
             tmp = tmp[:-2]
             try:
-                res = eval(tmp)
+                res = eval(tmp) #PKHG was eval
                 print("***REPL RESULT = ", res)
                 tmp2 = self.info_test.text
                 #PKHG remove first line (no scrolling yet)
