@@ -160,7 +160,7 @@ class StringInput(Morph):
 #            print("\n\n\n---- INACTIVE")
             t_width, t_height  = blf.dimensions(self.font, text)
             bgl.glColor4f(0, 1, 0, 1) #green
-            blf.position(self.font,x ,y + 20 , 0)   #PKHG.??? 0 is z-depth?!
+            blf.position(self.font,x ,y + 25 , 0)   #PKHG.??? 0 is z-depth?!
             blf.draw(self.font, self.default)
             self.activation_info.set_color("red")
             self.blinker.is_visible = False            
