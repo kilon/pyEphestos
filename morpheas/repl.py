@@ -17,7 +17,6 @@ class Repl(Morph):
         self.set_position(Point(200,200))
         self.name = name
         self.info_test = Text("I will try to\nRead\nEval\nPrint\nLoop\nan Python commandline", fontname = "verdana.ttf", fontsize= 12, max_width = 400 )
-        
         self.info_test.bounds = Rectangle(Point(0,0), Point(200,200))
         self.info_test.set_position(Point(200, 330))
         world.add(self)
@@ -54,7 +53,7 @@ class Repl(Morph):
                 else:
                     res = tmp2[0] # "Ephestos.tmp.repl_loc." + tmp2[0]
                     print("res vor exec=", res)
-                    exec(tmp)
+                    exec(tmp,globals())
                     tmp3 = eval(tmp2[-1])
                     print("tmp3 = ", tmp3)
                     res += " = " + str(eval(tmp2[-1]))
@@ -74,7 +73,7 @@ class Repl(Morph):
             except Exception as excep:
                 print("***ERROR evaluation tmp", tmp, excep)
         else:
-            print(">>REPL++ seeing," ,tmp, "\nto eval, ? at end of string needed ;-)")
+            print(">>REPL++ seeing," ,tmp, "\nto eval, assignment = must be surrounde by at least onespace ;-)")
 
         def mouse_down_right(self,pos):
             print("\n\n mouse_down_right of repl called")
