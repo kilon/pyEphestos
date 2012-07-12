@@ -115,7 +115,7 @@ class StringInput(Morph):
             blf.position(self.font,x ,y, 0)   #PKHG.??? 0 is z-depth?!
             if self.is_visible:
                 self.blinker.set_position(Point(x + int(t_width + 1), y - 1))
-                blf.draw(self.font, text)
+                blf.draw(self.font, text + self.postfix) #PKHG>test 12-7-2012
                 mouse_location = Point(self.hand.mouse_x, self.hand.mouse_y)
                 #PKHG is show_all is pressed set me to invisible!
                 if not self.bounds.get_contains_point(mouse_location):

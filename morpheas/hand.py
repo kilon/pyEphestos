@@ -443,13 +443,16 @@ class KeyboardListener:
         return result
 
     def displayInfo(self, event):
-
+        
         if event.type in ["RET", "NUMPAD_ENTER"]:
             #DEL not done! yet
-            result = self.text_input #PKHG 0707 ??? [:-1]
-            self.text_input = ''
+            if self.text_input == "":
+                self.text_input = self.last_result
+            else:                
+                self.last_result = self.text_input #PKHG 0707 ??? [:-1]
+                self.text_input = ''
         else:
-            result = self.text_input
+            self.last_result = self.text_input
         if debug_typedtext:
-            print("\ntyped text now: ", result)
-        self.last_result = result
+            print("\ntyped text now: ", self.text_input)
+#        self.last_result = result
