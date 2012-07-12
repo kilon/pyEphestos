@@ -38,7 +38,7 @@ class World(Frame):
         """If ... is running show the world as rounded morph"""
 
         if self.running:
-            Morph.draw_rounded_morph(self, 0.2, self.color, rectangle = False)
+
             for child in self.children:
                 if debug_check_world_draws:
                     print("====world: checking ", child, " to draw")
@@ -82,8 +82,8 @@ class World(Frame):
         menu = Menu(self, self.__class__.__name__)
         menu.add_item("create a morph...", 'user_create_new_morph')
         menu.add_line()
-        menu.add_item("hide all", 'hide_all') 
-        menu.add_item("show all", 'show_all_hiddens') 
+        menu.add_item("hide all", 'hide_all')
+        menu.add_item("show all", 'show_all_hiddens')
 #        menu.add_item("move all inside...", 'keep_all_submorphs_within')#PKHG not yet
 #        menu.add_item("color...", 'choose_color')#PKHG not yet
 #        menu.add_line()
@@ -103,7 +103,7 @@ class World(Frame):
         """user_create_new_morph is one of the menu functions"""
         menu = Menu(target = self, title = "create new") #PKHG self is world!
         menu.is_draggable = True
-        #PKHG>??? does not work: menu.with_name = True 
+        #PKHG>??? does not work: menu.with_name = True
         menu.counter = 0 #PKHG show or show no content counter times
         self.add(menu)
         pair_item_0_counter = 0
@@ -126,9 +126,9 @@ class World(Frame):
         item_rectangle = MenuItem(self,'user_create_rectangle',"rectangle...")
         item_rectangle.name = "rectangle..."
         item_rectangle.with_name = True
-        menu.add(item_rectangle)        
+        menu.add(item_rectangle)
         #'''
-        
+
         pair_item_0_counter += 1
         menu.add_line() #PKHG.??? with creation of object??
         item = Morph()
@@ -145,7 +145,7 @@ class World(Frame):
 #        item_rounded.inner_per = 0.2
 #        item_rounded.border = 0
 #        item_rounded.bordercolor = (0, 0, 0, 1)
-        menu.add(item_rounded)        
+        menu.add(item_rounded)
 
         menu.add_line() #PKHG.??? with creation of object??
         pair_item_0_counter += 1
@@ -169,7 +169,7 @@ class World(Frame):
         menu.set_extent(fb.get_extent() + 10)
         menu.adjust_widths()
      #   super(Menu, self).draw()
-        
+
 #        menu.add_item("string...", 'user_create_string')
 #        menu.add_item("text...", 'user_create_text')
 #        menu.add_line()
@@ -187,7 +187,7 @@ class World(Frame):
         rounded.bounds = rounded.bounds.get_scale_by(0.5)
         rounded.name ="Round"
         rounded.outer_per = 0.5
-        rounded.inner_per = 0.499        
+        rounded.inner_per = 0.499
 #        rounded.with_name = True
         rounded.set_color((1, 1, 1, 1))
         rounded.bordercolor = (1, 0, 0, 1)
@@ -200,10 +200,10 @@ class World(Frame):
 #        remove_me.set_color((0,0,1,1))
 #        remove_me.is_visible = True
         remove_me.set_position(rounded.get_position())
-        rounded.add(remove_me)      
+        rounded.add(remove_me)
         self.add(rounded)
-        
-        
+
+
     def user_create_rectangle(self):
         rectangle = Morph()
         rectangle.name = "Rectangle"
@@ -217,10 +217,10 @@ class World(Frame):
         remove_me.set_color((0,1,1,1))
         remove_me.is_visible = True
         remove_me.set_position(rectangle.get_position())
-        rectangle.add(remove_me)      
-        self.add(rectangle)                        
+        rectangle.add(remove_me)
+        self.add(rectangle)
         return
-    
+
 #???        Morph().pick_up() #PKHG does only pass at 250612
 
     def delete_me_from_worlds_children(self, object):
@@ -231,8 +231,8 @@ class World(Frame):
             index = self.children.index(object)
             del self.children[index]
         return result
-        
-            
+
+
 #PKHG not yet used 4jul12
     def stop_all_bouncers(self):
         print("error: world has no attribute 'all_children', why?",self,type(self))
@@ -276,7 +276,7 @@ class World(Frame):
     def choose_color(self):
         print("*INFO* no chose_color (yet) implemented")
         pass #PKHG.TODO
-    
+
     def pick_up(self):
         pass
 

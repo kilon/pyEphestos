@@ -281,6 +281,7 @@ class Morph(Node ):
             img = bpy.data.images[0]
             texture= img.gl_load()
             print("Opengl Error value : ",texture)
+            print("Bindcode : ",img.bindcode)
             bgl.glBindTexture(bgl.GL_TEXTURE_2D, img.bindcode)
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
