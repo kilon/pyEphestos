@@ -89,7 +89,7 @@ world.add(about)
 #add a texture morph
 textured_morph = Morph()
 textured_morph.is_textured = True
-textured_morph.set_position(Point(100,100))
+textured_morph.set_position(Point(600,600))
 world.add(textured_morph)
 print("textured_morph x position: ",textured_morph.get_position().x)
 print("textured_morph y position: ",textured_morph.get_position().y)
