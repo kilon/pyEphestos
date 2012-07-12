@@ -279,16 +279,21 @@ class Morph(Node ):
         if len(bpy.data.images)>0:
 
             img = bpy.data.images[0]
-            texture= img.gl_load()
+            texture= img.gl_load(bgl.GL_NEAREST, bgl.GL_NEAREST)
 
-            bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, img.bindcode)
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST)
             bgl.glEnable(bgl.GL_TEXTURE_2D)
 
             #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
-            bgl.glColor4f(self.color[0], self.color[1], self.color[2], self.color[3])
+
+
+            bgl.glEnd()
+            bgl.glDisable(bgl.GL_BLEND)
+            bgl.glEnable(bgl.GL_BLEND)
+            bgl.glColor4f(*self.color)
             bgl.glBegin(bgl.GL_QUADS)
             bgl.glTexCoord2f(0,0)
             bgl.glVertex2f(self.get_position().x,self.get_position().y)
@@ -299,7 +304,8 @@ class Morph(Node ):
             bgl.glTexCoord2f(1,0)
             bgl.glVertex2f(self.get_width(),self.get_position().y)
             bgl.glEnd()
-            bgl.glDisable(bgl.GL_TEXTURE_2D)
+            bgl.glDisable(bgl.GL_BLEND)
+           # bgl.glDisable(bgl.GL_TEXTURE_2D)
 
         return
 
