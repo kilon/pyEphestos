@@ -6,6 +6,11 @@ debug_changed_130512_0810 = False #all items seem to have world as root
 import bgl, blf, bpy
 from .rectangle import *
 from .node import *
+
+#PKHG to be OS independent
+from os import path
+path_sep = path.sep
+
 #from .world import * #error ==> 050512_1225
 '''
   File "C:\BlenderSVN\cmake_all3\bin\2.63\scripts\addons\Ephestos\morpheas\hand.py", line 28, in <module>
@@ -54,16 +59,16 @@ class Morph(Node ):
         self.font_id = blf.load(self.default_font)
         self.my_name_size = 0
         self.image_path = bpy.utils.user_script_path() + \
-                          "\\addons\\Ephestos\\data\\images\\"
+                          "/addons/Ephestos/data/images/".replace("/",path_sep)
         self.world = None
         self.texture = None
         self.is_textured = False
-        self.image_name = "" #PKHG absolute filepath!
-        self.image = None       #PKHG
+        self.image_name = "" #PKHG see image_path!
+        self.image = None      
 
     def load_image(self):
         tmp = self.image_path + self.image_name
-        print(tmp)
+#        print(tmp)
         bpy.ops.image.open(filepath = tmp, relative_path=False)
         self.image = bpy.data.images[-1]
 
