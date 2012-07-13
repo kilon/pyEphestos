@@ -56,6 +56,12 @@ class Morph(Node ):
         self.world = None
         self.texture = None
         self.is_textured = False
+        self.link_to_image = "" #PKHG absolute filepath!
+        self.image = None       #PKHG
+
+    def load_image(self):
+        bpy.ops.image.open(filepath = self.link_to_image, relative_path=False)
+        self.image = bpy.data.images[-1]
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -275,17 +281,18 @@ class Morph(Node ):
 
     def draw_textured(self):
         """ call this draw function only if morphs uses texture """
+        if self.image == None:
+            self.load_image()
+        if True:#len(bpy.data.images)>0:
 
-        if len(bpy.data.images)>0:
-
-            img = bpy.data.images[0]
+            img = self.image # bpy.data.images[0]
             texture= img.gl_load()
-            print("Opengl Error value : ",texture)
-            print("Bindcode : ",img.bindcode)
+#            print("Opengl Error value : ",texture)
+#            print("Bindcode : ",img.bindcode)
             bgl.glBindTexture(bgl.GL_TEXTURE_2D, img.bindcode)
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
-            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST)
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
             bgl.glEnable(bgl.GL_TEXTURE_2D)
 
             #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
