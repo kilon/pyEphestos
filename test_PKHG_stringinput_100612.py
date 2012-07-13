@@ -89,12 +89,12 @@ world.add(about)
 #add a texture morph
 textured_morph = Morph()
 textured_morph.is_textured = True
-textured_morph.link_to_image = "c:\\tmp\\swatch.png"
+textured_morph.image_name = "swatch.png"
 textured_morph.set_position(Point(600,100))
 world.add(textured_morph)
 tex2_morph = Morph(bounds = Rectangle(Point(0,0),Point(200,200)))
 tex2_morph.is_textured = True
-tex2_morph.link_to_image = "c:\\tmp\\weetniet.001.png"
+tex2_morph.image_name = "weetniet.png"
 tex2_morph.set_position(Point(600,200))
 world.add(tex2_morph)
 print("textured_morph x position: ",textured_morph.get_position().x)
