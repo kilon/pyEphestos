@@ -58,19 +58,19 @@ class Morph(Node ):
         self.default_font = self.path_to_local_fonts + "/verdana.ttf"
         self.font_id = blf.load(self.default_font)
         self.my_name_size = 0
-        self.image_path = bpy.utils.user_script_path() + \
+        self.texture_path = bpy.utils.script_paths()[0] + \
                           "/addons/Ephestos/data/images/".replace("/",path_sep)
         self.world = None
         self.texture = None
         self.is_textured = False
         self.image_name = "" #PKHG see image_path!
-        self.image = None      
+        self.image = None
 
-    def load_image(self):
-        tmp = self.image_path + self.image_name
-#        print(tmp)
-        bpy.ops.image.open(filepath = tmp, relative_path=False)
-        self.image = bpy.data.images[-1]
+    def set_texture(self,file_name):
+
+        file_path = self.texture_path + file_name
+        bpy.ops.image.open(filepath = file_path, relative_path=False)
+        self.image = bpy.data.images[0]
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -290,40 +290,34 @@ class Morph(Node ):
 
     def draw_textured(self):
         """ call this draw function only if morphs uses texture """
-        if self.image == None:
-            self.load_image()
-            self.texture = self.image.gl_load()
-#        if True:#len(bpy.data.images)>0:
+        if self.image != None:
 
-        img = self.image # bpy.data.images[0]
-        texture= self.texture #img.gl_load()
-#            print("Opengl Error value : ",texture)
-#            print("Bindcode : ",img.bindcode)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, img.bindcode)
-        bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
-        bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
+            image = self.image # bpy.data.images[0]
+            texture= self.texture #img.gl_load()
+
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
+
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
+            bgl.glEnable(bgl.GL_TEXTURE_2D)
 
             #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
 
 
-            #bgl.glEnd()
-            #bgl.glDisable(bgl.GL_BLEND)
-            #bgl.glEnable(bgl.GL_BLEND)
-        bgl.glColor4f(1,1,1,1)
-        bgl.glBegin(bgl.GL_QUADS)
-        bgl.glTexCoord2d(0,0)
-        bgl.glVertex2d(self.get_position().x,self.get_position().y)
-        bgl.glTexCoord2d(0,1)
-        bgl.glVertex2d(self.get_position().x,self.get_position().y+self.get_height())
-        bgl.glTexCoord2d(1,1)
-        bgl.glVertex2d(self.get_position().x+self.get_width(),self.get_position().y+self.get_height())
-        bgl.glTexCoord2d(1,0)
-        bgl.glVertex2d(self.get_position().x+self.get_width(),self.get_position().y)
-        bgl.glEnd()
-        bgl.glDisable(bgl.GL_BLEND)
-           # bgl.glDisable(bgl.GL_TEXTURE_2D)
+            bgl.glColor4f(1,1,1,1)
+            bgl.glBegin(bgl.GL_QUADS)
+            bgl.glTexCoord2d(0,0)
+            bgl.glVertex2d(self.get_position().x,self.get_position().y)
+            bgl.glTexCoord2d(0,1)
+            bgl.glVertex2d(self.get_position().x,self.get_position().y+self.get_height())
+            bgl.glTexCoord2d(1,1)
+            bgl.glVertex2d(self.get_position().x+self.get_width(),self.get_position().y+self.get_height())
+            bgl.glTexCoord2d(1,0)
+            bgl.glVertex2d(self.get_position().x+self.get_width(),self.get_position().y)
+            bgl.glEnd()
+            bgl.glDisable(bgl.GL_BLEND)
+               # bgl.glDisable(bgl.GL_TEXTURE_2D)
 
         return
 
