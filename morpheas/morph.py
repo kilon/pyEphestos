@@ -63,14 +63,14 @@ class Morph(Node ):
         self.world = None
         self.texture = None
         self.is_textured = False
-        self.image_name = "" #PKHG see image_path!
-        self.image = None
+
+
 
     def set_texture(self,file_name):
 
         file_path = self.texture_path + file_name
         bpy.ops.image.open(filepath = file_path, relative_path=False)
-        self.image = bpy.data.images[0]
+        self.texture = bpy.data.images[-1]
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -290,13 +290,13 @@ class Morph(Node ):
 
     def draw_textured(self):
         """ call this draw function only if morphs uses texture """
-        if self.image != None:
+        if self.texture != None:
 
 
-            image = self.image # bpy.data.images[0]
-            texture= self.texture #img.gl_load()
+             # bpy.data.images[0]
+            self.texture.gl_load()
 
-            bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.texture.bindcode)
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
             bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
