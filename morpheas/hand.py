@@ -41,7 +41,7 @@ class Hand(Morph):
 
 
     def draw(self):
-        """ hand has nothing more to draw than its children which are the morph that are marked for grab """
+        """ hand has nothing more to draw than its children which is the morph that is marked for grab """
         for child in self.children:
             child.draw()
 

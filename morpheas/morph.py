@@ -71,6 +71,11 @@ class Morph(Node ):
         file_path = self.texture_path + file_name
         self.texture= bpy.data.images.load(filepath = file_path)
         self.is_textured = True
+        #self.texture.gl_load()
+       # bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.texture.bindcode)
+        #bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
+
+        #bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -293,13 +298,7 @@ class Morph(Node ):
         if self.texture != None:
 
 
-             # bpy.data.images[0]
-            self.texture.gl_load()
 
-            bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.texture.bindcode)
-            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
-
-            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
             bgl.glEnable(bgl.GL_TEXTURE_2D)
 
             #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
