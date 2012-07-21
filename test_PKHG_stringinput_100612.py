@@ -88,12 +88,10 @@ world.add(about)
 
 #add a texture morph
 textured_morph = Morph()
-textured_morph.is_textured = True
 textured_morph.set_texture( "swatch.png" )
 textured_morph.set_position(Point(600,100))
 world.add(textured_morph)
 tex2_morph = Morph(bounds = Rectangle(Point(0,0),Point(200,200)))
-tex2_morph.is_textured = True
 tex2_morph.set_texture("weetniet.png")
 tex2_morph.set_position(Point(600,200))
 world.add(tex2_morph)

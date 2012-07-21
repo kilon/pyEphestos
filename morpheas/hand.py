@@ -158,19 +158,31 @@ class Hand(Morph):
         print(">>> hand L156 drop_target_for  morph = ", morph, "target =", target)
         while target.get_wants_drop_of(morph) == False:
             target = target.parent
-        print(">>> finished while hand L159 drop_target_for  morph = ", morph, "target =", target)            
+        print(">>> finished while hand L159 drop_target_for  morph = ", morph, "target =", target)
         return target
 #Hand
     def grab(self, morph):
         """ Grab morph . That means that the morph is removed as a child of the world and added as a child of the hand """
         if self.children == []:
+            print("GRAB OPERATION ================================>")
             print("grab has been called for morph ",morph)
             #self.world.stop_editing()
+            print("world has children : ", self.world.children)
+            print("removing moprh for parent : ",morph.parent)
+            morph.parent.remove_child(morph)
+
             self.add(morph)
+            print("morphs parent is now : ", morph.parent)
+            print("now parent has children : ",morph.parent.children)
+            print("hand children : ", self.children)
+            print("world children :", self.world.children)
+
+
             self.changed()
             self.grabed_morph_offset_x =  morph.bounds.origin.x - self.bounds.origin.x
             self.grabed_morph_offset_y =  morph.bounds.origin.y - self.bounds.origin.y
             print("morph has been grabbed")
+            print("END OF GRAB OPERATION ===========================>")
 
     def drop(self):
         """ Drop morph. The morph is removed as a child of the hand and added back to its world."""
@@ -349,6 +361,7 @@ class Hand(Morph):
             morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y)
             self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
+            print("the color of the morph that is being moved is : ", self.morph_to_grab.color)
             return  True
 
 
@@ -443,12 +456,12 @@ class KeyboardListener:
         return result
 
     def displayInfo(self, event):
-        
+
         if event.type in ["RET", "NUMPAD_ENTER"]:
             #DEL not done! yet
             if self.text_input == "":
                 self.text_input = self.last_result
-            else:                
+            else:
                 self.last_result = self.text_input #PKHG 0707 ??? [:-1]
                 self.text_input = ''
         else:

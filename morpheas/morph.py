@@ -47,7 +47,7 @@ class Morph(Node ):
             self.bounds = Rectangle(Point(0, 0), Point(100,60))
 #PKHG test 3jul        self.color = (0.3, 0.3, 0.3, 1.0)
 #sometimes working ???
-        self.color = (0, 0, 1, 1)
+        self.color = (1, 1, 1, 1)
         self.is_visible = True
         self.is_draggable = True
         self.fps = 0
@@ -70,6 +70,7 @@ class Morph(Node ):
         """setter : set_texture(file_name). Set the texture to be used by the morph, the file_name is just the name of the file, path used is the folder images inside Ephestos in data"""
         file_path = self.texture_path + file_name
         self.texture= bpy.data.images.load(filepath = file_path)
+        self.is_textured = True
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
@@ -304,7 +305,7 @@ class Morph(Node ):
             #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
 
 
-            bgl.glColor4f(1,1,1,1)
+            bgl.glColor4f(*self.color)
             bgl.glBegin(bgl.GL_QUADS)
             bgl.glTexCoord2d(0,0)
             bgl.glVertex2d(self.get_position().x,self.get_position().y)
