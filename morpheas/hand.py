@@ -357,7 +357,7 @@ class Hand(Morph):
 
     # move morph by mouse drag
     def detect_mouse_drag(self,event):
-        if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True and self.is_draggable:
+        if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True and self.morph_to_grab.is_draggable and self.morph_to_grab.is_visible:
             morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y)
             self.morph_to_grab.set_position(morph_position)
             print("WARNING !!!! morph move : ",self.morph_to_grab)
