@@ -67,10 +67,9 @@ class Morph(Node ):
 
 
     def set_texture(self,file_name):
-
+        """setter : set_texture(file_name). Set the texture to be used by the morph, the file_name is just the name of the file, path used is the folder images inside Ephestos in data"""
         file_path = self.texture_path + file_name
-        bpy.ops.image.open(filepath = file_path, relative_path=False)
-        self.texture = bpy.data.images[-1]
+        self.texture= bpy.data.images.load(filepath = file_path)
 
     def __repr__(self):
         """set how a morph is printed to the console and represented"""
