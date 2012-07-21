@@ -297,7 +297,11 @@ class Morph(Node ):
         """ call this draw function only if morphs uses texture """
         if self.texture != None:
 
+            self.texture.gl_load()
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.texture.bindcode)
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
 
+            bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST) #GL_LINEAR seems to be used in Blender for background images
 
             bgl.glEnable(bgl.GL_TEXTURE_2D)
 
@@ -316,7 +320,8 @@ class Morph(Node ):
             bgl.glVertex2d(self.get_position().x+self.get_width(),self.get_position().y)
             bgl.glEnd()
             bgl.glDisable(bgl.GL_BLEND)
-               # bgl.glDisable(bgl.GL_TEXTURE_2D)
+            bgl.glDisable(bgl.GL_TEXTURE_2D)
+            self.texture.gl_free()
 
         return
 
