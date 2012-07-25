@@ -14,8 +14,8 @@
 #-------------------------------------------------
 #    morpheas.py
 #
-#    Morpheas is the GUI side of Ephestos based on morphic.py 
-#    
+#    Morpheas is the GUI side of Ephestos based on morphic.py
+#
 #
 #    written by Kilon Alios
 #    thekilons@yahoo.co.uk
@@ -53,8 +53,7 @@
 #    - better string editing
 #    - multi-line edits
 
-#from .point import *
-#PKHG not yet from .button import *
+
 PKHG = True  #PKHG my dev tests
 from .frame import *
 from .hand import *
@@ -65,13 +64,9 @@ from .rectangle import *
 from .roundedbox import *
 from .stringfield import *
 from .text import *
-#if PKHG:
-#    from .worldNew import *
 from .world import *
 from .yesnomenu import *
 from .crosshair import *
-
-#error?? print(dir(morpheas))
 from .repl import *
-            
 
+""" Morpheas is the GUI side of Ephestos. Its build remotely immitating Morphic GUI of Squeak/Pharo. The central element of Morph is the Morph, a graphical element that can take any shape and size and represent even code visually."""
