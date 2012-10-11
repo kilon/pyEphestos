@@ -14,8 +14,8 @@
 #-------------------------------------------------
 #    morpheas.py
 #
-#    Morpheas is the GUI side of Ephestos based on morphic.py 
-#    
+#    Morpheas is the GUI side of Ephestos based on morphic.py
+#
 #
 #    written by Kilon Alios
 #    thekilons@yahoo.co.uk
@@ -53,6 +53,7 @@
 #    - better string editing
 #    - multi-line edits
 
+""" here we go """
 
 
 
@@ -76,7 +77,7 @@ ZEFFIE_test = False #add your analog lines ;-)
 if "bpy" in locals():
     import imp
     if "morpheas" in locals():
-        imp.reload(morpheas) 
+        imp.reload(morpheas)
     if "test_1_morpheas" in locals():
         if PKHG_test:
             imp.reload(test_PKHG_stringinput_100612)
@@ -88,7 +89,7 @@ else:
         from Ephestos import  test_PKHG_stringinput_100612
     else:
         from Ephestos import  test_1_morpheas
-    
+
 import bpy
 
 def register():
@@ -99,4 +100,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    
