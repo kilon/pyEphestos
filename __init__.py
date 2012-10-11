@@ -53,8 +53,6 @@
 #    - better string editing
 #    - multi-line edits
 
-""" here we go """
-
 
 
 bl_info = {
