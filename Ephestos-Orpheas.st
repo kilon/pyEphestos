@@ -1,0 +1,1 @@
+Object subclass: #Orpheas	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'Ephestos-Orpheas'!
