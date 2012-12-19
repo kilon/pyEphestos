@@ -1,0 +1,15 @@
+;;10-4-2012 PKHG
+
+(fset 'cam-class
+   [escape ?\C-s ?^ ?c ?l ?a ?s ?s ?\C-m ?\C-a ?* ? ])
+(fset 'cam-def
+   [escape ?\C-s ?^ ?  ?  ?  ?  ?d ?e ?f ?\C-a ?* ?* home down])
+
+(fset 'cam-stars
+   [escape ?\C-s ?^ ?\\ ?* ?\[ ?\\ ?* ?\] ?* ?\C-m return up ?\C-a ?\' ?\' ?\' ?\C-e ?\' ?\' ?\' home down down])
+(fset 'decam-stars
+   [escape ?\C-s ?^ ?\' ?\' ?\' ?\\ ?* ?\C-m ?\C-s ?\C-e backspace backspace backspace home delete delete delete ?\C-e ?\C-d home down])
+
+
+(fset 'g-o-side
+   "\C-[:(setq line (string-to-number (substring (what-line) 5 nil)))\C-m\C-xo\C-[:(goto-line line)\C-m")
