@@ -1,1 +1,0 @@
-Object subclass: #Ephestos	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'Ephestos-Core'!

@@ -1,1 +1,0 @@
-Object subclass: #Proteas	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'Ephestos-Proteas'!
