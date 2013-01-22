@@ -68,7 +68,7 @@ bl_info = {
     "category": "Development"}
 
 #select you default startup file!
-PKHG_test = True
+PKHG_test = False
 KILON_test = False
 ZEFFIE_test = False #add your analog lines ;-)
 
@@ -82,11 +82,11 @@ if "bpy" in locals():
         else:
             imp.reload(test_1_morpheas)
 else:
-    import Ephestos
+    # import pyEphestos
     if PKHG_test:
-        from Ephestos import  test_PKHG_stringinput_100612
+        from pyEphestos import  test_PKHG_stringinput_100612
     else:
-        from Ephestos import  test_1_morpheas
+        from pyEphestos import  test_1_morpheas
 
 import bpy
 
