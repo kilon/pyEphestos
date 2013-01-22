@@ -1,11 +1,11 @@
 #PKHG trying to build a Read Eval Print Loop REPL ;-)
 #import code  #PKHG does not work as expected ...
-#from code import InteractiveConsole #Interpreter 
+#from code import InteractiveConsole #Interpreter
 #import inspect #for test
 from .morph import *
 from .rectangle import *
 from .text import *
-import Ephestos.tmp.repl_loc
+from . import repl_loc
 
 
 class Repl(Morph):
@@ -29,7 +29,7 @@ class Repl(Morph):
         self.string_input.set_position(Point(200, 225 + self.bounds.get_height()))
         self.string_input.is_visible = True
  #does not work for me yet?! no evaluation of eg sin(1)       self.II = InteractiveConsole()
-                                    
+
     def draw(self):
         super(Repl,self).draw()
         self.info_test.draw()
@@ -37,12 +37,12 @@ class Repl(Morph):
     def get_handles_mouse_click(self):
         """a click wil activate evaluation"""
         return True
-    
+
     def mouse_down_left(self, pos):
         tmp = self.string_input.text
         if True: #tmp.endswith("?"):
             #because of True tmp = tmp[:-1]
-            res = ""                        
+            res = ""
             try:
 #                res = eval("Ephestos.tmp.repl_loc." + tmp)
                 #'''
@@ -60,7 +60,7 @@ class Repl(Morph):
                 #'''
                 if not res:
                     res = "test PKHG L49 in repl.py"
-                print("***REPL RESULT = ", res)                
+                print("***REPL RESULT = ", res)
                 tmp2 = self.info_test.text
                 #PKHG remove first line (no scrolling yet)
                 firstnl = tmp2.index("\n") + 1
