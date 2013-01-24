@@ -74,7 +74,6 @@ if "bpy" in locals():
     if "morpheas" in locals():
         imp.reload(morpheas)
 
-
 import bpy
 import bgl
 import blf
@@ -82,6 +81,7 @@ import blf
 from .morpheas import *
 
 #######
+
 def check_contains(cl,name , print_value = True, no_underscore = True):
     dir_class = dir(cl)
     for el in dir_class:
