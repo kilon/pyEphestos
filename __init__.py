@@ -239,7 +239,7 @@ class open_ephestos(bpy.types.Operator):
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
-
+            initialise()
             self.cursor_on_handle = 'None'
             context.window_manager.modal_handler_add(self)
 
