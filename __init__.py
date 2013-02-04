@@ -78,6 +78,8 @@ import bpy
 import bgl
 import blf
 
+from bpy.props import *
+
 from .morpheas import *
 
 #######
@@ -95,95 +97,95 @@ def check_contains(cl,name , print_value = True, no_underscore = True):
             else:
                 print(name , " contains ==>",el)
     print("\ncheck_contains finished\n\n")
-
-##########start of default settings (today example for test_StringInput.py) ##
-
-
-#This file uses a World-morph on the 3DView screen of Blender
-#and all events are handled via the hand (an unvisible morph) but
-#can be made visible by a CrossHair-morph
 world = World()
-hand = world.hand
-hand.name = "MAIN hand"
-tmp = hand.kbd_listener
-world.kbd_listener = tmp #PKHG: this worlds keyboardListener
-
-crosshair = CrossHair(hand)
-crosshair.name = "MAIN crosshair"
-world.add(crosshair)
-
-#at least one Menu will be visible in the lower left corner
-#Big if it is in developpers mode small if not needed
-#it is the menu built for the context of the world
-world_menu = world.context_menu()
-world_menu.target = world
-world_menu.name = "MAIN menu of world"
-world_menu.create_my_objects()
-
-#test a Text morph as an about, always visible in the world_menu
-#Text is a multline morph
-about = Text("Ephestos: Age of Morpheas \n (c)  2012 by PKHG and Kilon  [ thekilon@yahoo.co.uk ] .GPL Licence . Based on Pymorphic.py by Jens Moenig [ jens@moenig.org ] \n ", max_width = 390 , fontsize = 16)
-
-#normal procedur#give it a name
-#give it a startposition
-#set its visbility
-#add it (a must yet) to the world see later!
-#PKHG.TODO.??? make this a def?
-about.name = "About"
-about.set_position(Point(200,200))
-about.is_visible = False
-
-#######to be compatible with 0905 state of git START ???!!!
-#test Blinker 16092012
-blinker = Blinker()
-blinker.set_position(Point(450,300))
-blinker.is_visible = False
-world.add(blinker)
-
-##StringInput test
-
-#stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
-stringinput = StringInput(hand, blinker, default="mouse here! if GREEN light type!")
-
-world.stringinput_ID = id(stringinput)
-stringinput.set_position(Point(400,200))
-stringinput.name = "I am IP"
-stringinput.is_visible = False
-stringinput.with_name = True
-#stringinput.keyboard_listener = world.keyboard_listener
-world.add_child(stringinput)
+def initialise():
+    ##########start of default settings (today example for test_StringInput.py) ##
 
 
-#add als default morphs to the world!
-#we know by the following world.add lines which child in
-#world.children is what (but better do not rely on this)
-world.add(world_menu)
-world.add(about)
+    #This file uses a World-morph on the 3DView screen of Blender
+    #and all events are handled via the hand (an unvisible morph) but
+    #can be made visible by a CrossHair-morph
+    global world
+    hand = world.hand
+    hand.name = "MAIN hand"
+    tmp = hand.kbd_listener
+    world.kbd_listener = tmp #PKHG: this worlds keyboardListener
+    crosshair = CrossHair(hand)
+    crosshair.name = "MAIN crosshair"
+    world.add(crosshair)
 
-#add a texture morph
-textured_morph = Morph()
-textured_morph.set_texture( "swatch.png" )
-textured_morph.set_position(Point(600,100))
-world.add(textured_morph)
-tex2_morph = Morph(bounds = Rectangle(Point(0,0),Point(200,200)))
-tex2_morph.set_texture("weetniet.png")
-tex2_morph.set_position(Point(600,200))
-world.add(tex2_morph)
-print("textured_morph x position: ",textured_morph.get_position().x)
-print("textured_morph y position: ",textured_morph.get_position().y)
-print("textured_morph height : ",textured_morph.get_height())
-print("textured_morph width : ",textured_morph.get_width())
-#PKHG to see what world contains:check_contains(world,"world")
+    #at least one Menu will be visible in the lower left corner
+    #Big if it is in developpers mode small if not needed
+    #it is the menu built for the context of the world
+    world_menu = world.context_menu()
+    world_menu.target = world
+    world_menu.name = "MAIN menu of world"
+    world_menu.create_my_objects()
+
+    #test a Text morph as an about, always visible in the world_menu
+    #Text is a multline morph
+    about = Text("Ephestos: Age of Morpheas \n (c)  2012 by PKHG and Kilon  [ thekilon@yahoo.co.uk ] .GPL Licence . Based on Pymorphic.py by Jens Moenig [ jens@moenig.org ] \n ", max_width = 390 , fontsize = 16)
+
+    #normal procedur#give it a name
+    #give it a startposition
+    #set its visbility
+    #add it (a must yet) to the world see later!
+    #PKHG.TODO.??? make this a def?
+    about.name = "About"
+    about.set_position(Point(200,200))
+    about.is_visible = False
+
+    #######to be compatible with 0905 state of git START ???!!!
+    #test Blinker 16092012
+    blinker = Blinker()
+    blinker.set_position(Point(450,300))
+    blinker.is_visible = False
+    world.add(blinker)
+
+    ##StringInput test
+
+    #stringinput = StringInput(kbd_listener = hand.kbd_listener, default="test StringInput  pkhg")
+    stringinput = StringInput(hand, blinker, default="mouse here! if GREEN light type!")
+
+    world.stringinput_ID = id(stringinput)
+    stringinput.set_position(Point(400,200))
+    stringinput.name = "I am IP"
+    stringinput.is_visible = False
+    stringinput.with_name = True
+    #stringinput.keyboard_listener = world.keyboard_listener
+    world.add_child(stringinput)
 
 
-repl = Repl(world)
-world.add(repl)
+    #add als default morphs to the world!
+    #we know by the following world.add lines which child in
+    #world.children is what (but better do not rely on this)
+    world.add(world_menu)
+    world.add(about)
 
-print("start of test_PKHG")
-#PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
-#for el in world.children: print(id(el))
+    #add a texture morph
+    textured_morph = Morph()
+    textured_morph.set_texture( "swatch.png" )
+    textured_morph.set_position(Point(600,100))
+    world.add(textured_morph)
+    tex2_morph = Morph(bounds = Rectangle(Point(0,0),Point(200,200)))
+    tex2_morph.set_texture("weetniet.png")
+    tex2_morph.set_position(Point(600,200))
+    world.add(tex2_morph)
+    print("textured_morph x position: ",textured_morph.get_position().x)
+    print("textured_morph y position: ",textured_morph.get_position().y)
+    print("textured_morph height : ",textured_morph.get_height())
+    print("textured_morph width : ",textured_morph.get_width())
+    #PKHG to see what world contains:check_contains(world,"world")
 
-##########end of default settings ########################
+
+    repl = Repl(world)
+    world.add(repl)
+
+    print("start of test_PKHG")
+    #PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
+    #for el in world.children: print(id(el))
+
+    ##########end of default settings ########################
 
 ########## do not change the following code ##############
 class ephestos:
@@ -229,21 +231,10 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-            if debug_show_acttions_of_handle:
-                print("=======> start hand actions: test_3 L127 event type :", \
-                  event.type," event value : ",event.value,\
-                  " next hand is called!")
-            hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
-            res = hand.process_all_events(event) #{'RUNNING_MODAL'}
-            if debug_show_acttions_of_handle:
-                print("=======> end hand actions result of process_all_events =",res, "\n")
-#fort test of events only            print("\n=======>>>> event info: type=", event.type,"\n value=", event.value)
-            return(res)
-        else:
-#            print("event type :" ,event.type)
-#            print("event value : ",event.value)
-#            print("PASS THROUGH")
-            pass
+
+            world.hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
+
+
         return result
 
     def invoke(self, context, event):
