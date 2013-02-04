@@ -231,8 +231,9 @@ class open_ephestos(bpy.types.Operator):
                  and event.mouse_region_x < bpy.context.area.regions[4].width\
                  and event.mouse_region_y > 0 \
                  and event.mouse_region_y < bpy.context.area.regions[4].height :
-
-            world.hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
+            hand = world.hand
+            hand.bounds.origin = Point(event.mouse_region_x, event.mouse_region_y)
+            result = hand.process_all_events(event)
 
 
         return result
