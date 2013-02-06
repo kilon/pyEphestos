@@ -214,7 +214,7 @@ class open_ephestos(bpy.types.Operator):
     def modal(self, context, event):
         result =  {'PASS_THROUGH'}
         context.area.tag_redraw()
-
+        #context.area.header_text_set("Welcome to Ephestos")
         if context.area:
             context.area.tag_redraw()
 
@@ -222,7 +222,7 @@ class open_ephestos(bpy.types.Operator):
             return {'PASS_THROUGH'}
 
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in {'ESC',}:
-            context.region.callback_remove(self._handle)
+            bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             ephestos.running = False
             print("CANCELLED")
             result = {'CANCELLED'}
@@ -242,15 +242,16 @@ class open_ephestos(bpy.types.Operator):
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
             initialise()
             self.cursor_on_handle = 'None'
-            context.window_manager.modal_handler_add(self)
+
 
             # Add the region OpenGL drawing callback
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
-            self._handle = context.region.callback_add(draw_ephestos, (self, context), 'POST_PIXEL')
+            self._handle =bpy.types.SpaceView3D.draw_handler_add(draw_ephestos,(self,context), 'WINDOW', 'POST_PIXEL')
 #PKHG.notneeded            self._handle_world = context.region.callback_add(draw_World, (self, context), 'POST_PIXEL')
             self._timer = context.window_manager.event_timer_add(0.01,
                     context.window)
             ephestos.running = True
+            context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
         else:
             self.report({'WARNING'}, "Ephestos is already opened and running")
