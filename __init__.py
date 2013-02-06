@@ -97,7 +97,8 @@ def check_contains(cl,name , print_value = True, no_underscore = True):
             else:
                 print(name , " contains ==>",el)
     print("\ncheck_contains finished\n\n")
-world = World()
+world_initialised = False
+world = None
 def initialise():
     ##########start of default settings (today example for test_StringInput.py) ##
 
@@ -106,6 +107,9 @@ def initialise():
     #and all events are handled via the hand (an unvisible morph) but
     #can be made visible by a CrossHair-morph
     global world
+    global world_initialised
+    world_initialised = True
+    world = World()
     hand = world.hand
     hand.name = "MAIN hand"
     tmp = hand.kbd_listener
@@ -239,8 +243,9 @@ class open_ephestos(bpy.types.Operator):
         return result
 
     def invoke(self, context, event):
+        global world_initialised
         if context.area.type == 'VIEW_3D' and ephestos.running == False :
-            initialise()
+            if world_initialised == False: initialise()
             self.cursor_on_handle = 'None'
 
 
