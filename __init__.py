@@ -92,11 +92,9 @@ def check_contains(cl,name , print_value = True, no_underscore = True):
         else:
             if print_value:
                 tmp = getattr(cl,el)
-#                if el == 'stringfield_ID':
-                print(name , " contains ==>",el," value = ", tmp)
-            else:
-                print(name , " contains ==>",el)
-    print("\ncheck_contains finished\n\n")
+
+
+
 world_initialised = False
 world = None
 def initialise():
@@ -175,17 +173,14 @@ def initialise():
     tex2_morph.set_texture("weetniet.png")
     tex2_morph.set_position(Point(600,200))
     world.add(tex2_morph)
-    print("textured_morph x position: ",textured_morph.get_position().x)
-    print("textured_morph y position: ",textured_morph.get_position().y)
-    print("textured_morph height : ",textured_morph.get_height())
-    print("textured_morph width : ",textured_morph.get_width())
+
     #PKHG to see what world contains:check_contains(world,"world")
 
 
     repl = Repl(world)
     world.add(repl)
 
-    print("start of test_PKHG")
+
     #PKHG is now ok, maybe cleaned now:for el in world.children:print(el,"its id = ",id(el))
     #for el in world.children: print(id(el))
 
@@ -228,7 +223,6 @@ class open_ephestos(bpy.types.Operator):
         if context.area.type == 'VIEW_3D' and ephestos.running and event.type in {'ESC',}:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             ephestos.running = False
-            print("CANCELLED")
             result = {'CANCELLED'}
         elif context.area.type == 'VIEW_3D' and ephestos.running \
                  and event.mouse_region_x > 0 \

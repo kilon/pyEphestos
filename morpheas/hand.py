@@ -64,17 +64,11 @@ class Hand(Morph):
 ###################################################################
 
         if event.type == 'MOUSEMOVE':
-#            print("event detected -> ", event.type)
             if (self.mouse_x != old_mouse_x) or (self.mouse_y != old_mouse_y):
-#                print("YES <<< all events L44 type = ",event.type, newPoint == oldPoint)
                 result = self.process_mouse_move(event)
-#            else:
-#                print("NO <<< all events L67 type = ",event.type, newPoint == oldPoint)
         elif event.value=='PRESS':
-#            print("event detected -> ", event.type)
             result = self.detect_press_event(event)
         elif event.value=='RELEASE':
-#            print("event detected -> ", event.type)
             result =  self.detect_release_event(event)
         return result
 
@@ -126,9 +120,6 @@ class Hand(Morph):
         """ return the top morph that is under the current position of the mouse cursor """
 
         morphs = self.parent.children
-        if debug_get_morph_at_pointer:
-            print(">>> hand L117 get_morph_at_pointer returns morphs : ",morphs)
-        #PKHG.TODO return problem!
         for m in morphs: # morphs[::-1]:
             if m.get_full_bounds().get_contains_point(self.bounds.origin)\
                    and m.is_visible\
@@ -140,7 +131,6 @@ class Hand(Morph):
     def get_all_morphs_at_pointer(self):
         """ return all the morphs that are under the current position of the mouse cursor """
         answer = []
-        # morphs = self.world.all_children()
         morphs = self.parent.children
         for m in morphs:
             if m.is_visible \
@@ -148,58 +138,36 @@ class Hand(Morph):
               and not isinstance(m, Hand)\
               and not isinstance(m, type(self.parent)): #PKHG nothing with world!
                 answer.append(m)
-#PKHG>3jul        print("<<< tmp hand L135 all morph at pointer =", answer[:])
         return answer
 
     #Hand dragging and dropping:
 
     def drop_target_for(self, morph):
         target = self.get_morph_at_pointer()
-        print(">>> hand L156 drop_target_for  morph = ", morph, "target =", target)
         while target.get_wants_drop_of(morph) == False:
             target = target.parent
-        print(">>> finished while hand L159 drop_target_for  morph = ", morph, "target =", target)
         return target
 #Hand
     def grab(self, morph):
         """ Grab morph . That means that the morph is removed as a child of the world and added as a child of the hand """
         if self.children == []:
-            print("GRAB OPERATION ================================>")
-            print("grab has been called for morph ",morph)
-            #self.world.stop_editing()
-            print("world has children : ", self.world.children)
-            print("removing moprh for parent : ",morph.parent)
             morph.parent.remove_child(morph)
-
             self.add(morph)
-            print("morphs parent is now : ", morph.parent)
-            print("now parent has children : ",morph.parent.children)
-            print("hand children : ", self.children)
-            print("world children :", self.world.children)
-
-
             self.changed()
             self.grabed_morph_offset_x =  morph.bounds.origin.x - self.bounds.origin.x
             self.grabed_morph_offset_y =  morph.bounds.origin.y - self.bounds.origin.y
-            print("morph has been grabbed")
-            print("END OF GRAB OPERATION ===========================>")
 
     def drop(self):
         """ Drop morph. The morph is removed as a child of the hand and added back to its world."""
-        print("drop has been called")
         if self.children != []:
-            print(">>> hand L176 hands children", self.children[:])
             morph = self.children[0]
             target = self.drop_target_for(morph)
-            print("droped self =", self, " to target : ", target)
             self.changed()
             target.add(morph)
             morph.changed()
             self.morph_to_grab = None
             self.children = []
             self.set_extent(Point(0, 0))
-            print("morph has been droped")
-
 
     #Hand event dispatching:
 
@@ -212,8 +180,6 @@ class Hand(Morph):
             self.drop()
         else:
             morph = self.get_morph_at_pointer()
-            if debug_get_morph_at_pointer:
-                print("\n>>>hand.py L190 get_morph_at_pointer morph = (and parent)", morph, morph.parent)
             pos = self.bounds.origin
             if morph != self.parent: #world is it's own parent PKHG???
                 if event.type == 'LEFTMOUSE':
@@ -221,25 +187,14 @@ class Hand(Morph):
                     # mark morph for drag only if mouse cursor is top of it
                     self.morph_to_grab = morph.get_root_for_grab()
 #PKHG.todo??? 0606012
-                    if debug_get_morph_at_pointer:
-                        print(">>>hand.py L194 in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
                     if morph.is_draggable and not isinstance(morph, MenuItem):
                         self.moving_morph = True
                     #searh for a morph(parent) to handle a click!
                     tmp = morph.get_handles_mouse_click()
-#                    print(">>> hand L198 morph and get_handles_mouse_click() =", morph, tmp)
                     while not morph.get_handles_mouse_click():
-                        if debug_left_mouse_click_060512_1048:
-                            print("-L202-> hand.py; morph" , morph, " does not handle left_mouse_click")
                         morph = morph.parent
-                    if debug_get_morph_at_pointer:
-                        print("-L222-> hand.py in process_mouse_down morph and morph to grab",morph, self.morph_to_grab)
-                    if debug_left_mouse_click_060512_1048:
-                        print("-L224-> hand.py; morph" , morph, "  handles lef_mouse_click")
                     self.mouse_down_morph = morph
                     # trigger also the approriate morph event
-                    if debug_left_mouse_click_060512_1048:
-                        print("-L228-> hand.py; pos for morph.mouse_down_left(pos) " , morph, "  pos = ", pos)
                     morph.mouse_down_left(pos)
 
 
@@ -249,7 +204,6 @@ class Hand(Morph):
                     morph.mouse_down_right(pos)
 
                 result = {'RUNNING_MODAL'}
-        print("mouse down is ",result)
         return result
 
     def process_mouse_up(self, event):
@@ -257,15 +211,12 @@ class Hand(Morph):
         # if hand has children in case of a mouse button release remove all its children
 
         if self.children != []:
-            print("I am droping now !")
             self.drop()
             if self.moving_morph == True:
                     self.moving_morph = False
-                    print("movement finished")
         else:
             if self.moving_morph == True:
                     self.moving_morph = False
-                    print("movement finished")
 
             pos = Point(event.mouse_region_x,
                         event.mouse_region_y)
@@ -338,14 +289,11 @@ class Hand(Morph):
                 self.mouse_over_list.append(new)
                 if event.type == 'MOUSEMOVE':
                     new.mouse_enter_dragging()
-                    print("I am entering the area of a morph hand L321", new)
                     #PKHG morph info too!
 
 # trigger the mouse_leave event of the morph in case mouse cursor leaves morph
     def detect_mouse_leave(self,event):
         morphs_at_pointer = self.get_all_morphs_at_pointer()
-#        print("<<< mouse leaves L342 at pointer at and who ",(self.mouse_x, self.mouse_y),  morphs_at_pointer[:])
-#        print("L343 mouse_over_list", self.mouse_over_list[:])
         for old in self.mouse_over_list:
             if old not in morphs_at_pointer :
                 old.mouse_leave()
@@ -360,8 +308,6 @@ class Hand(Morph):
         if self.children != [] and event.type == 'MOUSEMOVE' and self.moving_morph == True and self.morph_to_grab.is_draggable and self.morph_to_grab.is_visible:
             morph_position = Point(self.bounds.origin.x + self.grabed_morph_offset_x , self.bounds.origin.y + self.grabed_morph_offset_y)
             self.morph_to_grab.set_position(morph_position)
-            print("WARNING !!!! morph move : ",self.morph_to_grab)
-            print("the color of the morph that is being moved is : ", self.morph_to_grab.color)
             return  True
 
 
