@@ -72,9 +72,10 @@ class open_ephestos(bpy.types.Operator):
             return {'PASS_THROUGH'}
 
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type in {'ESC',}:
-            bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+
             ephestos_running = False
             result = {'CANCELLED'}
+            self.report({'WARNING'}, "Ephestos has been closed")
 
 
 
