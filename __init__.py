@@ -52,8 +52,35 @@ bl_info = {
 
 
 import bpy
+import threading
+import socket
 from bpy.props import *
 ephestos_running = False
+thread_created = False
+threadSocket = 0
+s = 0
+
+def create_thread():
+    print("creating thread")
+    global threadSocket
+    threadSocket = threading.Thread(name='threadSocket', target= socket_listen)
+    create_socket_connection()
+    threadSocket.start()
+    threadSocket.join()
+
+def socket_listen():
+    comRunning = True
+    print("listening")
+    while comRunning:
+        (receivedSocket , adreess) = s.accept()
+        print( "socket: ",receivedSocket)
+
+
+def create_socket_connection():
+    global s
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('127.0.0.1',4000))
+    s.listen(5)
 
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
@@ -61,15 +88,13 @@ class open_ephestos(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running
+        global ephestos_running,thread_created
         result =  {'PASS_THROUGH'}
         context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
         if context.area:
             context.area.tag_redraw()
 
-        if event.type == 'TIMER':
-            return {'PASS_THROUGH'}
 
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type in {'ESC',}:
 
@@ -77,7 +102,9 @@ class open_ephestos(bpy.types.Operator):
             result = {'CANCELLED'}
             self.report({'WARNING'}, "Ephestos has been closed")
 
-
+        if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' and thread_created == False:
+           create_thread()
+           thread_created = True
 
         return result
 
