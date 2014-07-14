@@ -35,7 +35,10 @@
 #    DEALINGS IN THE SOFTWARE.
 #
 
-
+""" Pharo code:
+stream := SocketStream openConnectionToHostNamed: ' 127.0.0.1'  port: 4000 .
+stream sendCommand: 'Hello Pharo AGAIN!!!!'.
+stream close."""
 
 bl_info = {
     "name": "Ephestos : The Golden Age",
@@ -59,28 +62,33 @@ ephestos_running = False
 thread_created = False
 threadSocket = 0
 s = 0
+receivedSocket = "none"
+listening = False
+receivedData = ''
 
 def create_thread():
     print("creating thread")
-    global threadSocket
+    global threadSocket,listening
     threadSocket = threading.Thread(name='threadSocket', target= socket_listen)
+    listening = True
     create_socket_connection()
     threadSocket.start()
-    threadSocket.join()
+    #threadSocket.join()
 
 def socket_listen():
-    comRunning = True
-    print("listening")
-    while comRunning:
+    global receivedSocket,listening, receivedData
+    s.listen(5)
+    while listening:
         (receivedSocket , adreess) = s.accept()
-        print( "socket: ",receivedSocket)
+        receivedData = (receivedSocket.recv(1024)).decode("utf-8")
+
 
 
 def create_socket_connection():
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('127.0.0.1',4000))
-    s.listen(5)
+
 
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
@@ -88,7 +96,7 @@ class open_ephestos(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running,thread_created
+        global ephestos_running, thread_created, listening
         result =  {'PASS_THROUGH'}
         context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
@@ -99,6 +107,7 @@ class open_ephestos(bpy.types.Operator):
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type in {'ESC',}:
 
             ephestos_running = False
+            listening = False
             result = {'CANCELLED'}
             self.report({'WARNING'}, "Ephestos has been closed")
 
@@ -132,10 +141,21 @@ class ephestos_panel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     def draw(self, context):
+        global receivedSocket,listening
+
         sce = context.scene
         layout = self.layout
         box = layout.box()
         box.label(text="Ephestos WIP not finished yet")
+        box.label(text="-----------------------------")
+
+        if listening:
+            box.label(text="Listening")
+        else:
+            box.label(text="Not Listening")
+
+        box.label(text="ReceivedData:")
+        box.label(text=receivedData)
         box.operator("ephestos_button.modal")
 
 
