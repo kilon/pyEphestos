@@ -81,11 +81,12 @@ def create_thread():
 def socket_listen():
     global receivedSocket,listening, receivedData,socketServer
     socketServer.listen(5)
-    
+
     while listening:
         (receivedSocket , adreess) = socketServer.accept()
         receivedData = (receivedSocket.recv(1024)).decode("utf-8")
-    
+        receivedSocket.close()
+
 
 
 
@@ -113,8 +114,9 @@ class open_ephestos(bpy.types.Operator):
 
             ephestos_running = False
             listening = False
-            time.sleep(3) 
+            #time.sleep(1)
             socketServer.close()
+            #time.sleep(1)
             thread_created = False
             result = {'CANCELLED'}
             self.report({'WARNING'}, "Ephestos has been closed")
