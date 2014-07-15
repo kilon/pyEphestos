@@ -43,13 +43,13 @@ stream sendCommand: 'Hello Pharo AGAIN!!!!'.
 stream close."""
 
 bl_info = {
-    "name": "Ephestos : The Golden Age",
-    "description": "Ephestos is a communication tool to allow Pharo to control Blender",
+    "name": "Ephestos : communication tool for Pharo",
+    "description": "Ephestos is a communication tool to allow Pharo to control Blender. This allows Pharo to control blender via Blender Python API. Pharo is a simple programming language , very powerful IDE and a fun live coding enviroment.",
     "author": "Kilon",
     "version": (0, 0, 1),
-    "blender": (2, 6, 3),
+    "blender": (2, 7, 1),
     "location": "View3D > Left panel ",
-    "warning": 'warn',  # used for warning icon and text in addons panel
+    "warning": 'Warning !!! It may crash Blender ! Always save your work !',  # used for warning icon and text in addons panel
     "wiki_url": "",
     "tracker_url": "https://github.com/kilon/pyEphestos",
     "category": "Development"}
@@ -84,7 +84,8 @@ def socket_listen():
 
     while listening:
         (receivedSocket , adreess) = socketServer.accept()
-        receivedData = (receivedSocket.recv(1024)).decode("utf-8")
+        receivedData = (receivedSocket.recv(1024)).decode("utf-8")[:-2]
+        exec(receivedData)
         receivedSocket.close()
 
 
