@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 #------------------------------------------
 #   pyEphestos
 #
@@ -53,21 +55,22 @@ bl_info = {
     "category": "Development"}
 
 
-
+import time
 import bpy
 import threading
 import socket
 from bpy.props import *
+
 ephestos_running = False
 thread_created = False
 threadSocket = 0
-s = 0
+socketServer = 0
 receivedSocket = "none"
 listening = False
 receivedData = ''
 
 def create_thread():
-    print("creating thread")
+
     global threadSocket,listening
     threadSocket = threading.Thread(name='threadSocket', target= socket_listen)
     listening = True
@@ -76,18 +79,20 @@ def create_thread():
     #threadSocket.join()
 
 def socket_listen():
-    global receivedSocket,listening, receivedData
-    s.listen(5)
+    global receivedSocket,listening, receivedData,socketServer
+    socketServer.listen(5)
+    
     while listening:
-        (receivedSocket , adreess) = s.accept()
+        (receivedSocket , adreess) = socketServer.accept()
         receivedData = (receivedSocket.recv(1024)).decode("utf-8")
+    
 
 
 
 def create_socket_connection():
-    global s
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('127.0.0.1',4000))
+    global socketServer
+    socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socketServer.bind(('127.0.0.1',4000))
 
 
 class open_ephestos(bpy.types.Operator):
@@ -96,29 +101,32 @@ class open_ephestos(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running, thread_created, listening
+        global ephestos_running, thread_created, listening, socketServer
         result =  {'PASS_THROUGH'}
-        context.area.tag_redraw()
+        #context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
-        if context.area:
-            context.area.tag_redraw()
+        #if context.area:
+           # context.area.tag_redraw()
 
 
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type in {'ESC',}:
 
             ephestos_running = False
             listening = False
+            time.sleep(3) 
+            socketServer.close()
+            thread_created = False
             result = {'CANCELLED'}
             self.report({'WARNING'}, "Ephestos has been closed")
 
-        if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' and thread_created == False:
-           create_thread()
-           thread_created = True
+       # if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' and thread_created == False:
+          # create_thread()
+          # thread_created = True
 
         return result
 
     def invoke(self, context, event):
-        global ephestos_running
+        global ephestos_running,thread_created
         if context.area.type == 'VIEW_3D' and ephestos_running == False :
             self.cursor_on_handle = 'None'
 
@@ -126,10 +134,11 @@ class open_ephestos(bpy.types.Operator):
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
             #self._handle =bpy.types.SpaceView3D.draw_handler_add(draw_ephestos,(self,context), 'WINDOW', 'POST_PIXEL')
 
-            self._timer = context.window_manager.event_timer_add(0.01,
-                    context.window)
+            #self._timer = context.window_manager.event_timer_add(0.01,context.window)
             ephestos_running = True
             context.window_manager.modal_handler_add(self)
+            create_thread()
+            thread_created = True
             return {'RUNNING_MODAL'}
         else:
             self.report({'WARNING'}, "Ephestos is already opened and running")
