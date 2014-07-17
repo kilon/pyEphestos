@@ -67,6 +67,7 @@ threadSocket = 0
 socketServer = 0
 receivedSocket = "none"
 listening = False
+socketMessages = []
 receivedData = ''
 
 def create_thread():
@@ -79,13 +80,14 @@ def create_thread():
     #threadSocket.join()
 
 def socket_listen():
-    global receivedSocket,listening, receivedData,socketServer
+    global receivedSocket,listening, receivedData,socketServer, socketMessages
     socketServer.listen(5)
 
     while listening:
         (receivedSocket , adreess) = socketServer.accept()
         receivedData = (receivedSocket.recv(1024)).decode("utf-8")[:-2]
-        exec(receivedData)
+        #exec(receivedData)
+        socketMessages.append(receivedData)
         receivedSocket.close()
 
 
@@ -103,7 +105,7 @@ class open_ephestos(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running, thread_created, listening, socketServer
+        global ephestos_running, thread_created, listening, socketServer, socketMessages
         result =  {'PASS_THROUGH'}
         #context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
@@ -117,12 +119,16 @@ class open_ephestos(bpy.types.Operator):
             listening = False
             #time.sleep(1)
             socketServer.close()
+            context.window_manager.event_timer_remove(self._timer)
             #time.sleep(1)
             thread_created = False
             result = {'CANCELLED'}
             self.report({'WARNING'}, "Ephestos has been closed")
 
-       # if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' and thread_created == False:
+        if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' :
+          for msg in socketMessages:
+              exec(msg)
+              socketMessages.remove(msg)
           # create_thread()
           # thread_created = True
 
@@ -137,7 +143,7 @@ class open_ephestos(bpy.types.Operator):
             # draw in view space with 'POST_VIEW' and 'PRE_VIEW'
             #self._handle =bpy.types.SpaceView3D.draw_handler_add(draw_ephestos,(self,context), 'WINDOW', 'POST_PIXEL')
 
-            #self._timer = context.window_manager.event_timer_add(0.01,context.window)
+            self._timer = context.window_manager.event_timer_add(0.01,context.window)
             ephestos_running = True
             context.window_manager.modal_handler_add(self)
             create_thread()
