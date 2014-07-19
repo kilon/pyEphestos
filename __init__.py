@@ -127,8 +127,13 @@ class open_ephestos(bpy.types.Operator):
 
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' :
           for msg in socketMessages:
-              exec(msg)
-              socketMessages.remove(msg)
+              try:
+
+                  exec(msg,globals())
+                  socketMessages.remove(msg)
+              except Exception as e:
+                  print("Error: %s" % str(e), " with :",msg)
+                  socketMessages.remove(msg)
           # create_thread()
           # thread_created = True
 
