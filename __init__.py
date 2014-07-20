@@ -69,6 +69,7 @@ receivedSocket = "none"
 listening = False
 socketMessages = []
 receivedData = ''
+pherror = ''
 
 def create_thread():
 
@@ -105,7 +106,7 @@ class open_ephestos(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running, thread_created, listening, socketServer, socketMessages
+        global ephestos_running, thread_created, listening, socketServer, socketMessages, pherror
         result =  {'PASS_THROUGH'}
         #context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
@@ -130,10 +131,12 @@ class open_ephestos(bpy.types.Operator):
               try:
 
                   exec(msg,globals())
-                  socketMessages.remove(msg)
+                  #socketMessages.remove(msg)
               except Exception as e:
-                  print("Error: %s" % str(e), " with :",msg)
-                  socketMessages.remove(msg)
+                  pherror = "Error:" +str(e)+" with :" + msg
+                  #self.report({'WARNING'}, pherror)
+                  #socketMessages.remove(msg)
+              socketMessages.remove(msg)
           # create_thread()
           # thread_created = True
 
@@ -164,7 +167,7 @@ class ephestos_panel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     def draw(self, context):
-        global receivedSocket,listening
+        global receivedSocket,listening,pherror
 
         sce = context.scene
         layout = self.layout
@@ -179,6 +182,8 @@ class ephestos_panel(bpy.types.Panel):
 
         box.label(text="ReceivedData:")
         box.label(text=receivedData)
+        box.label(text="Error: ")
+        box.label(text=pherror)
         box.operator("ephestos_button.modal")
 
 
