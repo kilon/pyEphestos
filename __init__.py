@@ -60,6 +60,7 @@ import bpy
 import threading
 import socket
 from bpy.props import *
+from time import sleep
 
 ephestos_running = False
 thread_created = False
@@ -69,7 +70,7 @@ receivedSocket = "none"
 listening = False
 socketMessages = []
 receivedData = ''
-pherror = ''
+pherror = [""]
 
 def create_thread():
 
@@ -81,14 +82,28 @@ def create_thread():
     #threadSocket.join()
 
 def socket_listen():
-    global receivedSocket,listening, receivedData,socketServer, socketMessages
+    global receivedSocket,listening, receivedData,socketServer, socketMessages, pherror
     socketServer.listen(5)
 
     while listening:
         (receivedSocket , adreess) = socketServer.accept()
         receivedData = (receivedSocket.recv(1024)).decode("utf-8")[:-2]
+
         #exec(receivedData)
         socketMessages.append(receivedData)
+        sleep(0.03)
+
+        print("pherror : " ,pherror)
+
+
+        while not (pherror[-1]==""):
+
+            receivedSocket.sendall((pherror[-1]+'\n').encode())
+            print("I have sent err : --->"+ pherror[-1] + ' <---- and removed it from the list of errors')
+            if len(pherror) > 1:pherror.remove(pherror[-1])
+
+
+            receivedSocket.sendall("end of error\n".encode())
         receivedSocket.close()
 
 
@@ -132,8 +147,11 @@ class open_ephestos(bpy.types.Operator):
 
                   exec(msg,globals())
                   #socketMessages.remove(msg)
+                  pherror.append("no error\n")
               except Exception as e:
-                  pherror = "Error:" +str(e)+" with :" + msg
+                  newerror = "Error:" +str(e)+" with :" + msg
+                  pherror.append( newerror )
+                  print( "inserted an error now pherror : ",pherror)
                   #self.report({'WARNING'}, pherror)
                   #socketMessages.remove(msg)
               socketMessages.remove(msg)
@@ -182,8 +200,10 @@ class ephestos_panel(bpy.types.Panel):
 
         box.label(text="ReceivedData:")
         box.label(text=receivedData)
-        box.label(text="Error: ")
-        box.label(text=pherror)
+        if len(pherror) == 0:
+            box.label(text="Error: no error ")
+        else:
+            box.label(text=pherror[-1])
         box.operator("ephestos_button.modal")
 
 
