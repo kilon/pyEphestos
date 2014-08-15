@@ -54,13 +54,14 @@ bl_info = {
     "tracker_url": "https://github.com/kilon/pyEphestos",
     "category": "Development"}
 
-
+import sys
 import time
 import bpy
 import threading
 import socket
 from bpy.props import *
 from time import sleep
+import atexit
 
 ephestos_running = False
 thread_created = False
@@ -69,9 +70,27 @@ socketServer = 0
 receivedSocket = "none"
 listening = False
 socketMessages = []
+shutDown = False
 receivedData = ''
 pherror = [""]
 
+
+def cleanup():
+    global ephestos_running, threadSocket, listening, socketServer
+    ephestos_running = False
+    listening = False
+
+    socketServer.settimeout(0.1)
+    threadSocket.join()
+    #socketServer.shutdown(socket.SHUT_RDWR)
+    socketServer.close()
+    del socketServer
+
+
+    thread_created = False
+    shutDown = False
+
+atexit.register(cleanup)
 def create_thread():
 
     global threadSocket,listening
@@ -84,6 +103,7 @@ def create_thread():
 def socket_listen():
     global receivedSocket,listening, receivedData,socketServer, socketMessages, pherror
     socketServer.listen(5)
+
 
     while listening:
         (receivedSocket , adreess) = socketServer.accept()
@@ -112,16 +132,17 @@ def socket_listen():
 def create_socket_connection():
     global socketServer
     socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socketServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socketServer.bind(('127.0.0.1',4000))
 
 
 class open_ephestos(bpy.types.Operator):
     bl_idname = "ephestos_button.modal"
-    bl_label = "enable Ephestos"
+    bl_label = "Enable Ephestos"
     _timer = None
 
     def modal(self, context, event):
-        global ephestos_running, thread_created, listening, socketServer, socketMessages, pherror
+        global ephestos_running, thread_created, listening, socketServer, socketMessages, pherror, shutDown
         result =  {'PASS_THROUGH'}
         #context.area.tag_redraw()
         #context.area.header_text_set("Welcome to Ephestos")
@@ -142,19 +163,36 @@ class open_ephestos(bpy.types.Operator):
             self.report({'WARNING'}, "Ephestos has been closed")
 
         if context.area.type == 'VIEW_3D' and ephestos_running and event.type == 'TIMER' :
-          for msg in socketMessages:
-              try:
 
-                  exec(msg,globals())
-                  #socketMessages.remove(msg)
-                  pherror.append("no error\n")
-              except Exception as e:
-                  newerror = "Error:" +str(e)+" with :" + msg
-                  pherror.append( newerror )
-                  print( "inserted an error now pherror : ",pherror)
-                  #self.report({'WARNING'}, pherror)
-                  #socketMessages.remove(msg)
-              socketMessages.remove(msg)
+            if shutDown:
+                ephestos_running = False
+                listening = False
+
+                socketServer.settimeout(0.01)
+                #socketServer.shutdown(socket.SHUT_RDWR)
+                socketServer.close()
+                threadSocket.join()
+                del socketServer
+                context.window_manager.event_timer_remove(self._timer)
+
+                thread_created = False
+                shutDown = False
+                result = {'CANCELLED'}
+                self.report({'WARNING'}, "Ephestos has been closed")
+
+            for msg in socketMessages:
+                try:
+
+                    exec(msg,globals())
+                    #socketMessages.remove(msg)
+                    pherror.append("no error\n")
+                except Exception as e:
+                    newerror = "Error:" +str(e)+" with :" + msg
+                    pherror.append( newerror )
+                    print( "inserted an error now pherror : ",pherror)
+                    #self.report({'WARNING'}, pherror)
+                    #socketMessages.remove(msg)
+                socketMessages.remove(msg)
           # create_thread()
           # thread_created = True
 
@@ -179,6 +217,22 @@ class open_ephestos(bpy.types.Operator):
             self.report({'WARNING'}, "Ephestos is already opened and running")
             return {'CANCELLED'}
 
+
+class AddBox(bpy.types.Operator):
+    """Add a simple box mesh"""
+    bl_idname = "ephestos.close"
+    bl_label = "Close Ephestos"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+
+    def execute(self, context):
+        global shutDown
+        shutDown = True
+
+
+
+        return {'FINISHED'}
 
 class ephestos_panel(bpy.types.Panel):
     bl_label = "Ephestos"
@@ -205,6 +259,7 @@ class ephestos_panel(bpy.types.Panel):
         else:
             box.label(text=pherror[-1])
         box.operator("ephestos_button.modal")
+        box.operator("ephestos.close")
 
 
 def register():
