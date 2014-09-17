@@ -62,6 +62,7 @@ import socket
 from bpy.props import *
 from time import sleep
 import atexit
+import re
 
 ephestos_running = False
 thread_created = False
@@ -182,10 +183,17 @@ class open_ephestos(bpy.types.Operator):
 
             for msg in socketMessages:
                 try:
-
-                    exec(msg,globals())
-                    #socketMessages.remove(msg)
-                    pherror.append("no error\n")
+                    if "RetValue:" in msg:
+                        regexobj = re.compile("[^(RetValue:)]\S.*")
+                        regexsearch = regexobj.search(msg)
+                        pythoncomm = regexsearch.group(0)
+                        pherror.append("RetValue:"+str(eval(pythoncomm)))
+                        print("eval with pherror: ",pherror)
+                        #pherror.append("no error\n")
+                    else:
+                        exec(msg,globals())
+                        #socketMessages.remove(msg)
+                        pherror.append("no error\n")
                 except Exception as e:
                     newerror = "Error:" +str(e)+" with :" + msg
                     pherror.append( newerror )
